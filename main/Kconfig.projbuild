@@ -1,0 +1,52 @@
+menu "Battery Tester Config"
+
+    menu "Hardware GPIO Assignment"
+        config I2C_SDA_PIN
+            int "I2C SDA Pin (OLED, ADS1115)"
+            default 21
+        config I2C_SCL_PIN
+            int "I2C SCL Pin (OLED, ADS1115)"
+            default 22
+
+        config ENCODER_CLK_PIN
+            int "Encoder CLK Pin"
+            default 18
+        config ENCODER_DT_PIN
+            int "Encoder DT Pin"
+            default 19
+        config ENCODER_SW_PIN
+            int "Encoder Button Pin"
+            default 5
+
+        config TARE_BTN_PIN
+            int "Dedicated Kelvin Probe Tare Button Pin"
+            default 4
+
+        config ONEWIRE_BUS_PIN
+            int "OneWire Bus Pin (DS18B20)"
+            default 23
+
+        config ADC_ALERT_PIN
+            int "ADS1115 Alert/Data Ready Pin"
+            default 17
+
+        config PWM_LOAD_CTRL_PIN
+            int "MOSFET Gate Drive PWM/DAC Pin"
+            default 25
+    endmenu
+
+    menu "Safety Hard Limits"
+        config MAX_HEATSINK_TEMP
+            int "Max Heatsink Temp Cutoff (C)"
+            default 65
+
+        config MAX_DISCHARGE_CURRENT_MA
+            int "Absolute Max Current Limit (mA)"
+            default 3500
+
+        config MIN_CELL_VOLTAGE_MV
+            int "Absolute Min Cell Voltage (mV)"
+            default 800
+    endmenu
+
+endmenu
