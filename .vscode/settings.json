@@ -28,5 +28,7 @@
     "--background-index",
     "--query-driver=**",
     "--compile-commands-dir=/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/build"
-  ]
+  ],
+  "idf.port": "/dev/tty.usbserial-0001",
+  "idf.flashType": "UART"
 }
