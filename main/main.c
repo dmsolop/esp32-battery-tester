@@ -25,8 +25,20 @@ void app_main(void)
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
 
-    safety_monitor_init();
-    load_control_init();
+    // 2. Ініціалізація монітора безпеки (КРИТИЧНО)
+    if (safety_monitor_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to initialize safety monitor!");
+        return; // Безпека понад усе, зупиняємось!
+    }
+
+    // 3. Ініціалізація контролю навантаження (КРИТИЧНО)
+    if (load_control_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to initialize load control!");
+        return; // Без регуляторів прилад не має сенсу
+    }
+
     ui_interface_init();
     telemetry_init();
 
