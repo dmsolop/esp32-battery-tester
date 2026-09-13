@@ -1,4 +1,3 @@
-idf_component_register(
-    SRC_DIRS "."
-    INCLUDE_DIRS "."
-)
+idf_component_register(SRCS "safety_monitor.c"
+                       INCLUDE_DIRS "include"
+                       REQUIRES freertos log system_state)
