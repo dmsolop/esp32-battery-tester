@@ -4,6 +4,8 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 
+#include "load_control.h"
+
 #ifndef CONFIG_MAX_CHANNELS
 #define CONFIG_MAX_CHANNELS 4
 #endif
@@ -57,8 +59,13 @@ static void safety_task(void *pvParameters)
                             metrics.state = STATE_ERROR;
                             system_state_set_metrics(i, &metrics);
 
-                            // 2. TODO: Виклик xTaskNotify() для передачі Direct Notification
+                            // 2. Виклик xTaskNotify() для передачі Direct Notification
                             // у Task_PID_Control(i) для миттєвого апаратного відключення ШІМ.
+                            TaskHandle_t pid_task = load_control_get_task_handle(i);
+                            if (pid_task != NULL)
+                            {
+                                xTaskNotifyGive(pid_task);
+                            }
                         }
                     }
                 }

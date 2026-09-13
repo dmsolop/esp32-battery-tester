@@ -6,6 +6,7 @@
 
 // Підключаємо наш новий компонент
 #include "system_state.h"
+#include "load_control.h"
 
 static const char *TAG = "MAIN";
 
@@ -22,6 +23,8 @@ void app_main(void)
     }
 
     ESP_LOGI(TAG, "System initialization complete. Entering main loop.");
+
+    load_control_init();
 
     // Основний цикл (тимчасова заглушка, щоб таска не завершувалася)
     while (1)
