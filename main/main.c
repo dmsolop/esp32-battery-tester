@@ -9,6 +9,7 @@
 #include "system_state.h"
 #include "load_control.h"
 #include "ui_interface.h"
+#include "telemetry.h"
 
 static const char *TAG = "MAIN";
 
@@ -24,11 +25,12 @@ void app_main(void)
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
 
-    ESP_LOGI(TAG, "System initialization complete. Entering main loop.");
-
     safety_monitor_init();
     load_control_init();
     ui_interface_init();
+    telemetry_init();
+
+    ESP_LOGI(TAG, "System initialization complete. Entering main loop.");
 
     // Основний цикл (тимчасова заглушка, щоб таска не завершувалася)
     while (1)
