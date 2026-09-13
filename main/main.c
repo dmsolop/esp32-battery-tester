@@ -5,8 +5,10 @@
 #include "esp_err.h"
 
 // Підключаємо наш новий компонент
+#include "safety_monitor.h"
 #include "system_state.h"
 #include "load_control.h"
+#include "ui_interface.h"
 
 static const char *TAG = "MAIN";
 
@@ -24,7 +26,9 @@ void app_main(void)
 
     ESP_LOGI(TAG, "System initialization complete. Entering main loop.");
 
+    safety_monitor_init();
     load_control_init();
+    ui_interface_init();
 
     // Основний цикл (тимчасова заглушка, щоб таска не завершувалася)
     while (1)
