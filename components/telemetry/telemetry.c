@@ -37,7 +37,7 @@ static void telemetry_task(void *pvParameters)
         ESP_LOGI(TAG, "-------------------------");
 
         // Телеметрію зазвичай відправляють рідше, ніж оновлюють UI (наприклад, раз на 5 секунд)
-        vTaskDelay(pdMS_TO_TICKS(5000));
+        vTaskDelay(pdMS_TO_TICKS(15000));
     }
 }
 

@@ -33,7 +33,7 @@ static void ui_task(void *pvParameters)
         }
 
         // Оновлюємо інформацію раз на 2 секунди, щоб не спамити лог
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(15000));
     }
 }
 
