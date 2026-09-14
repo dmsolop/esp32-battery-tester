@@ -10,6 +10,7 @@
 #include "load_control.h"
 #include "ui_interface.h"
 #include "telemetry.h"
+#include "adc_driver.h"
 
 static const char *TAG = "MAIN";
 
@@ -25,14 +26,21 @@ void app_main(void)
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
 
-    // 2. Ініціалізація монітора безпеки (КРИТИЧНО)
+    // Ініціалізація монітора безпеки (КРИТИЧНО)
     if (safety_monitor_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize safety monitor!");
         return; // Безпека понад усе, зупиняємось!
     }
 
-    // 3. Ініціалізація контролю навантаження (КРИТИЧНО)
+    // Ініціалізація драйвера шини I2C
+    if (adc_driver_init() != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to initialize adc driver!");
+        return;
+    }
+
+    // Ініціалізація контролю навантаження (КРИТИЧНО)
     if (load_control_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize load control!");
