@@ -15,12 +15,14 @@
 #endif
 
 #define I2C_MASTER_TIMEOUT_MS 1000
+// Стандартна адреса ADS1115 (ADDR -> GND)
+#define ADS1115_I2C_ADDRESS 0x48
 
 static const char *TAG = "ADC_DRIVER";
 static SemaphoreHandle_t s_i2c_mutex = NULL;
 
-// Зберігаємо хендл шини для подальшого додавання пристроїв
-static i2c_master_bus_handle_t s_bus_handle = NULL;
+static i2c_master_bus_handle_t s_bus_handle = NULL; // Зберігаємо хендл шини для подальшого додавання пристроїв
+static i2c_master_dev_handle_t s_ads_handle = NULL; // Хендл нашого АЦП
 
 esp_err_t adc_driver_init(void)
 {
@@ -54,7 +56,21 @@ esp_err_t adc_driver_init(void)
         return err;
     }
 
-    ESP_LOGI(TAG, "I2C bus initialized (New API). Ready for devices at %d Hz", I2C_MASTER_FREQ_HZ);
+    // Реєстрація пристрою ADS1115 на створеній шині
+    i2c_device_config_t dev_cfg = {
+        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+        .device_address = ADS1115_I2C_ADDRESS,
+        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+    };
+
+    err = i2c_master_bus_add_device(s_bus_handle, &dev_cfg, &s_ads_handle);
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to add ADS1115 to I2C bus");
+        return err;
+    }
+
+    ESP_LOGI(TAG, "I2C bus initialized. ADS1115 registered at 0x%02X (%d Hz)", ADS1115_I2C_ADDRESS, I2C_MASTER_FREQ_HZ);
     return ESP_OK;
 }
 
