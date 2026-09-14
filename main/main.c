@@ -11,6 +11,7 @@
 #include "ui_interface.h"
 #include "telemetry.h"
 #include "adc_driver.h"
+#include "cli.h"
 
 static const char *TAG = "MAIN";
 
@@ -49,6 +50,7 @@ void app_main(void)
 
     ui_interface_init();
     telemetry_init();
+    cli_init();
 
     ESP_LOGI(TAG, "System initialization complete. Entering main loop.");
 
