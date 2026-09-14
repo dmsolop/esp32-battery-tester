@@ -4,19 +4,20 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
-#define I2C_MASTER_SCL_IO 22
-#define I2C_MASTER_SDA_IO 21
-#define I2C_MASTER_PORT_NUM -1 // -1 дозволяє драйверу автоматично обрати вільний порт (I2C_NUM_0 або I2C_NUM_1)
-
 #ifdef NDEBUG
 #define I2C_MASTER_FREQ_HZ 400000 // Release: Fast mode для PCB (використаємо при додаванні пристрою)
 #else
 #define I2C_MASTER_FREQ_HZ 100000 // Debug: Standard mode для макетної плати (використаємо при додаванні пристрою)
 #endif
-
+#define I2C_MASTER_SCL_IO 22
+#define I2C_MASTER_SDA_IO 21
+#define I2C_MASTER_PORT_NUM -1 // -1 дозволяє драйверу автоматично обрати вільний порт (I2C_NUM_0 або I2C_NUM_1)
 #define I2C_MASTER_TIMEOUT_MS 1000
+
 // Стандартна адреса ADS1115 (ADDR -> GND)
 #define ADS1115_I2C_ADDRESS 0x48
+#define ADS1115_REG_CONVERSION 0x00
+#define ADS1115_REG_CONFIG 0x01
 
 static const char *TAG = "ADC_DRIVER";
 static SemaphoreHandle_t s_i2c_mutex = NULL;
@@ -78,23 +79,65 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 {
     if (xSemaphoreTake(s_i2c_mutex, pdMS_TO_TICKS(50)) == pdTRUE)
     {
+        esp_err_t err = ESP_OK;
 
-        // TODO: Тут буде реальний запис у Config Register ADS1115
-        // та зчитування Conversion Register
-
-        // Симуляція даних АЦП
-        if (!is_current)
+        // Фізичне "залізо" працює тільки для Каналу 0
+        if (channel == 0)
         {
-            *out_val = 4100000 + (channel * 10000);
+            // Налаштування Config Register (16 біт)
+            // База: Single-shot (Bit15=1), PGA +/- 4.096V (Bits11-9=001), 128 SPS (Bits7-5=100)
+            // MUX (Bits14-12): 100 для AIN0 (напруга), 101 для AIN1 (струм)
+            uint16_t config = 0x0383;                 // Базові біти (0000 0011 1000 0011)
+            config |= (is_current ? 0xD000 : 0xC000); // Додаємо MUX та біт старту (OS)
+
+            // I2C передає старший байт першим (MSB first)
+            uint8_t write_buf[3] = {
+                ADS1115_REG_CONFIG,
+                (uint8_t)(config >> 8),
+                (uint8_t)(config & 0xFF)};
+
+            // Запис конфігурації
+            err = i2c_master_transmit(s_ads_handle, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
+            if (err == ESP_OK)
+            {
+                // Чекаємо завершення перетворення. Для 128 SPS це ~8 мс. Даємо 10 мс.
+                vTaskDelay(pdMS_TO_TICKS(10));
+
+                uint8_t reg_addr = ADS1115_REG_CONVERSION;
+                uint8_t read_buf[2] = {0};
+
+                // Читаємо 2 байти результату. Функція сама відправляє адресу регістра, робить Repeated Start і читає.
+                err = i2c_master_transmit_receive(s_ads_handle, &reg_addr, 1, read_buf, 2, I2C_MASTER_TIMEOUT_MS);
+                if (err == ESP_OK)
+                {
+                    // Склеюємо два байти у знакове 16-бітне число
+                    int16_t raw_adc = (read_buf[0] << 8) | read_buf[1];
+
+                    if (raw_adc < 0)
+                        raw_adc = 0; // Відкидаємо можливий шум нижче нуля
+
+                    // При PGA +/- 4.096V, 1 біт = 125 мікровольт (uV)
+                    // Поки що повертаємо мікровольти і для струму, і для напруги (додамо шунт пізніше)
+                    *out_val = (uint32_t)raw_adc * 125;
+                }
+            }
         }
         else
         {
-            *out_val = 1500000 + (channel * 50000);
+            // Заглушки для каналів 1, 2, 3
+            if (!is_current)
+            {
+                *out_val = 4100000 + (channel * 10000);
+            }
+            else
+            {
+                *out_val = 1500000 + (channel * 50000);
+            }
+            vTaskDelay(pdMS_TO_TICKS(10));
         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
         xSemaphoreGive(s_i2c_mutex);
-        return ESP_OK;
+        return err;
     }
     return ESP_ERR_TIMEOUT;
 }
