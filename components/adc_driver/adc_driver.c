@@ -19,6 +19,9 @@
 #define ADS1115_REG_CONVERSION 0x00
 #define ADS1115_REG_CONFIG 0x01
 
+static uint32_t s_mock_voltage[4] = {4100000, 4110000, 4120000, 4130000};
+static uint32_t s_mock_current[4] = {1450000, 1500000, 1550000, 1600000}; // 1.5A для старту
+
 static const char *TAG = "ADC_DRIVER";
 static SemaphoreHandle_t s_i2c_mutex = NULL;
 
@@ -127,11 +130,11 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
             // Заглушки для каналів 1, 2, 3
             if (!is_current)
             {
-                *out_val = 4100000 + (channel * 10000);
+                *out_val = s_mock_voltage[channel];
             }
             else
             {
-                *out_val = 1500000 + (channel * 50000);
+                *out_val = s_mock_current[channel];
             }
             vTaskDelay(pdMS_TO_TICKS(10));
         }
@@ -150,4 +153,16 @@ esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
 esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua)
 {
     return i2c_read_adc(channel, true, current_ua);
+}
+
+void adc_driver_set_mock_voltage(uint8_t channel, uint32_t voltage_uv)
+{
+    if (channel < 4)
+        s_mock_voltage[channel] = voltage_uv;
+}
+
+void adc_driver_set_mock_current(uint8_t channel, uint32_t current_ua)
+{
+    if (channel < 4)
+        s_mock_current[channel] = current_ua;
 }
