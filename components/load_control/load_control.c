@@ -68,11 +68,35 @@ static void pid_control_task(void *pvParameters)
             break;
 
         case STATE_PRE_CHECK:
-            // Навантаження ще вимкнене, але ми маємо зчитати напругу розімкнутого кола (Vocv)
+            // Навантаження ще вимкнене, зчитуємо напругу розімкнутого кола (Vocv)
             hw_set_load_pwm(channel, 0);
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
 
-            // Записуємо Vocv в систему, щоб UI або інша логіка могли прийняти рішення про старт
+// Застосовуємо правило: поділ на тестовий та релізний код
+#ifndef NDEBUG
+            // [DEBUG] Тестовий код: переходимо в розряд майже завжди (якщо V > 0),
+            // щоб ми могли швидко тестувати OCP (струм) через CLI.
+            if (metrics.voltage_uv > 0)
+            {
+                metrics.state = STATE_DISCHARGING;
+                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed. Moving to DISCHARGING.", channel);
+            }
+#else
+            // [RELEASE] Релізний код: жорстка перевірка мінімальної напруги перед стартом.
+            // CONFIG_MIN_CELL_VOLTAGE_MV береться з Kconfig (за замовчуванням 800 мВ).
+            // Якщо напруга менша, блокуємо старт (акумулятор занадто розряджений або відсутній).
+            if (metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
+            {
+                metrics.state = STATE_DISCHARGING;
+                ESP_LOGI(TAG, "CH%d: Pre-check passed. Moving to DISCHARGING.", channel);
+            }
+            else
+            {
+                metrics.state = STATE_ERROR;
+                ESP_LOGE(TAG, "CH%d: Pre-check failed. Voltage too low!", channel);
+            }
+#endif
+
             system_state_set_metrics(channel, &metrics);
             break;
 
@@ -86,16 +110,14 @@ static void pid_control_task(void *pvParameters)
             // hw_set_load_pwm(channel, calc_duty);
 
             // 3. Інтегрування ємності та енергії
-            // Заряд = Струм (мкА) * Час (с) -> мкА*с
             metrics.accumulated_uas += (metrics.current_ua * dt_us) / 1000000;
-
-            // Енергія = Напруга (мВ) * Струм (мА) * Час (с) -> мкВт*с
             uint64_t power_uw = (metrics.voltage_uv / 1000) * (metrics.current_ua / 1000);
             metrics.accumulated_uws += (power_uw * dt_us) / 1000000;
 
-            // Конвертація для відображення в UI
-            metrics.capacity_mah = metrics.accumulated_uas / 3600;
-            metrics.energy_mwh = metrics.accumulated_uws / 3600;
+            // ВИПРАВЛЕНИЙ БАГ: ділимо на 3 600 000 (3600 секунд * 1000 для мікро->мілі)
+            // (uint32_t) - це явне приведення типу, щоб компілятор не сварився при конвертації 64-біт у 32-біти.
+            metrics.capacity_mah = (uint32_t)(metrics.accumulated_uas / 3600000);
+            metrics.energy_mwh = (uint32_t)(metrics.accumulated_uws / 3600000);
 
             // Збереження розрахованих даних у загальний стан
             system_state_set_metrics(channel, &metrics);
