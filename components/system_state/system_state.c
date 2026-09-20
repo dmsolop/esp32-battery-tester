@@ -3,6 +3,7 @@
 #include "freertos/semphr.h"
 #include "esp_log.h"
 #include "esp_err.h"
+#include <string.h> // Додано для memset
 
 // Тимчасовий дефолт, поки не додамо його в меню конфігурації (Kconfig)
 #ifndef CONFIG_MAX_CHANNELS
@@ -32,7 +33,17 @@ esp_err_t system_state_init(void)
     {
         s_channels[i].voltage_uv = 0;
         s_channels[i].current_ua = 0;
-        s_channels[i].temp_mcelsius = 0;
+
+        // Ініціалізація всього масиву датчиків для поточного каналу
+        for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
+        {
+            memset(s_channels[i].temp_sensors[s].rom, 0, 8);
+            s_channels[i].temp_sensors[s].role = SENSOR_ROLE_NONE;
+            s_channels[i].temp_sensors[s].current_temp_mc = 0;
+            s_channels[i].temp_sensors[s].limit_temp_mc = 0;
+            s_channels[i].temp_sensors[s].is_bound = false;
+        }
+
         s_channels[i].accumulated_uas = 0;
         s_channels[i].accumulated_uws = 0;
         s_channels[i].capacity_mah = 0;
