@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MAX_CHANNELS 4
+#define MAX_SENSORS_PER_CHANNEL 3
+
 // Стани кінцевого автомата каналу
 typedef enum
 {
@@ -25,13 +28,34 @@ typedef enum
     SOH_DEAD       // < 60% ємності або критичний опір
 } soh_verdict_t;
 
+// Ролі температурних датчиків
+typedef enum
+{
+    SENSOR_ROLE_NONE = 0,
+    SENSOR_ROLE_CELL_LIION,   // Ліміт 60°C
+    SENSOR_ROLE_CELL_LIFEPO4, // Ліміт 50°C
+    SENSOR_ROLE_HEATSINK      // Ліміт 85°C
+} sensor_role_t;
+
+// Структура окремого термодатчика
+typedef struct
+{
+    uint8_t rom[8];          // Унікальна 64-бітна адреса
+    sensor_role_t role;      // Роль датчика у системі
+    int32_t current_temp_mc; // Поточна температура у міліградусах (mC)
+    int32_t limit_temp_mc;   // Індивідуальний хард-ліміт для цієї ролі (mC)
+    bool is_bound;           // Чи прив'язаний цей датчик фізично
+} temp_sensor_data_t;
+
 // Структура метрик для одного незалежного каналу
 typedef struct
 {
     // Виміри реального часу (мікроодиниці)
-    uint32_t voltage_uv;   // Напруга на щупах Кельвіна (мкВ)
-    uint32_t current_ua;   // Поточний струм розряду (мкА)
-    int32_t temp_mcelsius; // Температура радіатора (м°C)
+    uint32_t voltage_uv; // Напруга на щупах Кельвіна (мкВ)
+    uint32_t current_ua; // Поточний струм розряду (мкА)
+
+    // Масив термодатчиків для цього каналу
+    temp_sensor_data_t temp_sensors[MAX_SENSORS_PER_CHANNEL];
 
     // Точне чисельне інтегрування
     uint64_t accumulated_uas; // Накопичений заряд (мкА·с)
