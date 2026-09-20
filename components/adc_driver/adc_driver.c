@@ -4,11 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
-#ifdef NDEBUG
-#define I2C_MASTER_FREQ_HZ 400000 // Release: Fast mode для PCB (використаємо при додаванні пристрою)
-#else
 #define I2C_MASTER_FREQ_HZ 100000 // Debug: Standard mode для макетної плати (використаємо при додаванні пристрою)
-#endif
 #define I2C_MASTER_SCL_IO 22
 #define I2C_MASTER_SDA_IO 21
 #define I2C_MASTER_PORT_NUM -1 // -1 дозволяє драйверу автоматично обрати вільний порт (I2C_NUM_0 або I2C_NUM_1)
@@ -26,7 +22,9 @@ static const char *TAG = "ADC_DRIVER";
 static SemaphoreHandle_t s_i2c_mutex = NULL;
 
 static i2c_master_bus_handle_t s_bus_handle = NULL; // Зберігаємо хендл шини для подальшого додавання пристроїв
-static i2c_master_dev_handle_t s_ads_handle = NULL; // Хендл нашого АЦП
+// static i2c_master_dev_handle_t s_ads_handle = NULL; // Хендл нашого АЦП
+static i2c_master_dev_handle_t s_ads_handles[4] = {NULL}; // Глобальний масив хендлів для 4 мікросхем ADS1115
+static const uint8_t s_ads_addrs[4] = {0x48, 0x49, 0x4A, 0x4B};
 
 esp_err_t adc_driver_init(void)
 {
@@ -60,18 +58,20 @@ esp_err_t adc_driver_init(void)
         return err;
     }
 
-    // Реєстрація пристрою ADS1115 на створеній шині
-    i2c_device_config_t dev_cfg = {
-        .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-        .device_address = ADS1115_I2C_ADDRESS,
-        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
-    };
-
-    err = i2c_master_bus_add_device(s_bus_handle, &dev_cfg, &s_ads_handle);
-    if (err != ESP_OK)
+    // Реєструємо 4 фізичні мікросхеми АЦП на шині
+    for (int i = 0; i < 4; i++)
     {
-        ESP_LOGE(TAG, "Failed to add ADS1115 to I2C bus");
-        return err;
+        i2c_device_config_t dev_cfg = {
+            .dev_addr_length = I2C_ADDR_BIT_LEN_7,
+            .device_address = s_ads_addrs[i],
+            .scl_speed_hz = I2C_MASTER_FREQ_HZ, // Форсований I2C 100 кГц для стабільності на кабелі
+        };
+        esp_err_t err = i2c_master_bus_add_device(s_bus_handle, &dev_cfg, &s_ads_handles[i]);
+        if (err != ESP_OK)
+        {
+            ESP_LOGE("ADC_DRV", "Failed to add ADS1115 for CH%d at 0x%02X", i, s_ads_addrs[i]);
+            return err;
+        }
     }
 
     ESP_LOGI(TAG, "I2C bus initialized. ADS1115 registered at 0x%02X (%d Hz)", ADS1115_I2C_ADDRESS, I2C_MASTER_FREQ_HZ);
@@ -80,12 +80,27 @@ esp_err_t adc_driver_init(void)
 
 static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_val)
 {
+    if (channel > 3)
+        return ESP_ERR_INVALID_ARG; // Захист від виходу за межі масиву
+
     if (xSemaphoreTake(s_i2c_mutex, pdMS_TO_TICKS(50)) == pdTRUE)
     {
         esp_err_t err = ESP_OK;
 
-        // Фізичне "залізо" працює тільки для Каналу 0
-        if (channel == 0)
+#ifndef NDEBUG
+        // [DEBUG] Віртуальний режим для тестування CLI
+        if (!is_current)
+        {
+            *out_val = s_mock_voltage[channel];
+        }
+        else
+        {
+            *out_val = s_mock_current[channel];
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
+#else
+        // [RELEASE] Робота з реальними мікросхемами
+        if (s_ads_handles[channel] != NULL)
         {
             // Налаштування Config Register (16 біт)
             // База: Single-shot (Bit15=1), PGA +/- 4.096V (Bits11-9=001), 128 SPS (Bits7-5=100)
@@ -99,8 +114,8 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
                 (uint8_t)(config >> 8),
                 (uint8_t)(config & 0xFF)};
 
-            // Запис конфігурації
-            err = i2c_master_transmit(s_ads_handle, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
+            // Використовуємо хендл конкретного каналу
+            err = i2c_master_transmit(s_ads_handles[channel], write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
             if (err == ESP_OK)
             {
                 // Чекаємо завершення перетворення. Для 128 SPS це ~8 мс. Даємо 10 мс.
@@ -110,15 +125,13 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
                 uint8_t read_buf[2] = {0};
 
                 // Читаємо 2 байти результату. Функція сама відправляє адресу регістра, робить Repeated Start і читає.
-                err = i2c_master_transmit_receive(s_ads_handle, &reg_addr, 1, read_buf, 2, I2C_MASTER_TIMEOUT_MS);
+                err = i2c_master_transmit_receive(s_ads_handles[channel], &reg_addr, 1, read_buf, 2, I2C_MASTER_TIMEOUT_MS);
                 if (err == ESP_OK)
                 {
                     // Склеюємо два байти у знакове 16-бітне число
                     int16_t raw_adc = (read_buf[0] << 8) | read_buf[1];
-
                     if (raw_adc < 0)
                         raw_adc = 0; // Відкидаємо можливий шум нижче нуля
-
                     // При PGA +/- 4.096V, 1 біт = 125 мікровольт (uV)
                     // Поки що повертаємо мікровольти і для струму, і для напруги (додамо шунт пізніше)
                     *out_val = (uint32_t)raw_adc * 125;
@@ -127,17 +140,9 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
         }
         else
         {
-            // Заглушки для каналів 1, 2, 3
-            if (!is_current)
-            {
-                *out_val = s_mock_voltage[channel];
-            }
-            else
-            {
-                *out_val = s_mock_current[channel];
-            }
-            vTaskDelay(pdMS_TO_TICKS(10));
+            err = ESP_ERR_INVALID_STATE;
         }
+#endif
 
         xSemaphoreGive(s_i2c_mutex);
         return err;
