@@ -1,11 +1,12 @@
 #include "load_control.h"
 #include "system_state.h"
 #include "adc_driver.h"
-#include "pwm_driver.h" // Підключення нашого нового драйвера ШІМ
+#include "pwm_driver.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "dcir_service.h"
-#include "pid_service.h" // Підключення сервісу ПІД-регулятора
+#include "pid_service.h"
+#include "integration_service.h"
 
 #ifndef CONFIG_MAX_CHANNELS
 #define CONFIG_MAX_CHANNELS 4
@@ -22,11 +23,11 @@ static void hw_set_load_pwm(uint8_t channel, uint32_t duty)
 {
     if (duty == 0)
     {
-        load_control_pwm_set(channel, 0); // Гарантоване закриття транзистора
+        load_control_pwm_set(channel, 0);
     }
     else
     {
-        load_control_pwm_set(channel, duty); // Встановлення робочого ШІМ
+        load_control_pwm_set(channel, duty);
     }
 }
 
@@ -36,12 +37,10 @@ static void pid_control_task(void *pvParameters)
     uint8_t channel = (uint8_t)((uint32_t)pvParameters);
     channel_metrics_t metrics;
 
-    // Ініціалізація ПІД-регулятора через ізольований сервіс
+    // Ініціалізація ПІД-регулятора
     pid_context_t channel_pid;
     pid_service_init(&channel_pid, 0.005f, 0.001f, 0.0f, 0.0f, (float)PWM_MAX_DUTY);
 
-    // Ініціалізація ШІМ для цього каналу.
-    // Оскільки в Kconfig зараз задано лише один пін, генеруємо сусідні зі зміщенням.
     int channel_pwm_pin = CONFIG_PWM_LOAD_CTRL_PIN + channel;
     if (load_control_pwm_init(channel, channel_pwm_pin) != ESP_OK)
     {
@@ -52,8 +51,6 @@ static void pid_control_task(void *pvParameters)
 
     while (1)
     {
-        // Очікуємо повідомлення (Direct Task Notification) з таймаутом 50 мс.
-        // Це визначає частоту циклу ПІД-регулятора (20 Гц).
         uint32_t notification = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50));
 
         system_state_get_metrics(channel, &metrics);
@@ -62,11 +59,11 @@ static void pid_control_task(void *pvParameters)
         if (notification > 0)
         {
             ESP_LOGW(TAG, "CH%d: Emergency Abort received! Cutting power.", channel);
-            hw_set_load_pwm(channel, 0); // МИТТЄВЕ апаратне відключення
+            hw_set_load_pwm(channel, 0);
 
             metrics.state = STATE_ERROR;
             system_state_set_metrics(channel, &metrics);
-            continue; // Пропускаємо решту циклу, чекаємо наступної ітерації
+            continue;
         }
 
         int64_t current_time_us = esp_timer_get_time();
@@ -79,33 +76,27 @@ static void pid_control_task(void *pvParameters)
         case STATE_IDLE:
         case STATE_FINISHED:
         case STATE_ERROR:
-            // У цих станах навантаження має бути гарантовано вимкнене
             hw_set_load_pwm(channel, 0);
             dcir_service_reset(channel);
-            pid_service_reset(&channel_pid); // Обнуляємо інтеграл та стан ШІМ
+            pid_service_reset(&channel_pid);
+            integration_service_reset(&metrics); // Скидання лічильників ємності
             break;
 
         case STATE_PRE_CHECK:
-            // Навантаження ще вимкнене, зчитуємо напругу розімкнутого кола (Vocv)
             hw_set_load_pwm(channel, 0);
             dcir_service_reset(channel);
-            pid_service_reset(&channel_pid); // Обнуляємо інтеграл та стан ШІМ
+            pid_service_reset(&channel_pid);
+            integration_service_reset(&metrics); // Гарантоване обнулення перед стартом
 
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
 
-// Застосовуємо правило: поділ на тестовий та релізний код
 #ifndef NDEBUG
-            // [DEBUG] Тестовий код: переходимо в розряд майже завжди (якщо V > 0),
-            // щоб ми могли швидко тестувати OCP (струм) через CLI.
             if (metrics.voltage_uv > 0)
             {
                 metrics.state = STATE_DISCHARGING;
                 ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed. Moving to DISCHARGING.", channel);
             }
 #else
-            // [RELEASE] Релізний код: жорстка перевірка мінімальної напруги перед стартом.
-            // CONFIG_MIN_CELL_VOLTAGE_MV береться з Kconfig (за замовчуванням 800 мВ).
-            // Якщо напруга менша, блокуємо старт (акумулятор занадто розряджений або відсутній).
             if (metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
             {
                 metrics.state = STATE_DISCHARGING;
@@ -132,14 +123,8 @@ static void pid_control_task(void *pvParameters)
             uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.current_ua);
             hw_set_load_pwm(channel, calc_duty);
 
-            // 3. Інтегрування ємності та енергії
-            metrics.accumulated_uas += (metrics.current_ua * dt_us) / 1000000;
-            uint64_t power_uw = (metrics.voltage_uv / 1000) * (metrics.current_ua / 1000);
-            metrics.accumulated_uws += (power_uw * dt_us) / 1000000;
-
-            // ВИПРАВЛЕНИЙ БАГ: ділимо на 3 600 000 (3600 секунд * 1000 для мікро->мілі)
-            metrics.capacity_mah = (uint32_t)(metrics.accumulated_uas / 3600000);
-            metrics.energy_mwh = (uint32_t)(metrics.accumulated_uws / 3600000);
+            // 3. Інтегрування ємності та енергії через незалежну службу
+            integration_service_update(&metrics, dt_us);
 
             // Збереження розрахованих даних у загальний стан
             system_state_set_metrics(channel, &metrics);
