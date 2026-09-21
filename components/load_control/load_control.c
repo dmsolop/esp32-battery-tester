@@ -4,6 +4,7 @@
 #include "pwm_driver.h" // Підключення нашого нового драйвера ШІМ
 #include "esp_log.h"
 #include "esp_timer.h"
+#include "dcir_service.h"
 
 #ifndef CONFIG_MAX_CHANNELS
 #define CONFIG_MAX_CHANNELS 4
@@ -89,6 +90,7 @@ static void pid_control_task(void *pvParameters)
         case STATE_ERROR:
             // У цих станах навантаження має бути гарантовано вимкнене
             hw_set_load_pwm(channel, 0);
+            dcir_service_reset(channel);
             pid.integral = 0.0f;         // Скидаємо накопичену помилку
             pid.current_pwm_duty = 0.0f; // Обнуляємо внутрішній стан ШІМ
             break;
@@ -96,6 +98,7 @@ static void pid_control_task(void *pvParameters)
         case STATE_PRE_CHECK:
             // Навантаження ще вимкнене, зчитуємо напругу розімкнутого кола (Vocv)
             hw_set_load_pwm(channel, 0);
+            dcir_service_reset(channel);
             pid.integral = 0.0f;
             pid.current_pwm_duty = 0.0f;
 
@@ -134,8 +137,9 @@ static void pid_control_task(void *pvParameters)
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
             adc_driver_read_current(channel, &metrics.current_ua);
 
-            // 2. Розрахунок PID і оновлення ШІМ
-            float error = (float)target_current_ua - (float)metrics.current_ua;
+            // 2. Розрахунок PID і оновлення ШІМ (із впровадженням служби DCIR)
+            uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_current_ua);
+            float error = (float)active_target_ua - (float)metrics.current_ua;
 
             pid.integral += error;
             // Захист від інтегрального насичення (Anti-windup)
