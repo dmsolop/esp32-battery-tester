@@ -31,6 +31,25 @@ bool ds18b20_request_temperature(gpio_num_t pin, const uint8_t *rom)
     return true;
 }
 
+// Локальна функція розрахунку Dallas CRC8
+static uint8_t ds18b20_crc8(const uint8_t *data, uint8_t len)
+{
+    uint8_t crc = 0;
+    for (uint8_t i = 0; i < len; i++)
+    {
+        uint8_t inbyte = data[i];
+        for (uint8_t j = 0; j < 8; j++)
+        {
+            uint8_t mix = (crc ^ inbyte) & 0x01;
+            crc >>= 1;
+            if (mix)
+                crc ^= 0x8C;
+            inbyte >>= 1;
+        }
+    }
+    return crc;
+}
+
 bool ds18b20_read_temperature(gpio_num_t pin, const uint8_t *rom, int32_t *temp_mc)
 {
     if (!onewire_match_rom(pin, rom))
@@ -41,17 +60,22 @@ bool ds18b20_read_temperature(gpio_num_t pin, const uint8_t *rom, int32_t *temp_
     // Команда на зчитування оперативної пам'яті (Scratchpad) датчика
     onewire_write_byte(pin, DS18B20_CMD_READ_SCRATCH); // 0xBE
 
-    // Зчитуємо перші два байти (LSB та MSB температури)
-    uint8_t lsb = onewire_read_byte(pin);
-    uint8_t msb = onewire_read_byte(pin);
+    // Зчитуємо всі 9 байтів
+    uint8_t scratchpad[9];
+    for (int i = 0; i < 9; i++)
+    {
+        scratchpad[i] = onewire_read_byte(pin);
+    }
 
-    // За стандартом треба зчитати ще 7 байт для CRC,
-    // але для базового зчитування перших двох достатньо.
-    // Перериваємо передачу імпульсом скидання.
-    onewire_reset(pin);
+    // Перевірка контрольної суми (перші 8 байтів мають дати CRC, що лежить у 9-му)
+    if (ds18b20_crc8(scratchpad, 8) != scratchpad[8])
+    {
+        ESP_LOGE("DS18B20", "CRC Error for ROM: %02X%02X...", rom[0], rom[1]);
+        return false;
+    }
 
-    // Об'єднуємо два байти у 16-бітне число зі знаком
-    int16_t raw_temp = (int16_t)((msb << 8) | lsb);
+    // Об'єднуємо два байти у 16-бітне число зі знаком (LSB - 0 байт, MSB - 1 байт)
+    int16_t raw_temp = (int16_t)((scratchpad[1] << 8) | scratchpad[0]);
 
     // Конвертація у міліградуси Цельсія (цілочисельна математика)
     // 1 крок АЦП DS18B20 = 0.0625 °C (або 62.5 mC)
