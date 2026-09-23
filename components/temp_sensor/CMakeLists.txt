@@ -1,3 +1,3 @@
-idf_component_register(SRCS "ds18b20.c" "onewire.c" "onewire.c"
+idf_component_register(SRCS "temp_service.c" "ds18b20.c" "onewire.c" "onewire.c"
                        INCLUDE_DIRS "include"
-                       REQUIRES esp_driver_gpio esp_timer)
+                       REQUIRES system_state esp_driver_gpio esp_timer)
