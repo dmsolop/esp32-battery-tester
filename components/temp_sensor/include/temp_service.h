@@ -4,12 +4,12 @@
 #include "driver/gpio.h"
 #include <stdint.h>
 
-// Максимальна кількість датчиків на одній фізичній шині OneWire
-#define MAX_SYSTEM_SENSORS 8
-
-// Ініціалізація шини та сканування адрес датчиків
+// Ініціалізує шину OneWire
 void temp_service_init(gpio_num_t onewire_pin);
 
-// Асинхронний автомат для зчитування температури без блокування процесора
-// Оновлює переданий масив датчиків та повертає кількість активних пристроїв
-void temp_service_process(temp_sensor_data_t *system_sensors, uint8_t *out_count);
+// Допоміжна функція для Task_UI: сканує шину та повертає знайдені ROM-адреси для їх подальшої прив'язки
+// Повертає кількість знайдених датчиків
+uint8_t temp_service_scan_bus(uint8_t discovered_roms[][8], uint8_t max_roms);
+
+// Асинхронний автомат. Приймає масив датчиків зі структури метрик і оновлює лише current_temp_mc
+void temp_service_process(temp_sensor_data_t *sensors, uint8_t count);
