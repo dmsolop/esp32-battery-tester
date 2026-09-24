@@ -7,9 +7,11 @@
 // Ініціалізує шину OneWire
 void temp_service_init(gpio_num_t onewire_pin);
 
-// Допоміжна функція для Task_UI: сканує шину та повертає знайдені ROM-адреси для їх подальшої прив'язки
-// Повертає кількість знайдених датчиків
-uint8_t temp_service_scan_bus(uint8_t discovered_roms[][8], uint8_t max_roms);
+// Допоміжні функції для Task_UI: сканують шину та повертають знайдені ROM-адреси для їх подальшої прив'язки
+// Новий розділений API кінцевого автомата
+bool temp_service_trigger_conversion(void);
+bool temp_service_is_conversion_done(void);
+void temp_service_read_sensors(temp_sensor_data_t *sensors, uint8_t count);
 
 // Асинхронний автомат. Приймає масив датчиків зі структури метрик і оновлює лише current_temp_mc
 void temp_service_process(temp_sensor_data_t *sensors, uint8_t count);

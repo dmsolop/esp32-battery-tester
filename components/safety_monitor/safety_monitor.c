@@ -7,6 +7,7 @@
 #include "ds18b20.h"
 #include "adc_driver.h"
 #include "sdkconfig.h" // Додано підключення конфігурації платформи
+#include "temp_service.h"
 
 #ifndef CONFIG_MAX_CHANNELS
 #define CONFIG_MAX_CHANNELS 4
@@ -35,56 +36,31 @@ static void safety_task(void *pvParameters)
     {
         TickType_t current_time = xTaskGetTickCount();
 
-        // [TODO: Технічний борг - Рефакторинг інтеграції temp_service]
+        // 1. Асинхронний запуск конвертації для всієї шини (раз на 1000 мс)
         if (!temp_conversion_started && (current_time - last_temp_request_time) >= pdMS_TO_TICKS(1000))
         {
-            for (int i = 0; i < CONFIG_MAX_CHANNELS; i++)
+            if (temp_service_trigger_conversion())
             {
-                if (system_state_get_metrics(i, &metrics) == ESP_OK)
-                {
-                    for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
-                    {
-                        if (metrics.temp_sensors[s].is_bound)
-                        {
-                            // Використовуємо правильний макрос із Kconfig
-                            ds18b20_request_temperature(CONFIG_ONEWIRE_BUS_PIN, metrics.temp_sensors[s].rom);
-                        }
-                    }
-                }
+                temp_conversion_started = true;
+                last_temp_request_time = current_time;
             }
-            temp_conversion_started = true;
-            last_temp_request_time = current_time;
         }
 
-        if (temp_conversion_started && (current_time - last_temp_request_time) >= pdMS_TO_TICKS(750))
+        // 2. Зчитування температури після завершення глобальної конвертації
+        if (temp_conversion_started && temp_service_is_conversion_done())
         {
+            // Час вийшов, датчики готові. Тепер можна безпечно перебирати канали.
             for (int i = 0; i < CONFIG_MAX_CHANNELS; i++)
             {
                 if (system_state_get_metrics(i, &metrics) == ESP_OK)
                 {
-                    bool metrics_updated = false;
-                    for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
-                    {
-                        if (metrics.temp_sensors[s].is_bound)
-                        {
-                            int32_t temp_mc = 0;
-                            // Використовуємо правильний макрос із Kconfig
-                            if (ds18b20_read_temperature(CONFIG_ONEWIRE_BUS_PIN, metrics.temp_sensors[s].rom, &temp_mc))
-                            {
-                                metrics.temp_sensors[s].current_temp_mc = temp_mc;
-                                metrics_updated = true;
-                            }
-                        }
-                    }
-                    if (metrics_updated)
-                    {
-                        system_state_set_metrics(i, &metrics);
-                    }
+                    // Делегуємо читання сервісу, передаючи масив датчиків конкретного каналу
+                    temp_service_read_sensors(metrics.temp_sensors, MAX_SENSORS_PER_CHANNEL);
+                    system_state_set_metrics(i, &metrics);
                 }
             }
             temp_conversion_started = false;
         }
-        // [Кінець блоку TODO]
 
         // Основний цикл швидких перевірок хард-лімітів
         for (int i = 0; i < CONFIG_MAX_CHANNELS; i++)
