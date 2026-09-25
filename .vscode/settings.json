@@ -21,7 +21,7 @@
   },
   "idf.currentSetup": "/Users/dmsolop/.espressif/v6.0.2/esp-idf",
   "idf.customExtraVars": {
-    "IDF_TARGET": "esp32"
+    "IDF_TARGET": "esp32s3"
   },
   "clangd.path": "/Users/dmsolop/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
   "clangd.arguments": [
@@ -30,5 +30,8 @@
     "--compile-commands-dir=/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/build"
   ],
   "idf.port": "/dev/tty.usbserial-0001",
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.openOcdConfigs": [
+    "board/esp32s3-builtin.cfg"
+  ]
 }

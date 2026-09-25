@@ -5,71 +5,71 @@ menu "Battery Tester Config"
         menu "I2C Buses"
             config I2C_SDA_PIN
                 int "I2C SDA Pin (Primary: ADS1115)"
-                default 21
+                default 4
             config I2C_SCL_PIN
                 int "I2C SCL Pin (Primary: ADS1115)"
-                default 22
+                default 5
 
             config I2C_OLED_SDA_PIN
                 int "I2C SDA Pin (Secondary: OLED UI)"
-                default 32
+                default 6
             config I2C_OLED_SCL_PIN
                 int "I2C SCL Pin (Secondary: OLED UI)"
-                default 33
+                default 7
         endmenu
 
         menu "User Interface (Input Only - Need Ext Pull-up)"
             config ENCODER_CLK_PIN
                 int "Encoder CLK Pin"
-                default 34
+                default 15
             config ENCODER_DT_PIN
                 int "Encoder DT Pin"
-                default 35
+                default 16
             config ENCODER_SW_PIN
                 int "Encoder Button Pin"
-                default 36
+                default 17
         endmenu
 
         menu "Sensors & Inputs"
             config TARE_BTN_PIN
                 int "Dedicated Kelvin Probe Tare Button Pin"
-                default 4
+                default 18
 
             config ONEWIRE_BUS_PIN
                 int "OneWire Bus Pin (DS18B20)"
-                default 23
+                default 8
 
             config ADC_ALERT_PIN
                 int "ADS1115 Alert/Data Ready Pin"
-                default 13
+                default 47
         endmenu
 
         menu "Power & Thermal Control (PWM Outputs)"
             config PWM_CH0_PIN
                 int "MOSFET Gate Drive CH0"
-                default 25
+                default 38
             config PWM_CH1_PIN
                 int "MOSFET Gate Drive CH1"
-                default 26
+                default 39
             config PWM_CH2_PIN
                 int "MOSFET Gate Drive CH2"
-                default 27
+                default 40
             config PWM_CH3_PIN
                 int "MOSFET Gate Drive CH3"
-                default 14
+                default 41
 
             config FAN_CH0_PIN
                 int "Cooling Fan PWM CH0"
-                default 16
+                default 42
             config FAN_CH1_PIN
                 int "Cooling Fan PWM CH1"
-                default 17
+                default 48
             config FAN_CH2_PIN
                 int "Cooling Fan PWM CH2"
-                default 18
+                default 1
             config FAN_CH3_PIN
                 int "Cooling Fan PWM CH3"
-                default 19
+                default 2
         endmenu
 
     endmenu
