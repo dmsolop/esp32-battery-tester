@@ -29,7 +29,7 @@
     "--query-driver=**",
     "--compile-commands-dir=/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/build"
   ],
-  "idf.port": "/dev/tty.usbserial-0001",
+  "idf.port": "/dev/tty.usbmodem5C390137121",
   "idf.flashType": "UART",
   "idf.openOcdConfigs": [
     "board/esp32s3-builtin.cfg"
