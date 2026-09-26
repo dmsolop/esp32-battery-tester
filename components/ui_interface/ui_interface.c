@@ -88,7 +88,7 @@ esp_err_t ui_interface_init(void)
         .dc_bit_offset = 6,
         .lcd_cmd_bits = 8,
         .lcd_param_bits = 8,
-    };
+        .scl_speed_hz = 400000};
     esp_lcd_new_panel_io_i2c(s_oled_bus_handle, &io_config_left, &io_left);
 
     // Налаштування драйвера esp_lcd для Правого екрана (зазвичай 0x3D)
@@ -99,7 +99,7 @@ esp_err_t ui_interface_init(void)
         .dc_bit_offset = 6,
         .lcd_cmd_bits = 8,
         .lcd_param_bits = 8,
-    };
+        .scl_speed_hz = 400000};
     esp_lcd_new_panel_io_i2c(s_oled_bus_handle, &io_config_right, &io_right);
 
     esp_lcd_panel_dev_config_t panel_config = {
