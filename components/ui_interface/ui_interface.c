@@ -140,7 +140,7 @@ esp_err_t ui_interface_init(void)
     // Налаштування лівого екрана (0x3C)
     esp_lcd_panel_io_handle_t io_left = NULL;
     esp_lcd_panel_io_i2c_config_t io_config_left = {
-        .dev_addr = 0x3C,
+        .dev_addr = 0x3D,
         .scl_speed_hz = 400000,
         .control_phase_bytes = 1,
         .dc_bit_offset = 6,
@@ -152,7 +152,7 @@ esp_err_t ui_interface_init(void)
     // Налаштування правого екрана (0x3D)
     esp_lcd_panel_io_handle_t io_right = NULL;
     esp_lcd_panel_io_i2c_config_t io_config_right = {
-        .dev_addr = 0x3D,
+        .dev_addr = 0x3C,
         .scl_speed_hz = 400000,
         .control_phase_bytes = 1,
         .dc_bit_offset = 6,
@@ -176,6 +176,10 @@ esp_err_t ui_interface_init(void)
     ESP_ERROR_CHECK(esp_lcd_panel_reset(s_panel_right));
     ESP_ERROR_CHECK(esp_lcd_panel_init(s_panel_right));
     ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(s_panel_right, true));
+
+    // Апаратний поворот зображення на 180 градусів
+    ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel_left, true, true));
+    ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel_right, true, true));
 
     // Очищення пам'яті дисплеїв (стерти стартовий "шум")
     memset(fb_left, 0, sizeof(fb_left));
