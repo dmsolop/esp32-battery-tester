@@ -9,6 +9,7 @@
 #include "esp_lcd_panel_vendor.h"
 #include "sdkconfig.h"
 #include <string.h>
+#include "font.h"
 
 static const char *TAG = "UI";
 
@@ -22,6 +23,20 @@ static uint8_t fb_right[1024] = {0};
 
 static void ui_task(void *pvParameters)
 {
+    // Очищуємо буфери
+    memset(fb_left, 0, sizeof(fb_left));
+    memset(fb_right, 0, sizeof(fb_right));
+
+    // Малюємо тестовий текст
+    draw_string(0, 0, "TESTER DASHBOARD", 1);  // Лівий екран, верхній рядок (жовта зона)
+    draw_string(0, 20, "CH1: 3.75V 1.00A", 1); // Лівий екран, нижче
+
+    draw_string(128, 0, "SYSTEM METRICS", 1); // Правий екран (x = 128)
+    draw_string(128, 20, "TEMP: 45C", 1);     // Правий екран
+
+    // Відправляємо на дисплеї
+    ui_update_displays();
+
     while (1)
     {
         // Поки що тестове оновлення кадрів
@@ -101,4 +116,82 @@ void ui_update_displays(void)
 {
     esp_lcd_panel_draw_bitmap(s_panel_left, 0, 0, 128, 64, fb_left);
     esp_lcd_panel_draw_bitmap(s_panel_right, 0, 0, 128, 64, fb_right);
+}
+
+// Малювання одного пікселя на віртуальній сітці 256x64
+static void draw_pixel(int x, int y, uint8_t color)
+{
+    // Відкидаємо координати поза межами екранів
+    if (x < 0 || x >= 256 || y < 0 || y >= 64)
+    {
+        return;
+    }
+
+    // Маршрутизація: визначаємо, який буфер використовувати
+    uint8_t *fb;
+    int local_x;
+
+    if (x < 128)
+    {
+        fb = fb_left;
+        local_x = x;
+    }
+    else
+    {
+        fb = fb_right;
+        local_x = x - 128;
+    }
+
+    // Розрахунок індексу байта (сторінкова адресація)
+    int page = y / 8;
+    int bit_pos = y % 8;
+    int index = local_x + (page * 128);
+
+    // Маніпуляція бітом
+    if (color)
+    {
+        fb[index] |= (1 << bit_pos); // Засвітити (1)
+    }
+    else
+    {
+        fb[index] &= ~(1 << bit_pos); // Погасити (0)
+    }
+}
+
+// Рендеринг одного символу (шрифт 5x7)
+static void draw_char(int x, int y, char c, uint8_t color)
+{
+    // Відкидаємо недруковані символи
+    if (c < 32 || c > 127)
+        return;
+
+    // Отримуємо індекс масиву (перший символ у нас пробіл, ASCII 32)
+    int font_idx = c - 32;
+
+    for (int i = 0; i < 5; i++)
+    { // 5 вертикальних стовпців
+        uint8_t line = font_5x7[font_idx][i];
+        for (int j = 0; j < 7; j++)
+        { // 7 пікселів у стовпці
+            if (line & (1 << j))
+            {
+                draw_pixel(x + i, y + j, color);
+            }
+            else
+            {
+                draw_pixel(x + i, y + j, !color); // Затирання фону
+            }
+        }
+    }
+}
+
+// Рендеринг рядка з урахуванням відступів
+static void draw_string(int x, int y, const char *str, uint8_t color)
+{
+    while (*str)
+    {
+        draw_char(x, y, *str, color);
+        x += 6; // Ширина символу (5) + проміжок (1 піксель)
+        str++;
+    }
 }
