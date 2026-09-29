@@ -44,6 +44,16 @@ esp_err_t system_state_init(void)
             s_channels[i].temp_sensors[s].is_bound = false;
         }
 
+        // Ініціалізація налаштувань тесту за замовчуванням (Li-Ion)
+        s_channels[i].settings.chem = CHEM_LI_ION;
+        s_channels[i].settings.target_current_ma = 1000;
+        s_channels[i].settings.cutoff_voltage_mv = 3000;
+        s_channels[i].settings.thermal_limit_mc = 60000; // 60°C
+        s_channels[i].settings.pro_pid_override = false;
+        s_channels[i].settings.kp = 0.0f;
+        s_channels[i].settings.ki = 0.0f;
+        s_channels[i].settings.kd = 0.0f;
+
         s_channels[i].accumulated_uas = 0;
         s_channels[i].accumulated_uws = 0;
         s_channels[i].capacity_mah = 0;

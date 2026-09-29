@@ -48,6 +48,25 @@ typedef struct
     bool is_bound;           // Чи прив'язаний цей датчик фізично
 } temp_sensor_data_t;
 
+// Типи хімії акумуляторів
+typedef enum { 
+    CHEM_LI_ION = 0, 
+    CHEM_NIMH, 
+    CHEM_LIFEPO4 
+} battery_chem_t;
+
+// Структура налаштувань каналу (зберігає як базові, так і PRO налаштування)
+typedef struct {
+    battery_chem_t chem;
+    
+    uint32_t target_current_ma;
+    uint32_t cutoff_voltage_mv;
+    int32_t thermal_limit_mc;
+    
+    bool pro_pid_override;
+    float kp, ki, kd;
+} channel_settings_t;
+
 // Структура метрик для одного незалежного каналу
 typedef struct
 {
@@ -57,6 +76,9 @@ typedef struct
 
     // Масив термодатчиків для цього каналу
     temp_sensor_data_t temp_sensors[MAX_SENSORS_PER_CHANNEL];
+
+    // Налаштування тесту (встановлені через UI)
+    channel_settings_t settings;
 
     // Точне чисельне інтегрування
     uint64_t accumulated_uas; // Накопичений заряд (мкА·с)
