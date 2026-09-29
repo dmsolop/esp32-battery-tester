@@ -9,6 +9,7 @@
 #include "esp_lcd_panel_vendor.h"
 #include "sdkconfig.h"
 #include <string.h>
+#include <stdio.h>
 #include "font.h"
 
 static const char *TAG = "UI";
@@ -20,6 +21,9 @@ static esp_lcd_panel_handle_t s_panel_right = NULL;
 // Незалежні фреймбуфери для кожного екрана 128x64 (1024 байти кожен)
 static uint8_t fb_left[1024] = {0};
 static uint8_t fb_right[1024] = {0};
+
+// Глобальна змінна стану UI (тимчасово для тестування енкодера)
+static uint8_t s_selected_channel = 0;
 
 // Малювання одного пікселя на віртуальній сітці 256x64
 static void draw_pixel(int x, int y, uint8_t color)
@@ -99,26 +103,71 @@ static void draw_string(int x, int y, const char *str, uint8_t color)
     }
 }
 
-static void ui_task(void *pvParameters)
+// Рендеринг всього дашборда на основі обраного каналу
+static void ui_render_dashboard(uint8_t selected_ch)
 {
-    // Очищуємо буфери
+    // 1. Очищення буферів перед новим кадром
     memset(fb_left, 0, sizeof(fb_left));
     memset(fb_right, 0, sizeof(fb_right));
 
-    // Малюємо тестовий текст
-    draw_string(0, 0, "TESTER DASHBOARD", 1);  // Лівий екран, верхній рядок (жовта зона)
-    draw_string(0, 20, "CH1: 3.75V 1.00A", 1); // Лівий екран, нижче
+    // --- ЛІВИЙ ЕКРАН (0x3D) ---
+    // Жовта зона (Y: 0-15) - Статуси системи
+    draw_string(10, 4, "WIFI: OK  12:51", 1);
 
-    draw_string(128, 0, "SYSTEM METRICS", 1); // Правий екран (x = 128)
-    draw_string(128, 20, "TEMP: 45C", 1);     // Правий екран
+    // Синя зона (Y: 16-63) - Список каналів
+    for (int i = 0; i < 4; i++)
+    {
+        int y_pos = 18 + (i * 11);
 
-    // Відправляємо на дисплеї
-    ui_update_displays();
+        char ch_str[20];
+        snprintf(ch_str, sizeof(ch_str), "CH%d: 3.7%dV 1.00A", i, i);
 
+        // Курсор для обраного каналу
+        if (i == selected_ch)
+        {
+            draw_string(0, y_pos, ">", 1);
+        }
+
+        // Текст каналу (X=8, лівий екран)
+        draw_string(8, y_pos, ch_str, 1);
+    }
+
+    // --- ПРАВИЙ ЕКРАН (0x3C) ---
+    // Базове зміщення для правого екрана (віртуальна координата починається з 128)
+    int rx = 128;
+
+    // Деталізація обраного каналу
+    char title_str[24];
+    snprintf(title_str, sizeof(title_str), "--- CH %d DETAIL ---", selected_ch);
+
+    // Додаємо rx (128) до всіх X координат правого екрана
+    draw_string(rx + 4, 4, title_str, 1);
+
+    // Блок детальної телеметрії (Y: 20-63)
+    draw_string(rx + 0, 20, "MODE: DISCHARGE", 1);
+    draw_string(rx + 0, 32, "CAP:  1250 mAh", 1);
+    draw_string(rx + 0, 44, "RES:  45 mOhm", 1);
+    draw_string(rx + 0, 56, "TIME: 01:23:45", 1);
+}
+
+static void ui_task(void *pvParameters)
+{
     while (1)
     {
-        // Поки що тестове оновлення кадрів
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        // Рендеримо поточний стан інтерфейсу
+        ui_render_dashboard(s_selected_channel);
+
+        // Вивантажуємо буфери на I2C
+        ui_update_displays();
+
+        // Імітація роботи енкодера: перемикаємо канал кожні 2 секунди
+        s_selected_channel++;
+        if (s_selected_channel >= 4)
+        {
+            s_selected_channel = 0;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
