@@ -21,10 +21,66 @@ esp_err_t display_engine_init(void)
 {
     ESP_LOGI(TAG, "Initializing Display Engine...");
 
-    // ... (ТУТ ТОЙ САМИЙ КОД ІНІЦІАЛІЗАЦІЇ I2C ТА ESP_LCD З ПОПЕРЕДНЬОГО UI_INTERFACE.C) ...
-    // Включаючи налаштування адрес 0x3D та 0x3C і виклики esp_lcd_panel_mirror
-    // Для економії місця в чаті не дублюю ці 50 рядків, просто перенеси їх сюди.
+    i2c_master_bus_config_t bus_config = {
+        .i2c_port = -1,
+        .sda_io_num = CONFIG_I2C_OLED_SDA_PIN,
+        .scl_io_num = CONFIG_I2C_OLED_SCL_PIN,
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
 
+    ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, &s_oled_bus_handle));
+
+    // Налаштування лівого екрана (Двоколірний, 0x3D)
+    esp_lcd_panel_io_handle_t io_left = NULL;
+    esp_lcd_panel_io_i2c_config_t io_config_left = {
+        .dev_addr = 0x3D,
+        .scl_speed_hz = 400000,
+        .control_phase_bytes = 1,
+        .dc_bit_offset = 6,
+        .lcd_cmd_bits = 8,
+        .lcd_param_bits = 8,
+    };
+    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(s_oled_bus_handle, &io_config_left, &io_left));
+
+    // Налаштування правого екрана (Монохромний, 0x3C)
+    esp_lcd_panel_io_handle_t io_right = NULL;
+    esp_lcd_panel_io_i2c_config_t io_config_right = {
+        .dev_addr = 0x3C,
+        .scl_speed_hz = 400000,
+        .control_phase_bytes = 1,
+        .dc_bit_offset = 6,
+        .lcd_cmd_bits = 8,
+        .lcd_param_bits = 8,
+    };
+    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(s_oled_bus_handle, &io_config_right, &io_right));
+
+    esp_lcd_panel_dev_config_t panel_config = {
+        .bits_per_pixel = 1,
+        .reset_gpio_num = -1,
+    };
+
+    ESP_ERROR_CHECK(esp_lcd_new_panel_ssd1306(io_left, &panel_config, &s_panel_left));
+    ESP_ERROR_CHECK(esp_lcd_new_panel_ssd1306(io_right, &panel_config, &s_panel_right));
+
+    ESP_ERROR_CHECK(esp_lcd_panel_reset(s_panel_left));
+    ESP_ERROR_CHECK(esp_lcd_panel_init(s_panel_left));
+    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(s_panel_left, true));
+    ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel_left, true, true));
+
+    ESP_ERROR_CHECK(esp_lcd_panel_reset(s_panel_right));
+    ESP_ERROR_CHECK(esp_lcd_panel_init(s_panel_right));
+    ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(s_panel_right, true));
+    ESP_ERROR_CHECK(esp_lcd_panel_mirror(s_panel_right, true, true));
+
+    // Очищення пам'яті дисплеїв
+    memset(fb_left, 0, sizeof(fb_left));
+    memset(fb_right, 0, sizeof(fb_right));
+    esp_lcd_panel_draw_bitmap(s_panel_left, 0, 0, 128, 64, fb_left);
+    esp_lcd_panel_draw_bitmap(s_panel_right, 0, 0, 128, 64, fb_right);
+
+    ESP_LOGI(TAG, "Display Engine initialized successfully");
     return ESP_OK;
 }
 
