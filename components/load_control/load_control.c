@@ -107,7 +107,13 @@ static void pid_control_task(void *pvParameters)
                 ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed.", channel);
             }
 #else
-            if (metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
+            // Розраховуємо поріг старту з гістерезисом 100 мВ (100 000 мкВ)
+            uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
+            uint32_t start_threshold_uv = cutoff_uv + 100000;
+
+            // Захист від мінімально допустимої напруги та перевірка гістерезису
+            if (metrics.voltage_uv >= start_threshold_uv &&
+                metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
             {
                 metrics.state = STATE_DISCHARGING;
                 ESP_LOGI(TAG, "CH%d: Pre-check passed.", channel);
