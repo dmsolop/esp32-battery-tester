@@ -32,10 +32,8 @@ typedef enum
 typedef enum
 {
     SENSOR_ROLE_NONE = 0,
-    SENSOR_ROLE_CELL_LIION,   // Ліміт 60°C
-    SENSOR_ROLE_CELL_LIFEPO4, // Ліміт 50°C
-    SENSOR_ROLE_CELL_NIMH,    // Ліміт 50°C (для NiMH/NiCd)
-    SENSOR_ROLE_HEATSINK      // Ліміт 85°C
+    SENSOR_ROLE_CELL,    // Єдина роль для всіх акумуляторів
+    SENSOR_ROLE_HEATSINK // Роль для радіаторів (MOSFET)
 } sensor_role_t;
 
 // Структура окремого термодатчика

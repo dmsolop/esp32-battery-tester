@@ -10,10 +10,10 @@
 // --- Стани кінцевого автомата UI ---
 typedef enum
 {
-    UI_STATE_CH_LIST,      // Лівий екран: список 4 каналів
-    UI_STATE_CH_DETAIL,    // Правий екран: головний екран каналу (хімія, запуск)
-    UI_STATE_SETTINGS,     // Правий екран: PRO налаштування каналу
-    UI_STATE_GRAPH         // Правий екран: графік (заглушка)
+    UI_STATE_CH_LIST,   // Лівий екран: список 4 каналів
+    UI_STATE_CH_DETAIL, // Правий екран: головний екран каналу (хімія, запуск)
+    UI_STATE_SETTINGS,  // Правий екран: PRO налаштування каналу
+    UI_STATE_GRAPH      // Правий екран: графік (заглушка)
 } ui_state_t;
 
 // Пункти головного меню каналу
@@ -25,12 +25,18 @@ static const char *state_to_str(channel_state_t state)
 {
     switch (state)
     {
-    case STATE_IDLE:        return "IDLE   ";
-    case STATE_PRE_CHECK:   return "CHECK  ";
-    case STATE_DISCHARGING: return "DISCHG ";
-    case STATE_FINISHED:    return "DONE   ";
-    case STATE_ERROR:       return "ERROR  ";
-    default:                return "???    ";
+    case STATE_IDLE:
+        return "IDLE   ";
+    case STATE_PRE_CHECK:
+        return "CHECK  ";
+    case STATE_DISCHARGING:
+        return "DISCHG ";
+    case STATE_FINISHED:
+        return "DONE   ";
+    case STATE_ERROR:
+        return "ERROR  ";
+    default:
+        return "???    ";
     }
 }
 
@@ -45,11 +51,6 @@ static void render_left(uint8_t selected_ch, ui_state_t state)
         int y_pos = 18 + (i * 11);
         char ch_str[24];
 
-#ifndef NDEBUG
-        // У DEBUG режимі — статичні заглушки, не витрачаємо час на мютекс
-        snprintf(ch_str, sizeof(ch_str), "CH%d: 3.7V IDLE", i);
-#else
-        // У RELEASE режимі — реальні дані з system_state
         channel_metrics_t m;
         if (system_state_get_metrics(i, &m) == ESP_OK)
         {
@@ -62,7 +63,6 @@ static void render_left(uint8_t selected_ch, ui_state_t state)
         {
             snprintf(ch_str, sizeof(ch_str), "CH%d: ---", i);
         }
-#endif
 
         if (state == UI_STATE_CH_LIST && i == selected_ch)
         {
@@ -79,14 +79,6 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t 
     snprintf(title, sizeof(title), "--- CH %d ---", ch);
     display_engine_draw_string(rx + 4, 4, title, 1);
 
-#ifndef NDEBUG
-    // DEBUG: статичні заглушки
-    display_engine_draw_string(rx + 4, 18, "Chem: Li-Ion", 1);
-    display_engine_draw_string(rx + 4, 30, "[ -> START ]", 1);
-    display_engine_draw_string(rx + 4, 42, "[ SETTINGS ]", 1);
-    display_engine_draw_string(rx + 4, 54, "[ <- BACK  ]", 1);
-#else
-    // RELEASE: реальні налаштування з system_state
     channel_metrics_t m;
     system_state_get_metrics(ch, &m);
 
@@ -96,7 +88,6 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t 
     display_engine_draw_string(rx + 4, 30, "[ -> START ]", 1);
     display_engine_draw_string(rx + 4, 42, "[ SETTINGS ]", 1);
     display_engine_draw_string(rx + 4, 54, "[ <- BACK  ]", 1);
-#endif
 
     // Курсор (однаковий для debug і release)
     if (state == UI_STATE_CH_DETAIL)
@@ -116,12 +107,12 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
     snprintf(title, sizeof(title), "-- CH%d SETUP --", ch);
     display_engine_draw_string(rx + 4, 4, title, 1);
 
-#ifndef NDEBUG
-    display_engine_draw_string(rx + 4, 16, "I: 1000 mA", 1);
-    display_engine_draw_string(rx + 4, 28, "V: 3000 mV", 1);
-    display_engine_draw_string(rx + 4, 40, "T:   60 C ", 1);
-    display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
-#else
+    // #ifndef NDEBUG
+    //     display_engine_draw_string(rx + 4, 16, "I: 1000 mA", 1);
+    //     display_engine_draw_string(rx + 4, 28, "V: 3000 mV", 1);
+    //     display_engine_draw_string(rx + 4, 40, "T:   60 C ", 1);
+    //     display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
+    // #else
     channel_metrics_t m;
     system_state_get_metrics(ch, &m);
 
@@ -136,7 +127,7 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
     display_engine_draw_string(rx + 4, 40, buf, 1);
 
     display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
-#endif
+    // #endif
 
     if (state == UI_STATE_SETTINGS)
     {
@@ -234,14 +225,10 @@ static void ui_task(void *pvParameters)
                 if (selected_param == 0)
                 {
                     // Chem — перемикаємо хімію через system_state
-#ifndef NDEBUG
-                    // У debug просто логуємо
-#else
                     channel_metrics_t m;
                     system_state_get_metrics(selected_ch, &m);
                     m.settings.chem = (battery_chem_t)((m.settings.chem + 1) % 3);
                     system_state_set_metrics(selected_ch, &m);
-#endif
                 }
                 else if (selected_param == 1)
                 {

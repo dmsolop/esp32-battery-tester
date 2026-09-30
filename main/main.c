@@ -19,6 +19,14 @@ void app_main(void)
 {
     ESP_LOGI(TAG, "Starting Battery Tester Project...");
 
+    // Ініціалізація системи зберігання nvs
+    esp_err_t err = nvs_flash_init();
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "Failed to initialize system nvs!");
+        return; // Зупиняємо виконання, якщо критичний компонент не стартував
+    }
+
     // Ініціалізація глобального стану системи (м'ютекси та масив даних)
     esp_err_t err = system_state_init();
     if (err != ESP_OK)
