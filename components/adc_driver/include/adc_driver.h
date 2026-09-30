@@ -21,5 +21,8 @@ void adc_driver_set_mock_voltage(uint8_t channel, uint32_t voltage_uv);
 // Встановлення струму для тестування каналу
 void adc_driver_set_mock_current(uint8_t channel, uint32_t current_ua);
 
+// Встановлення нульового зміщення для калібрування
+void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off_ua);
+
 // Реєстрація таски безпеки для отримання сповіщень про апаратні аварії
 void adc_driver_register_safety_task(TaskHandle_t task);

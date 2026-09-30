@@ -16,6 +16,15 @@
 #define ADS1115_REG_CONVERSION 0x00
 #define ADS1115_REG_CONFIG 0x01
 
+#ifndef CONFIG_SHUNT_RESISTOR_MOHM
+#define CONFIG_SHUNT_RESISTOR_MOHM 500 // Дефолт 0.5 Ом
+#endif
+
+typedef struct {
+    int32_t voltage_offset_uv;
+    int32_t current_offset_ua;
+} adc_calib_t;
+
 static uint32_t s_mock_voltage[4] = {4100000, 4110000, 4120000, 4130000};
 static uint32_t s_mock_current[4] = {1450000, 1500000, 1550000, 1600000};
 
@@ -115,7 +124,18 @@ esp_err_t adc_driver_init(void)
     return ESP_OK;
 }
 
-static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_val)
+static adc_calib_t s_calib[4] = {0};
+
+void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off_ua)
+{
+    if (channel < 4)
+    {
+        s_calib[channel].voltage_offset_uv = v_off_uv;
+        s_calib[channel].current_offset_ua = i_off_ua;
+    }
+}
+
+static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_val_uv)
 {
     if (channel > 3)
         return ESP_ERR_INVALID_ARG;
@@ -124,17 +144,6 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
     {
         esp_err_t err = ESP_OK;
 
-#ifndef NDEBUG
-        if (!is_current)
-        {
-            *out_val = s_mock_voltage[channel];
-        }
-        else
-        {
-            *out_val = s_mock_current[channel];
-        }
-        vTaskDelay(pdMS_TO_TICKS(10));
-#else
         if (s_ads_handles[channel] != NULL)
         {
             uint16_t config = 0x0383;
@@ -159,7 +168,7 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
                     int16_t raw_adc = (read_buf[0] << 8) | read_buf[1];
                     if (raw_adc < 0)
                         raw_adc = 0;
-                    *out_val = (uint32_t)raw_adc * 125;
+                    *out_val_uv = (uint32_t)raw_adc * 125;
                 }
             }
         }
@@ -167,7 +176,6 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
         {
             err = ESP_ERR_INVALID_STATE;
         }
-#endif
 
         xSemaphoreGive(s_i2c_mutex);
         return err;
@@ -177,12 +185,39 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 
 esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
 {
-    return i2c_read_adc(channel, false, voltage_uv);
+#ifndef NDEBUG
+    *voltage_uv = s_mock_voltage[channel];
+    vTaskDelay(pdMS_TO_TICKS(10));
+    return ESP_OK;
+#else
+    uint32_t raw_voltage = 0;
+    esp_err_t err = i2c_read_adc(channel, false, &raw_voltage);
+    if (err == ESP_OK)
+    {
+        int32_t compensated = (int32_t)raw_voltage - s_calib[channel].voltage_offset_uv;
+        *voltage_uv = (compensated < 0) ? 0 : (uint32_t)compensated;
+    }
+    return err;
+#endif
 }
 
 esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua)
 {
-    return i2c_read_adc(channel, true, current_ua);
+#ifndef NDEBUG
+    *current_ua = s_mock_current[channel];
+    vTaskDelay(pdMS_TO_TICKS(10));
+    return ESP_OK;
+#else
+    uint32_t shunt_voltage_uv = 0;
+    esp_err_t err = i2c_read_adc(channel, true, &shunt_voltage_uv);
+    if (err == ESP_OK)
+    {
+        uint32_t raw_current = (shunt_voltage_uv * 1000) / CONFIG_SHUNT_RESISTOR_MOHM;
+        int32_t compensated = (int32_t)raw_current - s_calib[channel].current_offset_ua;
+        *current_ua = (compensated < 0) ? 0 : (uint32_t)compensated;
+    }
+    return err;
+#endif
 }
 
 void adc_driver_set_mock_voltage(uint8_t channel, uint32_t voltage_uv)
