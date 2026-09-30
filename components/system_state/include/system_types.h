@@ -49,20 +49,22 @@ typedef struct
 } temp_sensor_data_t;
 
 // Типи хімії акумуляторів
-typedef enum { 
-    CHEM_LI_ION = 0, 
-    CHEM_NIMH, 
-    CHEM_LIFEPO4 
+typedef enum
+{
+    CHEM_LI_ION = 0,
+    CHEM_NIMH,
+    CHEM_LIFEPO4
 } battery_chem_t;
 
 // Структура налаштувань каналу (зберігає як базові, так і PRO налаштування)
-typedef struct {
+typedef struct
+{
     battery_chem_t chem;
-    
+
     uint32_t target_current_ma;
     uint32_t cutoff_voltage_mv;
     int32_t thermal_limit_mc;
-    
+
     bool pro_pid_override;
     float kp, ki, kd;
 } channel_settings_t;
@@ -71,8 +73,9 @@ typedef struct {
 typedef struct
 {
     // Виміри реального часу (мікроодиниці)
-    uint32_t voltage_uv; // Напруга на щупах Кельвіна (мкВ)
-    uint32_t current_ua; // Поточний струм розряду (мкА)
+    uint32_t voltage_uv;    // Напруга на щупах Кельвіна (мкВ)
+    uint32_t current_ua;    // Поточний струм розряду (мкА)
+    int32_t pid_current_ua; // "Сирий" струм із шумами для ПІД (мкА)
 
     // Масив термодатчиків для цього каналу
     temp_sensor_data_t temp_sensors[MAX_SENSORS_PER_CHANNEL];

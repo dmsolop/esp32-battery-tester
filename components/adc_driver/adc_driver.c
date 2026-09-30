@@ -27,7 +27,7 @@ typedef struct
 } adc_calib_t;
 
 static uint32_t s_mock_voltage[4] = {4100000, 4110000, 4120000, 4130000};
-static uint32_t s_mock_current[4] = {1450000, 1500000, 1550000, 1600000};
+static int32_t s_mock_current[4] = {1450000, 1500000, 1550000, 1600000};
 
 static const char *TAG = "ADC_DRIVER";
 static SemaphoreHandle_t s_i2c_mutex = NULL;
@@ -202,10 +202,11 @@ esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
 #endif
 }
 
-esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua)
+esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua, int32_t *pid_current_ua)
 {
 #ifndef NDEBUG
     *current_ua = s_mock_current[channel];
+    *pid_current_ua = s_mock_current[channel];
     vTaskDelay(pdMS_TO_TICKS(10));
     return ESP_OK;
 #else
@@ -216,6 +217,9 @@ esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua)
         // Захист від Integer Overflow: проміжне множення у 64-бітному просторі
         uint32_t raw_current = (uint32_t)(((uint64_t)shunt_voltage_uv * 1000) / CONFIG_SHUNT_RESISTOR_MOHM);
         int32_t compensated = (int32_t)raw_current - s_calib[channel].current_offset_ua;
+        // ПІД-регулятор тепер отримує чесні від'ємні значення шумів
+        // тому що це потрібно для розрахунку PID-регулювання
+        *pid_current_ua = compensated;
         *current_ua = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
     return err;
