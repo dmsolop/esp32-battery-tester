@@ -73,10 +73,6 @@ static void safety_task(void *pvParameters)
                     {
                         uint32_t errors = 0;
 
-                        // Примусове зчитування найсвіжіших даних з I2C для підтвердження аварії
-                        adc_driver_read_voltage(i, &metrics.voltage_uv);
-                        adc_driver_read_current(i, &metrics.current_ua, &metrics.pid_current_ua);
-
                         if (metrics.current_ua > MAX_CURRENT_UA)
                             errors |= ERR_OVER_CURRENT;
                         if (metrics.voltage_uv > MAX_VOLTAGE_UV)
