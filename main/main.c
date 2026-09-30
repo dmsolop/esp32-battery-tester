@@ -12,6 +12,8 @@
 #include "telemetry.h"
 #include "adc_driver.h"
 #include "cli.h"
+#include "nvs_flash.h"
+#include "nvs.h"
 
 static const char *TAG = "MAIN";
 
@@ -20,16 +22,14 @@ void app_main(void)
     ESP_LOGI(TAG, "Starting Battery Tester Project...");
 
     // Ініціалізація системи зберігання nvs
-    esp_err_t err = nvs_flash_init();
-    if (err != ESP_OK)
+    if (nvs_flash_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize system nvs!");
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
 
     // Ініціалізація глобального стану системи (м'ютекси та масив даних)
-    esp_err_t err = system_state_init();
-    if (err != ESP_OK)
+    if (system_state_init() != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to initialize system state!");
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
