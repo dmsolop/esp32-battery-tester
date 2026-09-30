@@ -10,10 +10,10 @@
 // --- Стани кінцевого автомата UI ---
 typedef enum
 {
-    UI_STATE_CH_LIST,   // Лівий екран: список 4 каналів
-    UI_STATE_CH_DETAIL, // Правий екран: головний екран каналу (хімія, запуск)
-    UI_STATE_SETTINGS,  // Правий екран: PRO налаштування каналу
-    UI_STATE_GRAPH      // Правий екран: графік (заглушка)
+    UI_STATE_CH_LIST,      // Лівий екран: список 4 каналів
+    UI_STATE_CH_DETAIL,    // Правий екран: головний екран каналу (хімія, запуск)
+    UI_STATE_SETTINGS,     // Правий екран: PRO налаштування каналу
+    UI_STATE_GRAPH         // Правий екран: графік (заглушка)
 } ui_state_t;
 
 // Пункти головного меню каналу
@@ -25,18 +25,12 @@ static const char *state_to_str(channel_state_t state)
 {
     switch (state)
     {
-    case STATE_IDLE:
-        return "IDLE   ";
-    case STATE_PRE_CHECK:
-        return "CHECK  ";
-    case STATE_DISCHARGING:
-        return "DISCHG ";
-    case STATE_FINISHED:
-        return "DONE   ";
-    case STATE_ERROR:
-        return "ERROR  ";
-    default:
-        return "???    ";
+    case STATE_IDLE:        return "IDLE   ";
+    case STATE_PRE_CHECK:   return "CHECK  ";
+    case STATE_DISCHARGING: return "DISCHG ";
+    case STATE_FINISHED:    return "DONE   ";
+    case STATE_ERROR:       return "ERROR  ";
+    default:                return "???    ";
     }
 }
 
