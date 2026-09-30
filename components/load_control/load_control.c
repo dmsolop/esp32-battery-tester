@@ -42,11 +42,9 @@ static void pid_control_task(void *pvParameters)
     uint8_t channel = (uint8_t)((uint32_t)pvParameters);
     channel_metrics_t metrics;
 
-    // Ініціалізація ПІД-регулятора з дефолтними коефіцієнтами
     pid_context_t channel_pid;
     pid_service_init(&channel_pid, 0.005f, 0.001f, 0.0f, 0.0f, (float)PWM_MAX_DUTY);
 
-    // Використання безпечного піна з конфігураційного масиву
     int channel_pwm_pin = pwm_pins[channel];
     if (load_control_pwm_init(channel, channel_pwm_pin) != ESP_OK)
     {
@@ -55,13 +53,17 @@ static void pid_control_task(void *pvParameters)
 
     int64_t last_time_us = esp_timer_get_time();
 
+    // Ініціалізація змінної для точного періоду 100 Гц (10 мс)
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(10);
+
     while (1)
     {
-        uint32_t notification = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50));
+        // 1. Неблокуюча перевірка аварії (час очікування 0)
+        uint32_t notification = ulTaskNotifyTake(pdTRUE, 0);
 
         system_state_get_metrics(channel, &metrics);
 
-        // Реакція на сигнал аварії від Task_Safety
         if (notification > 0)
         {
             ESP_LOGW(TAG, "CH%d: Emergency Abort received! Cutting power.", channel);
@@ -69,6 +71,9 @@ static void pid_control_task(void *pvParameters)
 
             metrics.state = STATE_ERROR;
             system_state_set_metrics(channel, &metrics);
+
+            // Засинаємо до наступного такту, щоб не спамити м'ютекс
+            vTaskDelayUntil(&xLastWakeTime, xFrequency);
             continue;
         }
 
@@ -76,7 +81,6 @@ static void pid_control_task(void *pvParameters)
         int64_t dt_us = current_time_us - last_time_us;
         last_time_us = current_time_us;
 
-        // Обробка кінцевого автомата
         switch (metrics.state)
         {
         case STATE_IDLE:
@@ -100,13 +104,13 @@ static void pid_control_task(void *pvParameters)
             if (metrics.voltage_uv > 0)
             {
                 metrics.state = STATE_DISCHARGING;
-                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed. Moving to DISCHARGING.", channel);
+                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed.", channel);
             }
 #else
             if (metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
             {
                 metrics.state = STATE_DISCHARGING;
-                ESP_LOGI(TAG, "CH%d: Pre-check passed. Moving to DISCHARGING.", channel);
+                ESP_LOGI(TAG, "CH%d: Pre-check passed.", channel);
             }
             else
             {
@@ -114,18 +118,14 @@ static void pid_control_task(void *pvParameters)
                 ESP_LOGE(TAG, "CH%d: Pre-check failed. Voltage too low!", channel);
             }
 #endif
-
-            system_state_set_metrics(channel, &metrics);
             break;
 
         case STATE_DISCHARGING:
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
             adc_driver_read_current(channel, &metrics.current_ua, &metrics.pid_current_ua);
 
-            // Читаємо цільовий струм з налаштувань каналу (мА -> мкА)
             uint32_t target_ua = metrics.settings.target_current_ma * 1000;
 
-            // Якщо PRO PID override увімкнено — застосовуємо кастомні коефіцієнти
             if (metrics.settings.pro_pid_override)
             {
                 pid_service_init(&channel_pid,
@@ -142,7 +142,6 @@ static void pid_control_task(void *pvParameters)
 
             integration_service_update(&metrics, dt_us);
 
-            // Перевіряємо напругу відсічки (мВ -> мкВ)
             uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
             if (metrics.voltage_uv <= cutoff_uv && metrics.voltage_uv > 0)
             {
@@ -150,13 +149,16 @@ static void pid_control_task(void *pvParameters)
                 metrics.state = STATE_FINISHED;
                 ESP_LOGI(TAG, "CH%d: Cutoff voltage reached. Test FINISHED.", channel);
             }
-
-            system_state_set_metrics(channel, &metrics);
             break;
 
         default:
             break;
         }
+
+        system_state_set_metrics(channel, &metrics);
+
+        // 2. Жорстка фіксація частоти виконання (100 Гц)
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
 
