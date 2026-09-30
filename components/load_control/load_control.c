@@ -23,8 +23,7 @@ static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
     CONFIG_PWM_CH2_PIN,
     CONFIG_PWM_CH3_PIN};
 
-// Ціль для струму (пізніше винесемо в профілі/команди CLI)
-static uint32_t target_current_ua = 1000000; // 1.0 А
+
 
 // Апаратне керування MOSFET через генерацію V_REF
 static void hw_set_load_pwm(uint8_t channel, uint32_t duty)
@@ -45,7 +44,7 @@ static void pid_control_task(void *pvParameters)
     uint8_t channel = (uint8_t)((uint32_t)pvParameters);
     channel_metrics_t metrics;
 
-    // Ініціалізація ПІД-регулятора
+    // Ініціалізація ПІД-регулятора з дефолтними коефіцієнтами
     pid_context_t channel_pid;
     pid_service_init(&channel_pid, 0.005f, 0.001f, 0.0f, 0.0f, (float)PWM_MAX_DUTY);
 
@@ -125,12 +124,35 @@ static void pid_control_task(void *pvParameters)
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
             adc_driver_read_current(channel, &metrics.current_ua);
 
-            uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_current_ua);
+            // Читаємо цільовий струм з налаштувань каналу (мА -> мкА)
+            uint32_t target_ua = metrics.settings.target_current_ma * 1000;
+
+            // Якщо PRO PID override увімкнено — застосовуємо кастомні коефіцієнти
+            if (metrics.settings.pro_pid_override)
+            {
+                pid_service_init(&channel_pid,
+                                 metrics.settings.kp,
+                                 metrics.settings.ki,
+                                 metrics.settings.kd,
+                                 0.0f, (float)PWM_MAX_DUTY);
+            }
+
+            uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_ua);
 
             uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.current_ua);
             hw_set_load_pwm(channel, calc_duty);
 
             integration_service_update(&metrics, dt_us);
+
+            // Перевіряємо напругу відсічки (мВ -> мкВ)
+            uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
+            if (metrics.voltage_uv <= cutoff_uv && metrics.voltage_uv > 0)
+            {
+                hw_set_load_pwm(channel, 0);
+                metrics.state = STATE_FINISHED;
+                ESP_LOGI(TAG, "CH%d: Cutoff voltage reached. Test FINISHED.", channel);
+            }
+
             system_state_set_metrics(channel, &metrics);
             break;
 
