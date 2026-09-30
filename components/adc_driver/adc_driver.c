@@ -20,7 +20,8 @@
 #define CONFIG_SHUNT_RESISTOR_MOHM 500 // Дефолт 0.5 Ом
 #endif
 
-typedef struct {
+typedef struct
+{
     int32_t voltage_offset_uv;
     int32_t current_offset_ua;
 } adc_calib_t;
@@ -212,7 +213,8 @@ esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua)
     esp_err_t err = i2c_read_adc(channel, true, &shunt_voltage_uv);
     if (err == ESP_OK)
     {
-        uint32_t raw_current = (shunt_voltage_uv * 1000) / CONFIG_SHUNT_RESISTOR_MOHM;
+        // Захист від Integer Overflow: проміжне множення у 64-бітному просторі
+        uint32_t raw_current = (uint32_t)(((uint64_t)shunt_voltage_uv * 1000) / CONFIG_SHUNT_RESISTOR_MOHM);
         int32_t compensated = (int32_t)raw_current - s_calib[channel].current_offset_ua;
         *current_ua = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
