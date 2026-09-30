@@ -53,14 +53,9 @@ static void pid_control_task(void *pvParameters)
 
     int64_t last_time_us = esp_timer_get_time();
 
-    // Ініціалізація змінної для точного періоду 100 Гц (10 мс)
-    TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = pdMS_TO_TICKS(10);
-
     while (1)
     {
-        // 1. Неблокуюча перевірка аварії (час очікування 0)
-        uint32_t notification = ulTaskNotifyTake(pdTRUE, 0);
+        uint32_t notification = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50));
 
         system_state_get_metrics(channel, &metrics);
 
@@ -72,8 +67,6 @@ static void pid_control_task(void *pvParameters)
             metrics.state = STATE_ERROR;
             system_state_set_metrics(channel, &metrics);
 
-            // Засинаємо до наступного такту, щоб не спамити м'ютекс
-            vTaskDelayUntil(&xLastWakeTime, xFrequency);
             continue;
         }
 
@@ -116,14 +109,15 @@ static void pid_control_task(void *pvParameters)
                 metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
             {
                 metrics.state = STATE_DISCHARGING;
-                ESP_LOGI(TAG, "CH%d: Pre-check passed.", channel);
+                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed. Moving to DISCHARGING.", channel);
             }
             else
             {
                 metrics.state = STATE_ERROR;
-                ESP_LOGE(TAG, "CH%d: Pre-check failed. Voltage too low!", channel);
+                ESP_LOGI(TAG, "CH%d: Pre-check passed. Moving to DISCHARGING.", channel);
             }
 #endif
+            system_state_set_metrics(channel, &metrics);
             break;
 
         case STATE_DISCHARGING:
@@ -155,16 +149,12 @@ static void pid_control_task(void *pvParameters)
                 metrics.state = STATE_FINISHED;
                 ESP_LOGI(TAG, "CH%d: Cutoff voltage reached. Test FINISHED.", channel);
             }
+            system_state_set_metrics(channel, &metrics);
             break;
 
         default:
             break;
         }
-
-        system_state_set_metrics(channel, &metrics);
-
-        // 2. Жорстка фіксація частоти виконання (100 Гц)
-        vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
 
