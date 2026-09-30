@@ -137,7 +137,10 @@ static void pid_control_task(void *pvParameters)
 
             uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_ua);
 
-            uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.pid_current_ua);
+            // Переводимо мікросекунди в секунди для класичної математики ПІД
+            float dt_sec = (float)dt_us / 1000000.0f;
+
+            uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.pid_current_ua, dt_sec);
             hw_set_load_pwm(channel, calc_duty);
 
             integration_service_update(&metrics, dt_us);

@@ -19,4 +19,4 @@ void pid_service_init(pid_context_t *ctx, float kp, float ki, float kd, float ou
 void pid_service_reset(pid_context_t *ctx);
 
 // Головна функція розрахунку. Повертає готове значення керуючого впливу
-float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_value);
+float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_value, float dt_sec);

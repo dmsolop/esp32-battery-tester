@@ -26,7 +26,7 @@ void pid_service_reset(pid_context_t *ctx)
     ctx->current_output = ctx->out_min; // Гарантоване скидання ШІМ до мінімуму
 }
 
-float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_value)
+float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_value, float dt_sec)
 {
     if (ctx == NULL)
         return 0.0f;
@@ -35,7 +35,7 @@ float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_val
     float error = setpoint - measured_value;
 
     // 2. Інтегральна складова та захист від насичення (Anti-windup)
-    ctx->integral += error;
+    ctx->integral += (error * dt_sec);
 
     if (ctx->integral > 500000.0f)
         ctx->integral = 500000.0f;
@@ -43,7 +43,7 @@ float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_val
         ctx->integral = -500000.0f;
 
     // 3. Диференціальна складова
-    float derivative = error - ctx->prev_error;
+    float derivative = (error - ctx->prev_error) / dt_sec;
 
     // 4. Загальний вихід ПІД-регулятора
     float output = (ctx->kp * error) + (ctx->ki * ctx->integral) + (ctx->kd * derivative);
