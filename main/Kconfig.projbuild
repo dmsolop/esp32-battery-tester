@@ -35,9 +35,18 @@ menu "Battery Tester Config"
                 int "Dedicated Kelvin Probe Tare Button Pin"
                 default 18
 
-            config ONEWIRE_BUS_PIN
-                int "OneWire Bus Pin (DS18B20)"
+           config ONEWIRE_CH0_PIN
+                int "OneWire Bus CH0 (DS18B20)"
                 default 8
+            config ONEWIRE_CH1_PIN
+                int "OneWire Bus CH1 (DS18B20)"
+                default 9
+            config ONEWIRE_CH2_PIN
+                int "OneWire Bus CH2 (DS18B20)"
+                default 10
+            config ONEWIRE_CH3_PIN
+                int "OneWire Bus CH3 (DS18B20)"
+                default 11
 
             config ADC_ALERT_PIN
                 int "ADS1115 Alert/Data Ready Pin"

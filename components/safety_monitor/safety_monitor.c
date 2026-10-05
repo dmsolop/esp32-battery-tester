@@ -6,7 +6,7 @@
 #include "load_control.h"
 #include "ds18b20.h"
 #include "adc_driver.h"
-#include "sdkconfig.h" // Додано підключення конфігурації платформи
+#include "sdkconfig.h"
 #include "temp_service.h"
 
 #ifndef CONFIG_MAX_CHANNELS
@@ -54,8 +54,8 @@ static void safety_task(void *pvParameters)
             {
                 if (system_state_get_metrics(i, &metrics) == ESP_OK)
                 {
-                    // Делегуємо читання сервісу, передаючи масив датчиків конкретного каналу
-                    temp_service_read_sensors(metrics.temp_sensors, MAX_SENSORS_PER_CHANNEL);
+                    // Оновлений виклик: передаємо номер каналу та масив датчиків
+                    temp_service_read_sensors(i, metrics.temp_sensors);
                     system_state_set_metrics(i, &metrics);
                 }
             }
@@ -91,7 +91,7 @@ static void safety_task(void *pvParameters)
 
                         if (errors != 0)
                         {
-                            ESP_LOGE(TAG, "CRITICAL ERROR on CH%d! Mask: 0x%02lX. Emergency stop!", i, errors);
+                            ESP_LOGE(TAG, "CRITICAL ERROR on CH%d! Mask: 0x%02lX. Emergency stop!", i, (unsigned long)errors);
 
                             metrics.error_flags = errors;
                             metrics.state = STATE_ERROR;

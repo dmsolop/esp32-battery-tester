@@ -11,11 +11,33 @@
 #include "ui_interface.h"
 #include "telemetry.h"
 #include "adc_driver.h"
+#include "temp_service.h"
 #include "cli.h"
 #include "nvs_flash.h"
 #include "nvs.h"
 
 static const char *TAG = "MAIN";
+
+static void hardware_sensor_setup(void)
+{
+    const gpio_num_t ow_pins[MAX_CHANNELS] = {
+        CONFIG_ONEWIRE_CH0_PIN,
+        CONFIG_ONEWIRE_CH1_PIN,
+        CONFIG_ONEWIRE_CH2_PIN,
+        CONFIG_ONEWIRE_CH3_PIN};
+    temp_service_init(ow_pins);
+
+    for (int ch = 0; ch < MAX_CHANNELS; ch++)
+    {
+        channel_metrics_t metrics;
+        if (system_state_get_metrics(ch, &metrics) == ESP_OK)
+        {
+            temp_service_auto_assign(ch, metrics.temp_sensors);
+            system_state_set_metrics(ch, &metrics);
+            system_state_update_sensor_limits(ch);
+        }
+    }
+}
 
 void app_main(void)
 {
@@ -34,6 +56,9 @@ void app_main(void)
         ESP_LOGE(TAG, "Failed to initialize system state!");
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
+
+    // Ініціалізація апаратної частини 1-Wire
+    hardware_sensor_setup();
 
     // Ініціалізація монітора безпеки (КРИТИЧНО)
     if (safety_monitor_init() != ESP_OK)

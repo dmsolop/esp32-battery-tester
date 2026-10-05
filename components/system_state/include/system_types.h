@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define MAX_CHANNELS 4
-#define MAX_SENSORS_PER_CHANNEL 3
+#define MAX_SENSORS_PER_CHANNEL 6
 
 // Стани кінцевого автомата каналу
 typedef enum
