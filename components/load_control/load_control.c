@@ -80,7 +80,6 @@ static void pid_control_task(void *pvParameters)
         case STATE_IDLE:
         case STATE_FINISHED:
         case STATE_CHARGING: // Тимчасова заглушка для проходження компіляції
-        case STATE_REL_CALIBRATION:
         case STATE_ERROR:
             hw_set_load_pwm(channel, 0);
             dcir_service_reset(channel);
