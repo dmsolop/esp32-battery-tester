@@ -7,7 +7,8 @@
 #include "dcir_service.h"
 #include "pid_service.h"
 #include "integration_service.h"
-#include "sdkconfig.h" // Підключення нових глобальних макросів Kconfig
+#include "analyzer_service.h"
+#include "sdkconfig.h"
 
 #ifndef CONFIG_MAX_CHANNELS
 #define CONFIG_MAX_CHANNELS 4
@@ -78,84 +79,93 @@ static void pid_control_task(void *pvParameters)
         {
         case STATE_IDLE:
         case STATE_FINISHED:
+        case STATE_CHARGING: // Тимчасова заглушка для проходження компіляції
+        case STATE_REL_CALIBRATION:
         case STATE_ERROR:
             hw_set_load_pwm(channel, 0);
             dcir_service_reset(channel);
             pid_service_reset(&channel_pid);
             integration_service_reset(&metrics);
+            analyzer_service_reset(channel); // Скидаємо буфери
             break;
 
         case STATE_PRE_CHECK:
             hw_set_load_pwm(channel, 0);
-            dcir_service_reset(channel);
-            pid_service_reset(&channel_pid);
-            integration_service_reset(&metrics);
-
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
 
-#ifndef NDEBUG
-            if (metrics.voltage_uv > 0)
-            {
-                metrics.state = STATE_DISCHARGING;
-                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed.", channel);
-            }
-#else
-            // Розраховуємо поріг старту з гістерезисом 100 мВ (100 000 мкВ)
-            uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
-            uint32_t start_threshold_uv = cutoff_uv + 100000;
+            // Виклик бізнес-логіки діагностики OCV
+            analyzer_verdict_t pre_verdict = analyzer_service_evaluate_pre_check(channel, &metrics);
 
-            // Захист від мінімально допустимої напруги та перевірка гістерезису
-            if (metrics.voltage_uv >= start_threshold_uv &&
-                metrics.voltage_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
+            if (pre_verdict == ANALYZER_FINISHED)
             {
-                metrics.state = STATE_DISCHARGING;
-                ESP_LOGI(TAG, "CH%d: [DEBUG] Pre-check passed. Moving to DISCHARGING.", channel);
+                // Перевірка порогу розряду перед стартом
+                uint32_t start_threshold_uv = (metrics.settings.cutoff_voltage_mv * 1000) + 100000;
+
+                if (metrics.ocv_uv >= start_threshold_uv && metrics.ocv_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
+                {
+                    metrics.state = STATE_DISCHARGING;
+                    metrics.state_start_time_us = esp_timer_get_time();
+                    metrics.elapsed_time_us = 0;
+                    ESP_LOGI(TAG, "CH%d: OCV %.2fV. Moving to DISCHARGING.", channel, metrics.ocv_uv / 1000000.0f);
+                }
+                else
+                {
+                    metrics.state = STATE_ERROR;
+                    ESP_LOGE(TAG, "CH%d: OCV too low for start.", channel);
+                }
             }
-            else
-            {
-                metrics.state = STATE_ERROR;
-                ESP_LOGI(TAG, "CH%d: Pre-check passed. Moving to DISCHARGING.", channel);
-            }
-#endif
             system_state_set_metrics(channel, &metrics);
             break;
 
         case STATE_DISCHARGING:
+            metrics.elapsed_time_us += dt_us; // Накопичуємо час
+
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
             adc_driver_read_current(channel, &metrics.current_ua, &metrics.pid_current_ua);
 
-            uint32_t target_ua = metrics.settings.target_current_ma * 1000;
-
-            if (metrics.settings.pro_pid_override)
-            {
-                pid_service_init(&channel_pid,
-                                 metrics.settings.kp,
-                                 metrics.settings.ki,
-                                 metrics.settings.kd,
-                                 0.0f, (float)PWM_MAX_DUTY);
-            }
-
-            uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_ua);
-
-            // Переводимо мікросекунди в секунди для класичної математики ПІД
-            float dt_sec = (float)dt_us / 1000000.0f;
-
-            uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.pid_current_ua, dt_sec);
-            hw_set_load_pwm(channel, calc_duty);
-
             integration_service_update(&metrics, dt_us);
 
-            uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
-            if (metrics.voltage_uv <= cutoff_uv && metrics.voltage_uv > 0)
+            // Виклик бізнес-логіки FSM
+            analyzer_verdict_t dis_verdict = analyzer_service_evaluate_discharge(channel, &metrics);
+
+            if (dis_verdict == ANALYZER_FINISHED)
             {
                 hw_set_load_pwm(channel, 0);
                 metrics.state = STATE_FINISHED;
-                ESP_LOGI(TAG, "CH%d: Cutoff voltage reached. Test FINISHED.", channel);
+                ESP_LOGI(TAG, "CH%d: Test FINISHED (Condition met).", channel);
             }
-            system_state_set_metrics(channel, &metrics);
-            break;
+            else if (dis_verdict == ANALYZER_ERROR)
+            {
+                hw_set_load_pwm(channel, 0);
+                metrics.state = STATE_ERROR;
+                ESP_LOGE(TAG, "CH%d: ANALYZER ERROR. Mask: 0x%02lX", channel, metrics.error_flags);
+            }
+            else
+            {
+                // Нормальне керування ПІД
+                uint32_t target_ua = metrics.settings.target_current_ma * 1000;
 
-        default:
+                if (metrics.settings.pro_pid_override)
+                {
+                    pid_service_init(&channel_pid, metrics.settings.kp, metrics.settings.ki, metrics.settings.kd, 0.0f, (float)PWM_MAX_DUTY);
+                }
+
+                uint32_t active_target_ua = dcir_service_process(channel, &metrics, target_ua);
+                float dt_sec = (float)dt_us / 1000000.0f;
+                uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.pid_current_ua, dt_sec);
+                hw_set_load_pwm(channel, calc_duty);
+
+                // Класична відсічка по напрузі (CC/CP розряд)
+                uint32_t cutoff_uv = metrics.settings.cutoff_voltage_mv * 1000;
+                if (metrics.voltage_uv <= cutoff_uv && metrics.voltage_uv > 0)
+                {
+                    hw_set_load_pwm(channel, 0);
+                    metrics.state = STATE_FINISHED;
+                    ESP_LOGI(TAG, "CH%d: Cutoff voltage reached.", channel);
+                }
+            }
+
+            system_state_set_metrics(channel, &metrics);
             break;
         }
     }

@@ -3,50 +3,44 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MAX_CHANNELS 4
+#define CONFIG_MAX_CHANNELS 4
 #define MAX_SENSORS_PER_CHANNEL 6
+
+// Бітові маски помилок (Глобальні)
+#define ERR_OVER_TEMP 0x01
+#define ERR_OVER_CURRENT 0x02
+#define ERR_OVER_VOLTAGE 0x04
+#define ERR_THERMAL_RUNAWAY 0x08
+#define ERR_VOLTAGE_SAG 0x10
+#define ERR_TIMEOUT 0x20
+#define ERR_CAPACITY_LIMIT 0x40
 
 // Стани кінцевого автомата каналу
 typedef enum
 {
-    STATE_IDLE = 0,        // Очікування підключення / команди
-    STATE_PRE_CHECK,       // Перевірка OCV напруги початкового заряду
-    STATE_CHARGING,        // Опціональний дозаряд до 100%
-    STATE_REL_CALIBRATION, // Тарування/компенсація опору дротів
-    STATE_DISCHARGING,     // Активний розряд (CC/CP/CR) + вимірювання DCIR
-    STATE_FINISHED,        // Успішне завершення тесту
-    STATE_ERROR            // Аварійне зупинення (OTP, OCP, OVP)
+    STATE_IDLE = 0,
+    STATE_PRE_CHECK,
+    STATE_CHARGING,
+    STATE_REL_CALIBRATION,
+    STATE_DISCHARGING,
+    STATE_FINISHED,
+    STATE_ERROR
 } channel_state_t;
 
-// Вердикт стану акумулятора (State of Health)
 typedef enum
 {
     SOH_UNKNOWN = 0,
-    SOH_EXCELLENT, // > 90% ємності, нормований DCIR
-    SOH_GOOD,      // 80-90% ємності
-    SOH_DEGRADED,  // 60-80% ємності або завищений DCIR
-    SOH_DEAD       // < 60% ємності або критичний опір
+    SOH_EXCELLENT,
+    SOH_GOOD,
+    SOH_DEGRADED,
+    SOH_DEAD
 } soh_verdict_t;
-
-// Ролі температурних датчиків
 typedef enum
 {
     SENSOR_ROLE_NONE = 0,
-    SENSOR_ROLE_CELL,    // Єдина роль для всіх акумуляторів
-    SENSOR_ROLE_HEATSINK // Роль для радіаторів (MOSFET)
+    SENSOR_ROLE_CELL,
+    SENSOR_ROLE_HEATSINK
 } sensor_role_t;
-
-// Структура окремого термодатчика
-typedef struct
-{
-    uint8_t rom[8];          // Унікальна 64-бітна адреса
-    sensor_role_t role;      // Роль датчика у системі
-    int32_t current_temp_mc; // Поточна температура у міліградусах (mC)
-    int32_t limit_temp_mc;   // Індивідуальний хард-ліміт для цієї ролі (mC)
-    bool is_bound;           // Чи прив'язаний цей датчик фізично
-} temp_sensor_data_t;
-
-// Типи хімії акумуляторів
 typedef enum
 {
     CHEM_LI_ION = 0,
@@ -54,44 +48,52 @@ typedef enum
     CHEM_LIFEPO4
 } battery_chem_t;
 
-// Структура налаштувань каналу (зберігає як базові, так і PRO налаштування)
+typedef struct
+{
+    uint8_t rom[8];
+    sensor_role_t role;
+    int32_t current_temp_mc;
+    int32_t limit_temp_mc;
+    bool is_bound;
+} temp_sensor_data_t;
+
 typedef struct
 {
     battery_chem_t chem;
-
     uint32_t target_current_ma;
     uint32_t cutoff_voltage_mv;
     int32_t thermal_limit_mc;
+
+    // Нові ліміти захисту (сторожові таймери та ємність)
+    uint32_t capacity_limit_mah;
+    uint32_t time_limit_s;
 
     bool pro_pid_override;
     float kp, ki, kd;
 } channel_settings_t;
 
-// Структура метрик для одного незалежного каналу
 typedef struct
 {
-    // Виміри реального часу (мікроодиниці)
-    uint32_t voltage_uv;    // Напруга на щупах Кельвіна (мкВ)
-    uint32_t current_ua;    // Поточний струм розряду (мкА)
-    int32_t pid_current_ua; // "Сирий" струм із шумами для ПІД (мкА)
+    uint32_t voltage_uv;
+    uint32_t current_ua;
+    int32_t pid_current_ua;
 
-    // Масив термодатчиків для цього каналу
+    // Нові метрики для хімічного аналізу
+    uint32_t ocv_uv;              // Істинна напруга спокою
+    uint32_t peak_voltage_uv;     // Максимальна зафіксована напруга (-V алгоритм)
+    uint64_t state_start_time_us; // Час входу в поточний стан
+    uint64_t elapsed_time_us;     // Час, проведений в активному стані
+
     temp_sensor_data_t temp_sensors[MAX_SENSORS_PER_CHANNEL];
-
-    // Налаштування тесту (встановлені через UI)
     channel_settings_t settings;
 
-    // Точне чисельне інтегрування
-    uint64_t accumulated_uas; // Накопичений заряд (мкА·с)
-    uint64_t accumulated_uws; // Накопичена енергія (мкВТ·с)
-    uint32_t capacity_mah;    // Ємність для виводу в UI (мА·год)
-    uint32_t energy_mwh;      // Енергія для виводу в UI (мВт·год)
+    uint64_t accumulated_uas;
+    uint64_t accumulated_uws;
+    uint32_t capacity_mah;
+    uint32_t energy_mwh;
+    uint32_t internal_res_mohm;
+    soh_verdict_t soh;
 
-    // Внутрішній опір та вердикт
-    uint32_t internal_res_mohm; // Обчислений опір DCIR (мОм)
-    soh_verdict_t soh;          // Вердикт SOH
-
-    // Статуси та помилки
-    channel_state_t state; // Поточний стан автомата
-    uint32_t error_flags;  // Бітова маска помилок
+    channel_state_t state;
+    uint32_t error_flags;
 } channel_metrics_t;
