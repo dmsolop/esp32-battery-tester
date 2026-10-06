@@ -10,23 +10,45 @@
 // --- Стани кінцевого автомата UI ---
 typedef enum
 {
-    UI_STATE_CH_LIST,   // Лівий екран: список 4 каналів
-    UI_STATE_CH_DETAIL, // Правий екран: головний екран каналу (хімія, запуск)
-    UI_STATE_SETTINGS,  // Правий екран: PRO налаштування каналу
-    UI_STATE_GRAPH      // Правий екран: графік (заглушка)
+    UI_STATE_CH_LIST,
+    UI_STATE_CH_DETAIL,
+    UI_STATE_SETTINGS,
+    UI_STATE_GRAPH
 } ui_state_t;
 
-// Пункти головного меню каналу
 #define CH_DETAIL_ITEMS 3
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
 
-// --- Хелпери для рядків стану ---
+// --- Словник подій (всі рядки вирівняні до 14 символів для центрування) ---
+static const char *get_error_msg(uint32_t error_flags)
+{
+    if (error_flags & ERR_OPEN_CIRCUIT)
+        return " OPEN CIRCUIT ";
+    if (error_flags & ERR_VOLTAGE_SAG)
+        return " VOLTAGE SAG  ";
+    if (error_flags & ERR_THERMAL_RUNAWAY)
+        return "CRITICAL HEAT!";
+    if (error_flags & ERR_OVER_TEMP)
+        return " OVERHEATED   ";
+    if (error_flags & ERR_OVER_CURRENT)
+        return " OVER CURRENT ";
+    if (error_flags & ERR_OVER_VOLTAGE)
+        return " OVER VOLTAGE ";
+    if (error_flags & ERR_TIMEOUT)
+        return "  TIME LIMIT  ";
+    if (error_flags & ERR_CAPACITY_LIMIT)
+        return " CAPACITY CAP ";
+    return "UNKNOWN ERROR ";
+}
+
 static const char *state_to_str(channel_state_t state)
 {
     switch (state)
     {
     case STATE_IDLE:
         return "IDLE   ";
+    case STATE_SELF_TEST:
+        return "TEST   ";
     case STATE_PRE_CHECK:
         return "CHECK  ";
     case STATE_DISCHARGING:
@@ -40,7 +62,7 @@ static const char *state_to_str(channel_state_t state)
     }
 }
 
-// --- Рендеринг лівого екрана (список каналів) ---
+// --- Рендеринг лівого екрана ---
 static void render_left(uint8_t selected_ch, ui_state_t state)
 {
     display_engine_draw_bitmap(0, 4, icon_wifi_8x8, 8, 8, 1);
@@ -55,9 +77,7 @@ static void render_left(uint8_t selected_ch, ui_state_t state)
         if (system_state_get_metrics(i, &m) == ESP_OK)
         {
             snprintf(ch_str, sizeof(ch_str), "CH%d:%4lumV %s",
-                     i,
-                     (unsigned long)(m.voltage_uv / 1000),
-                     state_to_str(m.state));
+                     i, (unsigned long)(m.voltage_uv / 1000), state_to_str(m.state));
         }
         else
         {
@@ -89,14 +109,10 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t 
     display_engine_draw_string(rx + 4, 42, "[ SETTINGS ]", 1);
     display_engine_draw_string(rx + 4, 54, "[ <- BACK  ]", 1);
 
-    // Курсор (однаковий для debug і release)
-    if (state == UI_STATE_CH_DETAIL)
+    if (state == UI_STATE_CH_DETAIL && selected_param < CH_DETAIL_ITEMS + 1)
     {
         int cursor_y[] = {18, 30, 42, 54};
-        if (selected_param < CH_DETAIL_ITEMS + 1)
-        {
-            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
-        }
+        display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
     }
 }
 
@@ -107,12 +123,6 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
     snprintf(title, sizeof(title), "-- CH%d SETUP --", ch);
     display_engine_draw_string(rx + 4, 4, title, 1);
 
-    // #ifndef NDEBUG
-    //     display_engine_draw_string(rx + 4, 16, "I: 1000 mA", 1);
-    //     display_engine_draw_string(rx + 4, 28, "V: 3000 mV", 1);
-    //     display_engine_draw_string(rx + 4, 40, "T:   60 C ", 1);
-    //     display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
-    // #else
     channel_metrics_t m;
     system_state_get_metrics(ch, &m);
 
@@ -127,15 +137,11 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
     display_engine_draw_string(rx + 4, 40, buf, 1);
 
     display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
-    // #endif
 
-    if (state == UI_STATE_SETTINGS)
+    if (state == UI_STATE_SETTINGS && selected_param < 4)
     {
         int cursor_y[] = {16, 28, 40, 52};
-        if (selected_param < 4)
-        {
-            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
-        }
+        display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
     }
 }
 
@@ -143,15 +149,31 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
 static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state)
 {
     display_engine_clear();
-
     render_left(selected_ch, state);
 
-    int rx = 128;
+    int rx = 128; // Координатний зсув для правого дисплея
+
+    channel_metrics_t m;
+    system_state_get_metrics(selected_ch, &m);
+
+    // ПЕРЕХОПЛЕННЯ РЕНДЕРИНГУ: Якщо канал в аварії, блокуємо стандартний UI на правому екрані
+    if (m.state == STATE_ERROR)
+    {
+        display_engine_draw_string(rx + 26, 12, "!!! ERROR !!!", 1);
+
+        // Генерація блимання (400 мс)
+        bool blink = (xTaskGetTickCount() / pdMS_TO_TICKS(400)) % 2 == 0;
+
+        // Малюємо по центру (14 символів * 6px = 84px. Зсув: (128-84)/2 = 22)
+        display_engine_draw_string(rx + 22, 30, get_error_msg(m.error_flags), blink ? 0 : 1);
+
+        display_engine_draw_string(rx + 14, 50, "[ CLICK TO RESET ]", 1);
+        return; // Виходимо, щоб не малювати базовий інтерфейс поверх банера
+    }
 
     switch (state)
     {
     case UI_STATE_CH_LIST:
-        // Правий екран порожній — показуємо підказку
         display_engine_draw_string(rx + 10, 28, "Select", 1);
         display_engine_draw_string(rx + 10, 40, "channel", 1);
         break;
@@ -178,15 +200,29 @@ static void ui_task(void *pvParameters)
     ui_state_t current_state = UI_STATE_CH_LIST;
     int selected_ch = 0;
     int selected_param = 0;
-
-    // Кількість пунктів у поточному меню (для wraparound)
-    int menu_items = 4; // кількість каналів у CH_LIST
+    int menu_items = 4;
 
     while (1)
     {
         int diff = 0;
         bool btn_clicked = false;
         input_service_read(&diff, &btn_clicked);
+
+        channel_metrics_t cur_m;
+        system_state_get_metrics(selected_ch, &cur_m);
+
+        // --- Механізм квітування (Acknowledge) помилки ---
+        if (btn_clicked && cur_m.state == STATE_ERROR)
+        {
+            cur_m.state = STATE_IDLE;
+            cur_m.error_flags = 0;
+            system_state_set_metrics(selected_ch, &cur_m);
+
+            // Скидаємо UI на базовий вигляд каналу
+            current_state = UI_STATE_CH_DETAIL;
+            selected_param = 0;
+            btn_clicked = false; // "Поглинаємо" клік, щоб він не викликав інших дій
+        }
 
         // --- Оновлення вибору через енкодер ---
         if (diff != 0)
@@ -198,11 +234,11 @@ static void ui_task(void *pvParameters)
                 selected_ch = (selected_ch + diff + menu_items) % menu_items;
                 break;
             case UI_STATE_CH_DETAIL:
-                menu_items = 4; // Chem, START, SETTINGS, BACK
+                menu_items = 4;
                 selected_param = (selected_param + diff + menu_items) % menu_items;
                 break;
             case UI_STATE_SETTINGS:
-                menu_items = 4; // I, V, T, BACK
+                menu_items = 4;
                 selected_param = (selected_param + diff + menu_items) % menu_items;
                 break;
             default:
@@ -210,13 +246,12 @@ static void ui_task(void *pvParameters)
             }
         }
 
-        // --- Обробка кліку ---
+        // --- Обробка стандартного кліку ---
         if (btn_clicked)
         {
             switch (current_state)
             {
             case UI_STATE_CH_LIST:
-                // Входимо в головний екран обраного каналу
                 current_state = UI_STATE_CH_DETAIL;
                 selected_param = 0;
                 break;
@@ -224,28 +259,22 @@ static void ui_task(void *pvParameters)
             case UI_STATE_CH_DETAIL:
                 if (selected_param == 0)
                 {
-                    // Chem — перемикаємо хімію через system_state
-                    channel_metrics_t m;
-                    system_state_get_metrics(selected_ch, &m);
-                    m.settings.chem = (battery_chem_t)((m.settings.chem + 1) % 3);
-                    system_state_set_metrics(selected_ch, &m);
+                    cur_m.settings.chem = (battery_chem_t)((cur_m.settings.chem + 1) % 3);
+                    system_state_set_metrics(selected_ch, &cur_m);
                 }
                 else if (selected_param == 1)
                 {
-                    // START — запускаємо тест
-                    system_state_set_channel_state(selected_ch, STATE_PRE_CHECK);
-                    current_state = UI_STATE_GRAPH; // Переходимо на екран моніторингу
+                    system_state_set_channel_state(selected_ch, STATE_SELF_TEST); // Замінено PRE_CHECK на SELF_TEST
+                    current_state = UI_STATE_GRAPH;
                     selected_param = 0;
                 }
                 else if (selected_param == 2)
                 {
-                    // SETTINGS
                     current_state = UI_STATE_SETTINGS;
                     selected_param = 0;
                 }
                 else if (selected_param == 3)
                 {
-                    // BACK
                     current_state = UI_STATE_CH_LIST;
                     selected_param = 0;
                 }
@@ -254,15 +283,12 @@ static void ui_task(void *pvParameters)
             case UI_STATE_SETTINGS:
                 if (selected_param == 3)
                 {
-                    // BACK
                     current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 2; // Повертаємось на пункт SETTINGS
+                    selected_param = 2;
                 }
-                // TODO: редагування I, V, T через енкодер (edit mode)
                 break;
 
             case UI_STATE_GRAPH:
-                // Зупиняємо тест і повертаємось
                 system_state_set_channel_state(selected_ch, STATE_IDLE);
                 current_state = UI_STATE_CH_DETAIL;
                 selected_param = 0;
@@ -270,11 +296,10 @@ static void ui_task(void *pvParameters)
             }
         }
 
-        // --- Рендеринг ---
         ui_render(selected_ch, selected_param, current_state);
         display_engine_update();
 
-        vTaskDelay(pdMS_TO_TICKS(50)); // 20 FPS
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
