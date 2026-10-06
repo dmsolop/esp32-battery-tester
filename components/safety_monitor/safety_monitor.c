@@ -9,18 +9,9 @@
 #include "sdkconfig.h"
 #include "temp_service.h"
 
-#ifndef CONFIG_MAX_CHANNELS
-#define CONFIG_MAX_CHANNELS 4
-#endif
-
 // Жорсткі ліміти безпеки
 #define MAX_CURRENT_UA 5000000  // 5.0 A
 #define MAX_VOLTAGE_UV 20000000 // 20.0 V
-
-// Бітові маски помилок
-#define ERR_OVER_TEMP 0x01
-#define ERR_OVER_CURRENT 0x02
-#define ERR_OVER_VOLTAGE 0x04
 
 static const char *TAG = "SAFETY";
 

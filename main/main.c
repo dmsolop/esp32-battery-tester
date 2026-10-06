@@ -20,14 +20,14 @@ static const char *TAG = "MAIN";
 
 static void hardware_sensor_setup(void)
 {
-    const gpio_num_t ow_pins[MAX_CHANNELS] = {
+    const gpio_num_t ow_pins[CONFIG_MAX_CHANNELS] = {
         CONFIG_ONEWIRE_CH0_PIN,
         CONFIG_ONEWIRE_CH1_PIN,
         CONFIG_ONEWIRE_CH2_PIN,
         CONFIG_ONEWIRE_CH3_PIN};
     temp_service_init(ow_pins);
 
-    for (int ch = 0; ch < MAX_CHANNELS; ch++)
+    for (int ch = 0; ch < CONFIG_MAX_CHANNELS; ch++)
     {
         channel_metrics_t metrics;
         if (system_state_get_metrics(ch, &metrics) == ESP_OK)
