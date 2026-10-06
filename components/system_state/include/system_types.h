@@ -14,11 +14,13 @@
 #define ERR_VOLTAGE_SAG 0x10
 #define ERR_TIMEOUT 0x20
 #define ERR_CAPACITY_LIMIT 0x40
+#define ERR_OPEN_CIRCUIT 0x80 // Нова помилка: обрив ланцюга / перегорів запобіжник
 
 // Стани кінцевого автомата каналу
 typedef enum
 {
     STATE_IDLE = 0,
+    STATE_SELF_TEST,
     STATE_PRE_CHECK,
     STATE_CHARGING,
     STATE_REL_CALIBRATION,

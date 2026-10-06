@@ -88,6 +88,68 @@ static void pid_control_task(void *pvParameters)
             integration_service_reset(&metrics);
             analyzer_service_reset(channel); // Скидаємо буфери
             break;
+        case STATE_SELF_TEST:
+            // Крок 1. Валідація термодатчиків (Thermal Sanity)
+            bool thermal_ok = true;
+            for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
+            {
+                if (metrics.temp_sensors[s].is_bound)
+                {
+                    int32_t temp = metrics.temp_sensors[s].current_temp_mc;
+                    // Перевірка на помилки шини 1-Wire (85°C - скидання живлення, -127°C - обрив)
+                    if (temp == 85000 || temp <= -100000)
+                    {
+                        thermal_ok = false;
+                        metrics.error_flags |= ERR_OVER_TEMP;
+                        break;
+                    }
+                }
+            }
+
+            if (!thermal_ok)
+            {
+                metrics.state = STATE_ERROR;
+                ESP_LOGE(TAG, "CH%d: Thermal Sanity Check FAILED.", channel);
+                system_state_set_metrics(channel, &metrics);
+                break;
+            }
+
+            // Крок 2. Зсув нуля (Zero-Offset)
+            hw_set_load_pwm(channel, 0);
+            vTaskDelay(pdMS_TO_TICKS(20)); // Очікування розряду паразитних ємностей
+
+            uint32_t zero_current_ua = 0;
+            int32_t raw_pid_ua = 0;
+            adc_driver_read_current(channel, &zero_current_ua, &raw_pid_ua);
+
+            // Компенсуємо дрейф нуля ОП
+            adc_driver_set_zero_offset(channel, 0, raw_pid_ua);
+            ESP_LOGI(TAG, "CH%d: Zero offset calibrated: %ld uA", channel, raw_pid_ua);
+
+            // Крок 3. Перевірка силового ланцюга (Power Path Check)
+            // Даємо мінімальний ШІМ (наприклад, 5% від 8191 = ~400)
+            hw_set_load_pwm(channel, 400);
+            vTaskDelay(pdMS_TO_TICKS(20)); // Очікування відгуку хімії
+
+            uint32_t ping_current_ua = 0;
+            adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);
+            hw_set_load_pwm(channel, 0); // Миттєво закриваємо транзистор
+
+            if (ping_current_ua < 1000)
+            { // Якщо струм менше 1 мА - фізичний обрив
+                metrics.state = STATE_ERROR;
+                metrics.error_flags |= ERR_OPEN_CIRCUIT;
+                ESP_LOGE(TAG, "CH%d: Power Path Check FAILED (Open Circuit).", channel);
+            }
+            else
+            {
+                metrics.state = STATE_PRE_CHECK;
+                metrics.state_start_time_us = 0; // Скидаємо таймер для коректного старту OCV паузи
+                ESP_LOGI(TAG, "CH%d: Self-Test PASSED. Moving to PRE_CHECK.", channel);
+            }
+
+            system_state_set_metrics(channel, &metrics);
+            break;
 
         case STATE_PRE_CHECK:
             hw_set_load_pwm(channel, 0);
