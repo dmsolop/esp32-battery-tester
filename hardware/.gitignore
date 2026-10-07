@@ -1,0 +1,26 @@
+# KiCad 10 Project Local Settings (GUI state, layer visibility)
+*.kicad_prl
+
+# Auto-generated backups directory
+backups/
+
+# Lock files and caches
+*.lck
+.~*.lck
+fp-info-cache
+*~
+*.tmp
+
+# Legacy or rare crash backups
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*.kicad_sym-bak
+
+# Fabrication output directories (Gerbers, Drill, BoM)
+gerber/
+fabrication/
+outputs/
+*.gbr
+*.drl
+*.pos
+*.csv
