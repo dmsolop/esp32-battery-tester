@@ -661,13 +661,17 @@
         "uuid": "1337d129-c752-45b4-85a9-21e5a5723565"
       }
     ],
-    "used_designators": "R1-2,U1-2,F1,C1-4,#PWR1-10,J1",
+    "used_designators": "SW1-2,R1-4,U1-3,F1,C1-7,#PWR1-20,J1",
     "variants": []
   },
   "sheets": [
     [
       "1337d129-c752-45b4-85a9-21e5a5723565",
       "battery_analyzer_hw"
+    ],
+    [
+      "6edaa145-c4f2-4620-bd8b-09cb7dccac10",
+      "MCU_Core"
     ]
   ],
   "text_variables": {},
