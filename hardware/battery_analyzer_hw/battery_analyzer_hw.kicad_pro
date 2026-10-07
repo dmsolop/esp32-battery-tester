@@ -661,7 +661,7 @@
         "uuid": "1337d129-c752-45b4-85a9-21e5a5723565"
       }
     ],
-    "used_designators": "SW1-2,R1-4,U1-3,F1,C1-7,#PWR1-20,J1",
+    "used_designators": "SW1-4,R1-12,U1-3,F1,C1-11,#PWR1-31,J1-3",
     "variants": []
   },
   "sheets": [
@@ -672,6 +672,10 @@
     [
       "6edaa145-c4f2-4620-bd8b-09cb7dccac10",
       "MCU_Core"
+    ],
+    [
+      "13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d",
+      "UI_Controls"
     ]
   ],
   "text_variables": {},
