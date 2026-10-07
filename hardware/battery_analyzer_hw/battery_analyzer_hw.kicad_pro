@@ -488,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "default.kicad_pro",
+    "filename": "battery_analyzer_hw.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -656,15 +656,20 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "default.kicad_sch",
-        "name": "default",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "filename": "battery_analyzer_hw.kicad_sch",
+        "name": "battery_analyzer_hw",
+        "uuid": "1337d129-c752-45b4-85a9-21e5a5723565"
       }
     ],
-    "used_designators": "U1",
+    "used_designators": "R1-2,U1-2,F1,C1-4,#PWR1-10,J1",
     "variants": []
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "1337d129-c752-45b4-85a9-21e5a5723565",
+      "battery_analyzer_hw"
+    ]
+  ],
   "text_variables": {},
   "tuning_profiles": {
     "meta": {
