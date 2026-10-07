@@ -661,7 +661,7 @@
         "uuid": "1337d129-c752-45b4-85a9-21e5a5723565"
       }
     ],
-    "used_designators": "SW1-4,R1-12,U1-3,F1,C1-11,#PWR1-31,J1-3",
+    "used_designators": "SW1-4,R1-17,U1-3,F1,C1-11,#PWR1-44,J1-7",
     "variants": []
   },
   "sheets": [
@@ -676,6 +676,10 @@
     [
       "13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d",
       "UI_Controls"
+    ],
+    [
+      "7d038be6-a427-4199-9b42-2249d23efd76",
+      "Slave_Ports"
     ]
   ],
   "text_variables": {},

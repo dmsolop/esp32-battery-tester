@@ -2431,7 +2431,7 @@
 		)
 		(uuid "fa100af8-a4cd-4b08-99a3-f9d725d7e8cd")
 	)
-	(hierarchical_label "I2C_SDA"
+	(hierarchical_label "I2C_UI_SDA"
 		(shape bidirectional)
 		(at 213.36 64.77 0)
 		(effects
@@ -2442,7 +2442,7 @@
 		)
 		(uuid "02ba7f26-83c9-4229-8391-58fd64506e0d")
 	)
-	(hierarchical_label "I2C_SCL"
+	(hierarchical_label "I2C_UI_SCL"
 		(shape bidirectional)
 		(at 213.36 68.58 0)
 		(effects

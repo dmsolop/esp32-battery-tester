@@ -4821,6 +4821,52 @@
 			)
 		)
 	)
+	(sheet
+		(at 359.41 -1.27)
+		(size 284.48 204.47)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7d038be6-a427-4199-9b42-2249d23efd76")
+		(property "Sheetname" "Slave_Ports"
+			(at 359.41 -1.9816 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "slave_ports.kicad_sch"
+			(at 359.41 203.7846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "battery_analyzer_hw"
+				(path "/1337d129-c752-45b4-85a9-21e5a5723565"
+					(page "4")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
