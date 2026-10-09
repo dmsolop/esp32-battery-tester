@@ -1933,6 +1933,46 @@
 		(color 0 0 0 0)
 		(uuid "c1bd2107-507c-4f57-a5ed-19831433d306")
 	)
+	(no_connect
+		(at 181.61 100.33)
+		(uuid "06c12da0-f6e3-4a5e-a5d3-8b436f48b506")
+	)
+	(no_connect
+		(at 181.61 102.87)
+		(uuid "1185c612-04e1-483e-b0a6-2dfbf380176f")
+	)
+	(no_connect
+		(at 181.61 115.57)
+		(uuid "43828e81-54b4-4c1d-92f6-cc4b0335b8b3")
+	)
+	(no_connect
+		(at 151.13 90.17)
+		(uuid "5a164099-f01a-424d-92a4-b8dc4b6ecbad")
+	)
+	(no_connect
+		(at 181.61 82.55)
+		(uuid "6fbd12f9-ea28-4718-80a0-add59b690012")
+	)
+	(no_connect
+		(at 181.61 97.79)
+		(uuid "7e2b979c-a9fb-43ab-9ca2-af9e8aae719d")
+	)
+	(no_connect
+		(at 151.13 92.71)
+		(uuid "82f37876-692e-408c-92a4-57b52603b3b8")
+	)
+	(no_connect
+		(at 181.61 80.01)
+		(uuid "9916a20f-5e3b-4970-bd7a-7d9e07db7de8")
+	)
+	(no_connect
+		(at 151.13 87.63)
+		(uuid "ac0da87d-be10-4bd9-b019-d7bce4d3b19f")
+	)
+	(no_connect
+		(at 181.61 125.73)
+		(uuid "e5040cc3-aa18-40f6-9b7b-a50e407c6003")
+	)
 	(wire
 		(pts
 			(xy 115.57 90.17) (xy 115.57 97.79)
@@ -2005,6 +2045,16 @@
 	)
 	(wire
 		(pts
+			(xy 143.51 118.11) (xy 151.13 118.11)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "26788c99-eeed-4e6a-9f28-03a212e93f27")
+	)
+	(wire
+		(pts
 			(xy 102.87 45.72) (xy 104.14 45.72)
 		)
 		(stroke
@@ -2022,6 +2072,16 @@
 			(type default)
 		)
 		(uuid "3601982f-b38a-4b81-9d48-072841872a3b")
+	)
+	(wire
+		(pts
+			(xy 143.51 120.65) (xy 151.13 120.65)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3eabf422-0d1f-4b9f-b225-e016364d0606")
 	)
 	(wire
 		(pts
@@ -2195,6 +2255,26 @@
 	)
 	(wire
 		(pts
+			(xy 143.51 100.33) (xy 151.13 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d987f9e-0bc5-44a0-a915-e5130acacced")
+	)
+	(wire
+		(pts
+			(xy 143.51 102.87) (xy 151.13 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8dc833b3-c947-4fb2-b889-518ce1a734c1")
+	)
+	(wire
+		(pts
 			(xy 146.05 59.69) (xy 146.05 64.77)
 		)
 		(stroke
@@ -2315,6 +2395,16 @@
 	)
 	(wire
 		(pts
+			(xy 143.51 115.57) (xy 151.13 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "db3b1ed1-f3fe-40a0-bbe6-55b6a50093ec")
+	)
+	(wire
+		(pts
 			(xy 105.41 97.79) (xy 105.41 107.95)
 		)
 		(stroke
@@ -2362,6 +2452,16 @@
 			(type default)
 		)
 		(uuid "f36eb2fe-bff9-4824-b895-065f982ca302")
+	)
+	(wire
+		(pts
+			(xy 181.61 95.25) (xy 189.23 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f631a92f-9f10-4a2d-a1e8-8ed2002f868d")
 	)
 	(wire
 		(pts
@@ -2424,7 +2524,7 @@
 		)
 		(uuid "0b1b0223-cf3b-4283-a73e-8f2e278f9e4f")
 	)
-	(hierarchical_label "I2C_SCL"
+	(hierarchical_label "I2C_UI_SCL"
 		(shape bidirectional)
 		(at 143.51 97.79 180)
 		(effects
@@ -2534,7 +2634,18 @@
 		)
 		(uuid "7ef3eff5-4be4-4471-9900-9362964bd9f9")
 	)
-	(hierarchical_label "I2C_SDA"
+	(hierarchical_label "FAN_CH3"
+		(shape bidirectional)
+		(at 189.23 95.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8354bda1-017b-4891-a5ff-6ea3418cf9fb")
+	)
+	(hierarchical_label "I2C_UI_SDA"
 		(shape bidirectional)
 		(at 143.51 95.25 180)
 		(effects
@@ -2567,6 +2678,17 @@
 		)
 		(uuid "8c7a68b6-3a02-4126-a307-d03b5d4bcbbb")
 	)
+	(hierarchical_label "FAN_CH0"
+		(shape bidirectional)
+		(at 143.51 115.57 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "904da1ff-b87e-45ba-bfbd-afbe08b1a55e")
+	)
 	(hierarchical_label "ADC_ALERT"
 		(shape bidirectional)
 		(at 189.23 123.19 0)
@@ -2577,6 +2699,28 @@
 			(justify left)
 		)
 		(uuid "b694fa5e-d55b-46c2-8e6a-ca05cde15be8")
+	)
+	(hierarchical_label "FAN_CH1"
+		(shape bidirectional)
+		(at 143.51 118.11 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ccf85b35-ff77-44ac-8e39-5a3323644412")
+	)
+	(hierarchical_label "FAN_CH2"
+		(shape bidirectional)
+		(at 143.51 120.65 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d795e26c-51c5-4172-aec5-a03a1282f36e")
 	)
 	(hierarchical_label "1W_CH2"
 		(shape bidirectional)
@@ -2599,6 +2743,28 @@
 			(justify left)
 		)
 		(uuid "dcd5274a-6279-41db-9eb3-d8baffdbd190")
+	)
+	(hierarchical_label "I2C_PWR_SCL"
+		(shape bidirectional)
+		(at 143.51 102.87 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ebe37bbe-194e-4bc9-b2fe-96933d7143de")
+	)
+	(hierarchical_label "I2C_PWR_SDA"
+		(shape bidirectional)
+		(at 143.51 100.33 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f89f489e-6916-4771-ade1-3269ab2601e3")
 	)
 	(symbol
 		(lib_id "Switch:SW_Push")
