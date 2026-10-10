@@ -488,7 +488,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "default.kicad_pro",
+    "filename": "slave_board.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -656,15 +656,28 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "default.kicad_sch",
-        "name": "default",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "filename": "slave_board.kicad_sch",
+        "name": "slave_board",
+        "uuid": "2c4fc43b-02b1-4ef7-8914-a684f462c899"
       }
     ],
-    "used_designators": "U1",
+    "used_designators": "D1-4,Q1-2,#PWR1-9,C1-6,R1-14,NT1,J1-3,U1",
     "variants": []
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "2c4fc43b-02b1-4ef7-8914-a684f462c899",
+      "slave_board"
+    ],
+    [
+      "c29529fc-b98a-4ee0-89dc-ccd71379b83b",
+      "Power_Stage"
+    ],
+    [
+      "66d25d5f-b49c-4f1e-a839-fa51026b9740",
+      "Telemetry"
+    ]
+  ],
   "text_variables": {},
   "tuning_profiles": {
     "meta": {
