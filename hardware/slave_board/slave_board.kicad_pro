@@ -466,14 +466,14 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
       "similar_power": "warning",
       "simulation_model_issue": "ignore",
-      "single_global_label": "ignore",
+      "single_global_label": "warning",
       "stacked_pin_name": "warning",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
@@ -661,7 +661,7 @@
         "uuid": "2c4fc43b-02b1-4ef7-8914-a684f462c899"
       }
     ],
-    "used_designators": "D1-4,Q1-2,#PWR1-9,C1-6,R1-14,NT1,J1-3,U1",
+    "used_designators": "D1-4,Q1-2,#PWR1-11,C1-6,R1-14,NT1,J1-3,U1-2",
     "variants": []
   },
   "sheets": [
