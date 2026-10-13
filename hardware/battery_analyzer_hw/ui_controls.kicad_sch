@@ -1664,7 +1664,7 @@
 		(uuid "2e368b9a-b8ad-4287-b19b-001b5b9d2d59")
 	)
 	(junction
-		(at 91.44 73.66)
+		(at 85.09 73.66)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "351e1684-6c16-48b1-9218-0cfe9d9b6f14")
@@ -1676,13 +1676,13 @@
 		(uuid "43559bbe-1e1a-4f26-9c97-a8b79254d725")
 	)
 	(junction
-		(at 97.79 87.63)
+		(at 91.44 87.63)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "46dfc37f-5ec3-441e-9832-5c1e6e3a302c")
 	)
 	(junction
-		(at 97.79 44.45)
+		(at 91.44 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4ecca03f-3a2b-4294-a93e-6fa36519d2c1")
@@ -1694,7 +1694,7 @@
 		(uuid "5e09a309-6b10-45b4-a6ec-f8a175c13cdb")
 	)
 	(junction
-		(at 193.04 60.96)
+		(at 195.58 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6d817543-0f3a-4b64-8658-8524c541ddec")
@@ -1706,13 +1706,13 @@
 		(uuid "7afd824e-5c34-4049-b428-92cb3614abd2")
 	)
 	(junction
-		(at 91.44 87.63)
+		(at 85.09 87.63)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8db616f8-5fd4-46e9-81f9-de92c84a7fd8")
 	)
 	(junction
-		(at 200.66 44.45)
+		(at 199.39 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "965ce0a4-fdba-46e9-9bf1-6ae20d6ce318")
@@ -1730,7 +1730,7 @@
 		(uuid "99ece36f-556c-47d7-9d7b-5e58c5e458eb")
 	)
 	(junction
-		(at 193.04 44.45)
+		(at 195.58 44.45)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "aa8d412d-ce8e-4dc3-93df-1eae4fd62626")
@@ -1742,13 +1742,13 @@
 		(uuid "c2fa85a9-06b9-4621-9dfe-ca7c8515c1a4")
 	)
 	(junction
-		(at 200.66 58.42)
+		(at 199.39 58.42)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "c82b31ec-4029-4a53-b71b-bd7469875950")
 	)
 	(junction
-		(at 97.79 68.58)
+		(at 91.44 68.58)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ccd71aba-e727-442c-ab72-ef37dbe5595a")
@@ -1773,7 +1773,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 83.82) (xy 91.44 87.63)
+			(xy 85.09 83.82) (xy 85.09 87.63)
 		)
 		(stroke
 			(width 0)
@@ -1793,7 +1793,7 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 87.63) (xy 91.44 87.63)
+			(xy 74.93 87.63) (xy 85.09 87.63)
 		)
 		(stroke
 			(width 0)
@@ -1833,16 +1833,6 @@
 	)
 	(wire
 		(pts
-			(xy 200.66 58.42) (xy 201.93 58.42)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "239303d7-f141-44b9-844a-0be58837a7b3")
-	)
-	(wire
-		(pts
 			(xy 116.84 68.58) (xy 116.84 67.31)
 		)
 		(stroke
@@ -1853,7 +1843,7 @@
 	)
 	(wire
 		(pts
-			(xy 76.2 68.58) (xy 97.79 68.58)
+			(xy 69.85 68.58) (xy 91.44 68.58)
 		)
 		(stroke
 			(width 0)
@@ -1863,7 +1853,7 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 60.96) (xy 193.04 60.96)
+			(xy 180.34 60.96) (xy 198.12 60.96)
 		)
 		(stroke
 			(width 0)
@@ -1903,23 +1893,13 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 44.45) (xy 121.92 44.45)
+			(xy 85.09 44.45) (xy 121.92 44.45)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "3aa66d48-1f62-447d-a994-da7f4bb3c441")
-	)
-	(wire
-		(pts
-			(xy 121.92 74.93) (xy 121.92 87.63)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "41e947f4-40a8-4c02-ba91-efd1d2723d4e")
 	)
 	(wire
 		(pts
@@ -1933,7 +1913,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 44.45) (xy 97.79 48.26)
+			(xy 91.44 44.45) (xy 91.44 48.26)
 		)
 		(stroke
 			(width 0)
@@ -1953,7 +1933,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 68.58) (xy 97.79 76.2)
+			(xy 91.44 68.58) (xy 91.44 76.2)
 		)
 		(stroke
 			(width 0)
@@ -1973,7 +1953,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 71.12) (xy 81.28 71.12)
+			(xy 74.93 71.12) (xy 99.06 71.12)
 		)
 		(stroke
 			(width 0)
@@ -1983,7 +1963,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 87.63) (xy 121.92 87.63)
+			(xy 91.44 87.63) (xy 121.92 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2023,16 +2003,6 @@
 	)
 	(wire
 		(pts
-			(xy 200.66 44.45) (xy 208.28 44.45)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "62b32405-feca-4281-84c3-ce035e686ddb")
-	)
-	(wire
-		(pts
 			(xy 121.92 44.45) (xy 139.7 44.45)
 		)
 		(stroke
@@ -2053,7 +2023,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 83.82) (xy 97.79 87.63)
+			(xy 91.44 83.82) (xy 91.44 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2063,7 +2033,7 @@
 	)
 	(wire
 		(pts
-			(xy 200.66 55.88) (xy 200.66 58.42)
+			(xy 199.39 55.88) (xy 199.39 58.42)
 		)
 		(stroke
 			(width 0)
@@ -2073,7 +2043,7 @@
 	)
 	(wire
 		(pts
-			(xy 97.79 68.58) (xy 97.79 55.88)
+			(xy 91.44 68.58) (xy 91.44 55.88)
 		)
 		(stroke
 			(width 0)
@@ -2083,7 +2053,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 44.45) (xy 193.04 48.26)
+			(xy 195.58 44.45) (xy 195.58 48.26)
 		)
 		(stroke
 			(width 0)
@@ -2093,17 +2063,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 60.96) (xy 198.12 60.96)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "816140f7-e436-4992-8bef-f23c4df2ac02")
-	)
-	(wire
-		(pts
-			(xy 99.06 73.66) (xy 91.44 73.66)
+			(xy 85.09 73.66) (xy 99.06 73.66)
 		)
 		(stroke
 			(width 0)
@@ -2133,7 +2093,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 73.66) (xy 91.44 76.2)
+			(xy 85.09 73.66) (xy 85.09 76.2)
 		)
 		(stroke
 			(width 0)
@@ -2143,7 +2103,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 73.66) (xy 91.44 55.88)
+			(xy 85.09 73.66) (xy 85.09 55.88)
 		)
 		(stroke
 			(width 0)
@@ -2153,7 +2113,7 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 44.45) (xy 193.04 44.45)
+			(xy 187.96 44.45) (xy 208.28 44.45)
 		)
 		(stroke
 			(width 0)
@@ -2213,7 +2173,7 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 55.88) (xy 193.04 60.96)
+			(xy 195.58 55.88) (xy 195.58 60.96)
 		)
 		(stroke
 			(width 0)
@@ -2233,7 +2193,7 @@
 	)
 	(wire
 		(pts
-			(xy 200.66 44.45) (xy 200.66 48.26)
+			(xy 199.39 44.45) (xy 199.39 48.26)
 		)
 		(stroke
 			(width 0)
@@ -2263,7 +2223,17 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 58.42) (xy 200.66 58.42)
+			(xy 121.92 87.63) (xy 121.92 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5df9cef-f7ab-4264-9534-a2b81fb4a694")
+	)
+	(wire
+		(pts
+			(xy 180.34 58.42) (xy 201.93 58.42)
 		)
 		(stroke
 			(width 0)
@@ -2273,7 +2243,7 @@
 	)
 	(wire
 		(pts
-			(xy 81.28 71.12) (xy 81.28 87.63)
+			(xy 74.93 71.12) (xy 74.93 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2323,16 +2293,6 @@
 	)
 	(wire
 		(pts
-			(xy 193.04 44.45) (xy 200.66 44.45)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d079398c-ac05-4c40-a9c0-abe70d5150e4")
-	)
-	(wire
-		(pts
 			(xy 187.96 63.5) (xy 187.96 77.47)
 		)
 		(stroke
@@ -2343,7 +2303,7 @@
 	)
 	(wire
 		(pts
-			(xy 99.06 68.58) (xy 97.79 68.58)
+			(xy 91.44 68.58) (xy 99.06 68.58)
 		)
 		(stroke
 			(width 0)
@@ -2383,7 +2343,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 87.63) (xy 97.79 87.63)
+			(xy 85.09 87.63) (xy 91.44 87.63)
 		)
 		(stroke
 			(width 0)
@@ -2393,7 +2353,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 48.26) (xy 91.44 44.45)
+			(xy 85.09 48.26) (xy 85.09 44.45)
 		)
 		(stroke
 			(width 0)
@@ -2423,7 +2383,7 @@
 	)
 	(wire
 		(pts
-			(xy 76.2 73.66) (xy 91.44 73.66)
+			(xy 69.85 73.66) (xy 85.09 73.66)
 		)
 		(stroke
 			(width 0)
@@ -2455,7 +2415,7 @@
 	)
 	(hierarchical_label "ENC_B"
 		(shape bidirectional)
-		(at 76.2 73.66 180)
+		(at 69.85 73.66 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2488,7 +2448,7 @@
 	)
 	(hierarchical_label "ENC_A"
 		(shape bidirectional)
-		(at 76.2 68.58 180)
+		(at 69.85 68.58 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2507,7 +2467,6 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "026da758-786b-40f8-a515-9af9a357e637")
 		(property "Reference" "SW3"
 			(at 106.68 60.96 0)
@@ -2520,7 +2479,7 @@
 			)
 		)
 		(property "Value" "RotaryEncoder_Switch"
-			(at 106.68 63.5 0)
+			(at 100.33 63.5 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2529,7 +2488,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm"
 			(at 102.87 67.056 0)
 			(hide yes)
 			(show_name no)
@@ -2551,7 +2510,7 @@
 				)
 			)
 		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
+		(property "Description" "Rotary encoder, with switch, 12x12mm"
 			(at 106.68 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -2666,7 +2625,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 97.79 52.07 0)
+		(at 91.44 52.07 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2677,7 +2636,7 @@
 		(fields_autoplaced yes)
 		(uuid "1935069c-bc61-47e5-9f75-3c960f56b9aa")
 		(property "Reference" "R10"
-			(at 100.33 50.7999 0)
+			(at 93.98 50.7999 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2688,7 +2647,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 100.33 53.3399 0)
+			(at 93.98 53.3399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2698,8 +2657,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 96.012 52.07 90)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 89.662 52.07 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2710,7 +2669,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 97.79 52.07 0)
+			(at 91.44 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2720,8 +2679,8 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 97.79 52.07 0)
+		(property "Description" "SMD Resistor 10kOhm, 1%"
+			(at 91.44 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2826,7 +2785,8 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 91.44 52.07 0)
+		(at 85.09 52.07 0)
+		(mirror y)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2837,7 +2797,7 @@
 		(fields_autoplaced yes)
 		(uuid "6630ec9a-2802-42be-86da-0335d9684c58")
 		(property "Reference" "R9"
-			(at 93.98 50.7999 0)
+			(at 82.55 50.7999 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2848,7 +2808,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 93.98 53.3399 0)
+			(at 82.55 53.3399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2858,8 +2818,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 89.662 52.07 90)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 86.868 52.07 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2870,7 +2830,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 91.44 52.07 0)
+			(at 85.09 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2880,8 +2840,8 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 91.44 52.07 0)
+		(property "Description" "SMD Resistor 10kOhm, 1%"
+			(at 85.09 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2986,7 +2946,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 97.79 80.01 0)
+		(at 91.44 80.01 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2997,7 +2957,7 @@
 		(fields_autoplaced yes)
 		(uuid "6d5468f2-172a-476f-87b3-90ea8630d83b")
 		(property "Reference" "C9"
-			(at 101.6 78.7399 0)
+			(at 95.25 78.7399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3008,7 +2968,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 101.6 81.2799 0)
+			(at 95.25 81.2799 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3018,8 +2978,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 98.7552 83.82 0)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 92.4052 83.82 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3030,7 +2990,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 97.79 80.01 0)
+			(at 91.44 80.01 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3040,8 +3000,8 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
-			(at 97.79 80.01 0)
+		(property "Description" "Ceramic Capacitor SMD 10nF, 50V"
+			(at 91.44 80.01 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3068,7 +3028,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 200.66 52.07 0)
+		(at 199.39 52.07 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3079,7 +3039,7 @@
 		(fields_autoplaced yes)
 		(uuid "71457693-a08f-4786-94e5-9be6281d40af")
 		(property "Reference" "R8"
-			(at 203.2 50.7999 0)
+			(at 201.93 50.7999 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3089,8 +3049,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
-			(at 203.2 53.3399 0)
+		(property "Value" "10k"
+			(at 201.93 53.3399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3100,8 +3060,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
-			(at 198.882 52.07 90)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 197.612 52.07 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3112,7 +3072,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 200.66 52.07 0)
+			(at 199.39 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3122,8 +3082,8 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 200.66 52.07 0)
+		(property "Description" "SMD Resistor 10kOhm, 1%"
+			(at 199.39 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3150,7 +3110,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 91.44 80.01 0)
+		(at 85.09 80.01 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3161,7 +3121,7 @@
 		(fields_autoplaced yes)
 		(uuid "7d19bdcd-ffde-4eae-ba72-2b5812519aff")
 		(property "Reference" "C10"
-			(at 87.63 78.7399 0)
+			(at 81.28 78.7399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3172,7 +3132,7 @@
 			)
 		)
 		(property "Value" "10nF"
-			(at 87.63 81.2799 0)
+			(at 81.28 81.2799 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3182,8 +3142,8 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
-			(at 92.4052 83.82 0)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 86.0552 83.82 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3194,7 +3154,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 91.44 80.01 0)
+			(at 85.09 80.01 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3204,8 +3164,8 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
-			(at 91.44 80.01 0)
+		(property "Description" "Ceramic Capacitor SMD 10nF, 50V"
+			(at 85.09 80.01 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3264,7 +3224,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 122.8852 74.93 0)
 			(hide yes)
 			(show_name no)
@@ -3286,7 +3246,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "Ceramic Capacitor SMD 100nF, 50V"
 			(at 121.92 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3425,7 +3385,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 			(at 175.26 77.47 0)
 			(hide yes)
 			(show_name no)
@@ -3447,7 +3407,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x04, script generated"
+		(property "Description" "Generic connector, single row, 01x04, script generated, Pin Header 2.54mm"
 			(at 175.26 77.47 0)
 			(hide yes)
 			(show_name no)
@@ -3669,7 +3629,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 120.142 52.07 90)
 			(hide yes)
 			(show_name no)
@@ -3691,7 +3651,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 10kOhm, 1%"
 			(at 121.92 52.07 0)
 			(hide yes)
 			(show_name no)
@@ -3751,7 +3711,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 101.092 134.62 90)
 			(hide yes)
 			(show_name no)
@@ -3773,7 +3733,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 10kOhm, 1%"
 			(at 102.87 134.62 0)
 			(hide yes)
 			(show_name no)
@@ -3833,7 +3793,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 			(at 175.26 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -3855,7 +3815,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x04, script generated"
+		(property "Description" "Generic connector, single row, 01x04, script generated, Pin Header 2.54mm"
 			(at 175.26 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -3919,7 +3879,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_SMD:Nidec_Copal_CAS-120A"
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 88.9 140.97 0)
 			(hide yes)
 			(show_name no)
@@ -3941,7 +3901,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "Tactile Switch THT 6x6mm 4-pin"
 			(at 88.9 146.05 0)
 			(hide yes)
 			(show_name no)
@@ -4001,7 +3961,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 103.8352 162.56 0)
 			(hide yes)
 			(show_name no)
@@ -4023,7 +3983,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "Ceramic Capacitor SMD 100nF, 50V"
 			(at 102.87 158.75 0)
 			(hide yes)
 			(show_name no)
@@ -4051,7 +4011,8 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 193.04 52.07 180)
+		(at 195.58 52.07 0)
+		(mirror x)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4062,7 +4023,7 @@
 		(fields_autoplaced yes)
 		(uuid "f7903213-9b65-496d-9f2b-e57f87094f0c")
 		(property "Reference" "R7"
-			(at 195.58 50.7999 0)
+			(at 193.04 50.7999 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4072,8 +4033,8 @@
 				(justify right)
 			)
 		)
-		(property "Value" "R"
-			(at 195.58 53.3399 0)
+		(property "Value" "10k"
+			(at 193.04 53.3399 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4083,8 +4044,8 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
-			(at 194.818 52.07 90)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 193.802 52.07 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4095,7 +4056,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 193.04 52.07 0)
+			(at 195.58 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4105,8 +4066,8 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 193.04 52.07 0)
+		(property "Description" "SMD Resistor 10kOhm, 1%"
+			(at 195.58 52.07 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

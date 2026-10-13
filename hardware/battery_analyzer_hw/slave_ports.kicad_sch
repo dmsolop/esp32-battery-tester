@@ -3705,7 +3705,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_RJ:RJ45_Wuerth_7499151120_Horizontal"
 			(at 114.3 47.625 90)
 			(hide yes)
 			(show_name no)
@@ -3888,7 +3888,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 167.005 189.865 0)
 			(hide yes)
 			(show_name no)
@@ -4288,7 +4288,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
 			(at 275.59 238.76 0)
 			(hide yes)
 			(show_name no)
@@ -4371,7 +4371,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 126.492 151.13 90)
 			(hide yes)
 			(show_name no)
@@ -4393,7 +4393,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 4.7kOhm, 1%"
 			(at 128.27 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -4609,7 +4609,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_RJ:RJ45_Wuerth_7499151120_Horizontal"
 			(at 114.3 165.735 90)
 			(hide yes)
 			(show_name no)
@@ -4792,7 +4792,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 126.492 31.75 90)
 			(hide yes)
 			(show_name no)
@@ -4814,7 +4814,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 4.7kOhm, 1%"
 			(at 128.27 31.75 0)
 			(hide yes)
 			(show_name no)
@@ -5032,7 +5032,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 178.435 128.905 0)
 			(hide yes)
 			(show_name no)
@@ -5354,7 +5354,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 183.515 259.715 0)
 			(hide yes)
 			(show_name no)
@@ -5756,7 +5756,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 208.915 189.865 0)
 			(hide yes)
 			(show_name no)
@@ -6080,7 +6080,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 191.135 71.755 0)
 			(hide yes)
 			(show_name no)
@@ -6164,7 +6164,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
 			(at 274.32 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -6325,7 +6325,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 177.165 71.755 0)
 			(hide yes)
 			(show_name no)
@@ -6411,7 +6411,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 211.455 259.715 0)
 			(hide yes)
 			(show_name no)
@@ -6575,7 +6575,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 169.545 259.715 0)
 			(hide yes)
 			(show_name no)
@@ -6981,7 +6981,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 164.465 128.905 0)
 			(hide yes)
 			(show_name no)
@@ -7225,7 +7225,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 197.485 259.715 0)
 			(hide yes)
 			(show_name no)
@@ -7492,7 +7492,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 205.105 71.755 0)
 			(hide yes)
 			(show_name no)
@@ -7890,7 +7890,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 192.405 128.905 0)
 			(hide yes)
 			(show_name no)
@@ -7976,7 +7976,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 125.222 220.98 90)
 			(hide yes)
 			(show_name no)
@@ -7998,7 +7998,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 4.7kOhm, 1%"
 			(at 127 220.98 0)
 			(hide yes)
 			(show_name no)
@@ -8138,7 +8138,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
 			(at 275.59 167.64 0)
 			(hide yes)
 			(show_name no)
@@ -8301,7 +8301,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
 			(at 274.32 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -8620,7 +8620,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 206.375 128.905 0)
 			(hide yes)
 			(show_name no)
@@ -8704,7 +8704,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_RJ:RJ45_Wuerth_7499151120_Horizontal"
 			(at 114.3 104.775 90)
 			(hide yes)
 			(show_name no)
@@ -8885,7 +8885,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 180.975 189.865 0)
 			(hide yes)
 			(show_name no)
@@ -9133,7 +9133,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
 			(at 126.492 88.9 90)
 			(hide yes)
 			(show_name no)
@@ -9155,7 +9155,7 @@
 				)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "SMD Resistor 4.7kOhm, 1%"
 			(at 128.27 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -9453,7 +9453,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 163.195 71.755 0)
 			(hide yes)
 			(show_name no)
@@ -9701,7 +9701,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
 			(at 194.945 189.865 0)
 			(hide yes)
 			(show_name no)
