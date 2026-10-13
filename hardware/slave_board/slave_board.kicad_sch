@@ -1323,7 +1323,7 @@
 	)
 	(wire
 		(pts
-			(xy 44.45 110.49) (xy 44.45 113.03)
+			(xy 67.31 120.65) (xy 67.31 123.19)
 		)
 		(stroke
 			(width 0)
@@ -1333,7 +1333,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 154.94) (xy 144.78 154.94)
+			(xy 148.59 146.05) (xy 154.94 146.05)
 		)
 		(stroke
 			(width 0)
@@ -1353,7 +1353,7 @@
 	)
 	(wire
 		(pts
-			(xy 72.39 102.87) (xy 72.39 113.03)
+			(xy 95.25 113.03) (xy 95.25 123.19)
 		)
 		(stroke
 			(width 0)
@@ -1363,7 +1363,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 95.25) (xy 58.42 95.25)
+			(xy 77.47 105.41) (xy 81.28 105.41)
 		)
 		(stroke
 			(width 0)
@@ -1383,7 +1383,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 102.87) (xy 72.39 102.87)
+			(xy 77.47 113.03) (xy 95.25 113.03)
 		)
 		(stroke
 			(width 0)
@@ -1393,7 +1393,7 @@
 	)
 	(wire
 		(pts
-			(xy 138.43 149.86) (xy 144.78 149.86)
+			(xy 148.59 140.97) (xy 154.94 140.97)
 		)
 		(stroke
 			(width 0)
@@ -1413,7 +1413,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 87.63) (xy 58.42 87.63)
+			(xy 77.47 97.79) (xy 81.28 97.79)
 		)
 		(stroke
 			(width 0)
@@ -1423,7 +1423,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 100.33) (xy 72.39 100.33)
+			(xy 77.47 110.49) (xy 95.25 110.49)
 		)
 		(stroke
 			(width 0)
@@ -1433,7 +1433,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 97.79) (xy 58.42 97.79)
+			(xy 77.47 107.95) (xy 81.28 107.95)
 		)
 		(stroke
 			(width 0)
@@ -1453,7 +1453,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 92.71) (xy 58.42 92.71)
+			(xy 77.47 102.87) (xy 81.28 102.87)
 		)
 		(stroke
 			(width 0)
@@ -1463,7 +1463,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 105.41) (xy 58.42 105.41)
+			(xy 77.47 115.57) (xy 81.28 115.57)
 		)
 		(stroke
 			(width 0)
@@ -1473,7 +1473,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 90.17) (xy 58.42 90.17)
+			(xy 77.47 100.33) (xy 81.28 100.33)
 		)
 		(stroke
 			(width 0)
@@ -1483,7 +1483,7 @@
 	)
 	(hierarchical_label "PWM_IN"
 		(shape input)
-		(at 58.42 105.41 0)
+		(at 81.28 115.57 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1505,7 +1505,7 @@
 	)
 	(hierarchical_label "I2C_SCL"
 		(shape input)
-		(at 58.42 95.25 0)
+		(at 81.28 105.41 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1538,7 +1538,7 @@
 	)
 	(hierarchical_label "1W_DATA"
 		(shape input)
-		(at 58.42 87.63 0)
+		(at 81.28 97.79 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1549,7 +1549,7 @@
 	)
 	(hierarchical_label "ADC_ALERT"
 		(shape input)
-		(at 58.42 90.17 0)
+		(at 81.28 100.33 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1571,7 +1571,7 @@
 	)
 	(hierarchical_label "I2C_SDA"
 		(shape input)
-		(at 58.42 97.79 0)
+		(at 81.28 107.95 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1582,7 +1582,7 @@
 	)
 	(hierarchical_label "FAN_PWM"
 		(shape input)
-		(at 58.42 92.71 0)
+		(at 81.28 102.87 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1593,7 +1593,7 @@
 	)
 	(symbol
 		(lib_id "Connector:RJ45_Shielded")
-		(at 44.45 97.79 0)
+		(at 67.31 107.95 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1604,7 +1604,7 @@
 		(fields_autoplaced yes)
 		(uuid "16437245-b4cb-4588-81f1-45757782b844")
 		(property "Reference" "J1"
-			(at 44.45 80.01 0)
+			(at 67.31 90.17 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1614,7 +1614,7 @@
 			)
 		)
 		(property "Value" "RJ45_Shielded"
-			(at 44.45 82.55 0)
+			(at 67.31 92.71 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1624,7 +1624,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 44.45 97.155 90)
+			(at 67.31 107.315 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1635,7 +1635,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 44.45 97.155 90)
+			(at 67.31 107.315 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1646,7 +1646,7 @@
 			)
 		)
 		(property "Description" "RJ connector, 8P8C (8 positions 8 connected), Shielded"
-			(at 44.45 97.79 0)
+			(at 67.31 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1782,7 +1782,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 72.39 113.03 0)
+		(at 95.25 123.19 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1793,7 +1793,7 @@
 		(fields_autoplaced yes)
 		(uuid "76911293-fbb1-4400-b4ef-af6fe1a51c63")
 		(property "Reference" "#PWR02"
-			(at 72.39 119.38 0)
+			(at 95.25 129.54 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1804,7 +1804,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 72.39 118.11 0)
+			(at 95.25 128.27 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1814,7 +1814,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 72.39 113.03 0)
+			(at 95.25 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1825,7 +1825,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 72.39 113.03 0)
+			(at 95.25 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1836,7 +1836,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 72.39 113.03 0)
+			(at 95.25 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1860,7 +1860,7 @@
 	)
 	(symbol
 		(lib_id "power:+12V")
-		(at 144.78 149.86 0)
+		(at 154.94 140.97 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1871,7 +1871,7 @@
 		(fields_autoplaced yes)
 		(uuid "82225051-9773-4b13-b763-84d7b49ce367")
 		(property "Reference" "#PWR04"
-			(at 144.78 153.67 0)
+			(at 154.94 144.78 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1882,7 +1882,7 @@
 			)
 		)
 		(property "Value" "+12V"
-			(at 144.78 144.78 0)
+			(at 154.94 135.89 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1892,7 +1892,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 149.86 0)
+			(at 154.94 140.97 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1903,7 +1903,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 144.78 149.86 0)
+			(at 154.94 140.97 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1914,7 +1914,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+12V\""
-			(at 144.78 149.86 0)
+			(at 154.94 140.97 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1938,7 +1938,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 144.78 154.94 0)
+		(at 154.94 146.05 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1949,7 +1949,7 @@
 		(fields_autoplaced yes)
 		(uuid "afb8d0f7-8fe6-4410-9c4c-11a7650dee45")
 		(property "Reference" "#PWR05"
-			(at 144.78 161.29 0)
+			(at 154.94 152.4 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1960,7 +1960,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 144.78 160.02 0)
+			(at 154.94 151.13 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1970,7 +1970,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 154.94 0)
+			(at 154.94 146.05 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1981,7 +1981,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 144.78 154.94 0)
+			(at 154.94 146.05 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1992,7 +1992,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 144.78 154.94 0)
+			(at 154.94 146.05 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2016,7 +2016,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 44.45 113.03 0)
+		(at 67.31 123.19 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2027,7 +2027,7 @@
 		(fields_autoplaced yes)
 		(uuid "e640928f-d4fb-4d6d-819b-bd5c4b2d3183")
 		(property "Reference" "#PWR01"
-			(at 44.45 119.38 0)
+			(at 67.31 129.54 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2038,7 +2038,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 44.45 118.11 0)
+			(at 67.31 128.27 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2048,7 +2048,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 44.45 113.03 0)
+			(at 67.31 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2059,7 +2059,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 44.45 113.03 0)
+			(at 67.31 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2070,7 +2070,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 44.45 113.03 0)
+			(at 67.31 123.19 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2094,7 +2094,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 72.39 100.33 0)
+		(at 95.25 110.49 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2105,7 +2105,7 @@
 		(fields_autoplaced yes)
 		(uuid "ecb56d6b-357f-48a4-8736-f83cfbdfa2f5")
 		(property "Reference" "#PWR03"
-			(at 72.39 104.14 0)
+			(at 95.25 114.3 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2116,7 +2116,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 72.39 95.25 0)
+			(at 95.25 105.41 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2126,7 +2126,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 72.39 100.33 0)
+			(at 95.25 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2137,7 +2137,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 72.39 100.33 0)
+			(at 95.25 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2148,7 +2148,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 72.39 100.33 0)
+			(at 95.25 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2172,7 +2172,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Barrel_Jack_MountingPin")
-		(at 130.81 152.4 0)
+		(at 140.97 143.51 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2183,7 +2183,7 @@
 		(fields_autoplaced yes)
 		(uuid "fc84b175-7730-4169-b185-03c379efa995")
 		(property "Reference" "J2"
-			(at 130.81 143.51 0)
+			(at 140.97 134.62 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2193,7 +2193,7 @@
 			)
 		)
 		(property "Value" "Barrel_Jack_MountingPin"
-			(at 130.81 146.05 0)
+			(at 140.97 137.16 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2203,7 +2203,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 132.08 153.416 0)
+			(at 142.24 144.526 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2214,7 +2214,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 132.08 153.416 0)
+			(at 142.24 144.526 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2225,7 +2225,7 @@
 			)
 		)
 		(property "Description" "DC Barrel Jack with a mounting pin"
-			(at 130.81 152.4 0)
+			(at 140.97 143.51 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
