@@ -1876,7 +1876,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 182.5752 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -1898,7 +1898,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "Ceramic Capacitor SMD 1nF, 50V, C0G/NP0, 0805"
 			(at 181.61 95.25 0)
 			(hide yes)
 			(show_name no)
@@ -2277,7 +2277,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 147.32 61.2648 0)
 			(hide yes)
 			(show_name no)
@@ -2299,7 +2299,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized capacitor"
+		(property "Description" "Ceramic Capacitor SMD 100nF, 50V, X7R, 0805"
 			(at 143.51 62.23 0)
 			(hide yes)
 			(show_name no)
@@ -2358,7 +2358,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
 			(at 179.07 139.7 0)
 			(hide yes)
 			(show_name no)
