@@ -2391,71 +2391,149 @@
 		)
 		(uuid "fa100af8-a4cd-4b08-99a3-f9d725d7e8cd")
 	)
-	(hierarchical_label "I2C_UI_SDA"
-		(shape bidirectional)
-		(at 213.36 64.77 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "02ba7f26-83c9-4229-8391-58fd64506e0d")
-	)
-	(hierarchical_label "I2C_UI_SCL"
-		(shape bidirectional)
-		(at 213.36 68.58 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "09689452-5f1a-4f5b-b016-d5077066476c")
-	)
-	(hierarchical_label "ENC_B"
-		(shape bidirectional)
+	(global_label "ENC_B"
+		(shape input)
 		(at 69.85 73.66 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "86c92802-0ce3-4446-afcf-c500497093e2")
+		(uuid "50bdd57e-13e8-4243-8e2b-be57c7699a96")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 60.8777 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 	)
-	(hierarchical_label "ENC_SW"
-		(shape bidirectional)
-		(at 134.62 67.31 0)
+	(global_label "I2C_UI_SCL"
+		(shape input)
+		(at 213.36 68.58 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "e40e25a0-7601-41da-84c0-998ce7868317")
+		(uuid "67d49f72-c5a8-40b4-9e66-a21cc91d7bac")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 226.8076 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 	)
-	(hierarchical_label "BTN_TARE"
-		(shape bidirectional)
+	(global_label "BTN_TARE"
+		(shape input)
 		(at 114.3 146.05 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "f06df69e-fe1c-474f-aedf-02bf41415c47")
+		(uuid "67ff3844-a548-45a1-b829-733691981949")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 126.2961 146.05 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 	)
-	(hierarchical_label "ENC_A"
-		(shape bidirectional)
+	(global_label "ENC_SW"
+		(shape input)
+		(at 134.62 67.31 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e444731a-c74b-42e1-85fe-40e9bc294c35")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 144.9832 67.31 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_UI_SDA"
+		(shape input)
+		(at 213.36 64.77 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f20e0203-3221-4a93-9b8c-9b11973ce688")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 226.8681 64.77 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "ENC_A"
+		(shape input)
 		(at 69.85 68.58 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "fb7a8f5c-0214-4c43-8714-c9e1a52f16a4")
+		(uuid "fd50c65a-33c9-4ff2-8d51-7efcc3bd14dd")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 61.0591 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Device:RotaryEncoder_Switch")

@@ -2901,27 +2901,53 @@
 		)
 		(uuid "f7cd34db-af9b-431c-a20f-00f0f4e56f82")
 	)
-	(hierarchical_label "USB_D+"
-		(shape bidirectional)
-		(at 163.83 78.74 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "22e48e38-0c48-4a86-90eb-0994c6897a88")
-	)
-	(hierarchical_label "USB_D-"
-		(shape bidirectional)
+	(global_label "USB_D-"
+		(shape input)
 		(at 163.83 76.2 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "e06cefb3-b3ca-46c8-898b-ba4b532f9e7e")
+		(uuid "6f930bfe-9d37-471e-88be-cc398f0b3620")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 174.4352 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "USB_D+"
+		(shape input)
+		(at 163.83 78.74 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8518b978-bc04-4689-aee7-6d6861173286")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 174.4352 78.74 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
 	)
 	(symbol
 		(lib_id "Device:C_Small")
