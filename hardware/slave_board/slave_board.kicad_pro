@@ -661,7 +661,7 @@
         "uuid": "2c4fc43b-02b1-4ef7-8914-a684f462c899"
       }
     ],
-    "used_designators": "J_SENSE1,J_TEMP1,J_PWR1,J_FAN2,#PWR1-25,D1-4,Q1-3,U1-4,C1-9,Q_FAN1,R1-17,NT1,J1-7,F1",
+    "used_designators": "J_TEMP1,J_PWR1,J_FAN2,J_SENSE1,D1-4,#PWR1-25,Q1-3,U1-4,C1-9,Q_FAN1,R1-17,NT1,J1-7,F1",
     "variants": []
   },
   "sheets": [
