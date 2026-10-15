@@ -1469,6 +1469,16 @@
 	)
 	(wire
 		(pts
+			(xy 86.36 76.2) (xy 92.71 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bca9ca4a-850a-4858-aa2a-3711e05f928e")
+	)
+	(wire
+		(pts
 			(xy 173.99 134.62) (xy 173.99 137.16)
 		)
 		(stroke
@@ -1559,6 +1569,16 @@
 	)
 	(wire
 		(pts
+			(xy 85.09 124.46) (xy 92.71 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fc8a4771-f0a9-403d-878d-6c2be6e158b6")
+	)
+	(wire
+		(pts
 			(xy 87.63 99.06) (xy 87.63 93.98)
 		)
 		(stroke
@@ -1587,104 +1607,221 @@
 		)
 		(uuid "ff8061aa-83f4-4459-9772-7a2168c4d732")
 	)
-	(hierarchical_label "LOAD_SENSE_+"
-		(shape input)
-		(at 92.71 76.2 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3392e791-34a5-467a-aefd-2fb5f269c474")
-	)
-	(hierarchical_label "I2C_SDA"
+	(global_label "I2C_SDA"
 		(shape input)
 		(at 165.1 93.98 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "38801086-9835-4891-a43c-9b4e135723a2")
-	)
-	(hierarchical_label "ADC_ALERT"
-		(shape input)
-		(at 185.42 86.36 0)
-		(effects
-			(font
-				(size 1.27 1.27)
+		(uuid "21acc4d1-bb4d-4c3f-a79a-be50c9ec1a6f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 175.7052 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 			)
-			(justify left)
 		)
-		(uuid "8e43d2fb-0964-4b9f-ad95-f4cd633cd962")
 	)
-	(hierarchical_label "I_SENSE_Q2"
+	(global_label "I_SENSE_Q2"
 		(shape input)
 		(at 135.89 91.44 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "a2416625-f614-4df6-a576-9dc06ad780a6")
+		(uuid "5231a519-c422-4c88-b79c-f305620ef3d0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 121.7773 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 	)
-	(hierarchical_label "I_SENSE_Q1"
+	(global_label "LOAD_SENSE_-"
 		(shape input)
-		(at 135.89 88.9 180)
+		(at 85.09 124.46 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "a81d16d1-2c45-4f79-b6df-9b65117e3db6")
-	)
-	(hierarchical_label "I2C_SCL"
-		(shape input)
-		(at 165.1 91.44 0)
-		(effects
-			(font
-				(size 1.27 1.27)
+		(uuid "66384715-9bda-439f-8323-54ff18da8fb9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 67.8325 124.46 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
-			(justify left)
 		)
-		(uuid "d0f93dee-075f-4a3f-99dc-4dbc75a9d41d")
 	)
-	(hierarchical_label "LOAD_SENSE_-"
-		(shape input)
-		(at 92.71 124.46 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e3fa0d37-b2a4-4173-b57b-753b01ea603b")
-	)
-	(hierarchical_label "I2C_SDA"
-		(shape input)
-		(at 190.5 137.16 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f60525ba-dc44-4ec7-84ea-a59e39247ca7")
-	)
-	(hierarchical_label "I2C_SCL"
+	(global_label "I2C_SCL"
 		(shape input)
 		(at 190.5 134.62 0)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "fe2e9187-6876-4270-ab3a-c82cfd3ea4a2")
+		(uuid "71550281-ef69-4e21-b7eb-430206e60456")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 201.0447 134.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I_SENSE_Q1"
+		(shape input)
+		(at 135.89 88.9 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8b3e667f-bdd4-46c4-8344-d489e3de0f36")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 121.7773 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "ADC_ALERT"
+		(shape input)
+		(at 185.42 86.36 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cbecaccd-ba03-40a8-b596-1a8e318f5f61")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 198.5047 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 165.1 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e09ef941-b9af-4479-b8d5-ba7869f2e978")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 175.6447 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_SDA"
+		(shape input)
+		(at 190.5 137.16 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "eaec84c0-e737-44e1-a073-3f39786547ae")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 201.1052 137.16 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "LOAD_SENSE_+"
+		(shape input)
+		(at 86.36 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f7336b7f-b23d-49b7-be32-b95620d2904a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 69.1025 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 	)
 	(symbol
 		(lib_id "power:+3.3V")
@@ -2338,7 +2475,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e64b3c43-6515-43ce-bf6c-d4ff65bf3618")
-		(property "Reference" "J5"
+		(property "Reference" "J6"
 			(at 180.34 128.27 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2418,7 +2555,7 @@
 		(instances
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/66d25d5f-b49c-4f1e-a839-fa51026b9740"
-					(reference "J5")
+					(reference "J6")
 					(unit 1)
 				)
 			)

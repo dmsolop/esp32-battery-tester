@@ -661,7 +661,7 @@
         "uuid": "2c4fc43b-02b1-4ef7-8914-a684f462c899"
       }
     ],
-    "used_designators": "D1-4,Q1-2,#PWR1-15,C1-9,R1-16,NT1,J1-5,U1-2",
+    "used_designators": "J_SENSE1,J_TEMP1,J_PWR1,J_FAN2,#PWR1-25,D1-4,Q1-3,U1-4,C1-9,Q_FAN1,R1-17,NT1,J1-7,F1",
     "variants": []
   },
   "sheets": [
@@ -676,6 +676,10 @@
     [
       "66d25d5f-b49c-4f1e-a839-fa51026b9740",
       "Telemetry"
+    ],
+    [
+      "029a3992-bba1-4c16-af18-4c60d303ee1c",
+      "cooling_thermal"
     ]
   ],
   "text_variables": {},
