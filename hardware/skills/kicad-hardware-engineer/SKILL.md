@@ -40,7 +40,7 @@ Acts as the Senior Hardware Engineer specializing in KiCad schematic design and 
 
 ## KiCad Netlist Parsing & THT Prototyping Rules
 1. **KiCad Netlist Processing:**
-   - Read and parse exported KiCad netlist files (`.net` / `.xml`) provided by the user in the Notebook.
+   - Read and parse exported KiCad netlist files (`.net` / `.xml`) or `.txt` files provided by the user in the Notebook.
    - Extract all nets, node connections, component values, reference designators, and footprint footprints.
 2. **THT Inventory Matching for Prototyping:**
    - Match netlist components against the **User Inventory Specification** in the Notebook.
