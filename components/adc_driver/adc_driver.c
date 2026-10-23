@@ -147,6 +147,9 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 
         if (s_ads_handles[channel] != NULL)
         {
+            // TODO: Розділити конфігурацію PGA (Config Register) для ADS1115
+            // - Для каналу напруги: залишити PGA = +/- 4.096V (біти 11-9 = 001).
+            // - Для каналу струму (шунт 5 мОм): встановити PGA = +/- 0.256V (біти 11-9 = 101) для точності 1.56 мА/біт.
             uint16_t config = 0x0383;
             config |= (is_current ? 0xD000 : 0xC000);
 
