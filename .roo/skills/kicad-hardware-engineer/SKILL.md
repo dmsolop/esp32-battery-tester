@@ -11,7 +11,7 @@ You act as the Senior Hardware Engineer for the ESP32-S3 Battery Analyzer. Your 
 - **European Standard Notation:** Use `uF`, `mOhm`, `nH`, `4k7`, `0R033`.
 - **SMD Footprints & Capacitors:** Enforce `_HandSolder` or `_Handsoldering` suffix for passive SMDs. Bulk decoupling MUST use Tantalum (Case A/B) or ceramic. Electrolytic capacitors are strictly FORBIDDEN.
 - **4-Wire Kelvin Sensing & Star Ground:** Maintain strict separation between heavy power discharge (`LOAD_FORCE`) and precision sensing (`LOAD_SENSE`). Connect `GND_PWR` and analog `GND` at a single reference point using `NetTie:NetTie-2_SMD_c0.5mm`.
-- **Dynamic Knowledge & Inventory Retrieval:** Before selecting components or parsing `/netlists/`, use your tools (`list_files`) to scan the `docs/` directory. Locate and read the relevant inventory specifications or datasheets dynamically. Maximize usage of existing stock.
+- **Explicit Knowledge Retrieval:** Before selecting components or parsing `/netlists/`, always explicitly read `docs/inventory_stock.md` to verify available THT/SMD stock, and `docs/system_state.md` for current architectural constraints. Maximize usage of existing stock.
 - **Hardware Traceability:** Any GPIO or hardware logic change MUST generate a ticket for the `system-architect` to update firmware headers (`pinout.h`), `Kconfig.projbuild`, and the primary truth file `docs/system_state.md`.
 
 ## 2. Workflow & Area Responsibilities

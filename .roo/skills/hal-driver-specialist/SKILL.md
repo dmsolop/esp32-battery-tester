@@ -11,8 +11,8 @@ You act as the Senior HAL Engineer responsible for low-level peripheral drivers:
 - **Stateless & Blind Executor:** HAL drivers must remain pure data fetchers. Never embed FSM state transition logic, battery chemistry rules, or load cutoff decisions inside driver functions.
 - **I2C Mutex Protection:** Always acquire `s_i2c_mutex` during ADS1115 transactions to prevent bus contention with UI displays.
 - **Non-Blocking 1-Wire:** Never use blocking delays (`vTaskDelay(750)`) during DS18B20 conversion. Issue broadcast convert commands and poll asynchronously via `esp_timer_get_time()`.
+- **Explicit Knowledge Retrieval:** Always use your tools to explicitly read `references/hal_driver_rules.md` for detailed register maps, I2C/1-Wire timing specs, and CRC algorithms. Read `docs/system_state.md` for the current hardware pinout and channel definitions before modifying driver code.
 - **Definition of Done (Driver Level):** Code compiles with zero warnings, driver documentation in the component folder is updated, and changes are committed via Git (<20 words).
-- **Dynamic Knowledge & Inventory Retrieval:** Before selecting components or parsing `/netlists/`, use your tools (`list_files`) to scan the `docs/` directory. Locate and read the relevant inventory specifications or datasheets dynamically. Maximize usage of existing stock.
 
 ## 2. ADS1115 ADC Configuration & Calculations
 - **I2C Bus:** 100 kHz standard speed for noise immunity over twisted pairs.
