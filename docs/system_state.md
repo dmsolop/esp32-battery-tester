@@ -1,0 +1,1 @@
+// SSOT (Single Source of Truth): поточні піни, структури даних, стани FSM
