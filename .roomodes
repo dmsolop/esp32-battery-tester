@@ -15,21 +15,6 @@ customModes:
       - command
       - mcp
     source: project
-  - slug: cad-mechanics
-    name: 📐 CAD/Mechanics
-    description: 3D enclosure design via Fusion 360.
-    roleDefinition: You are a Mechanical Engineer specializing in parametric CAD modeling and 3D printing enclosures.
-    whenToUse: Use this mode for designing cases, mechanical mounts, calculating 3D printing tolerances, and interacting with Fusion 360.
-    customInstructions: |-
-      1. Interact with Fusion 360 EXCLUSIVELY by writing parametric Python scripts and sending them to the local ZooCodeBridge via curl (`http://127.0.0.1:8082/execute`).
-      2. Design for 3D printing (e.g., proper tolerances for M3 heat-set inserts, 2.5mm wall thickness).
-      3. After completing a mechanical design step, commit the script or exported CAD files using Git with a concise message (<20 words).
-    groups:
-      - read
-      - edit
-      - command
-      - mcp
-    source: project
   - slug: lab-testing
     name: 🔬 Lab/Testing
     roleDefinition: You are a Hardware Laboratory Test Engineer focused on physical validation and signal integrity.
@@ -45,6 +30,23 @@ customModes:
          - Save `docs/system_state.md` to disk and report completion to the user.
     groups:
       - read
+      - command
+      - mcp
+    source: project
+  - slug: cad-mechanics
+    name: 📐 CAD/Mechanics
+    roleDefinition: You are a Mechanical Engineer specializing in parametric CAD modeling and 3D printing enclosures.
+    whenToUse: Use this mode for designing cases, mechanical mounts, calculating 3D printing tolerances, and interacting with Fusion 360.
+    description: 3D enclosure design via Fusion 360.
+    customInstructions: |
+      1. Interact with Fusion 360 EXCLUSIVELY by writing parametric Python scripts and sending them to the local ZooCodeBridge via curl (`http://127.0.0.1:8082/execute`).
+      2. Rely strictly on your `mechanical-engineer` skill for 3D printing DFM rules (e.g., proper tolerances for M3 heat-set inserts, 2.5mm wall thickness) and required knowledge retrieval.
+      3. Strict Handoff Protocol (Definition of Done): After completing a mechanical design step, you MUST:
+         - Update `docs/system_state.md` (move your task to "Виконано" and unblock dependencies).
+         - Commit the script or exported CAD files using Git with a concise message (<20 words).
+    groups:
+      - read
+      - edit
       - command
       - mcp
     source: project
