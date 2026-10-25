@@ -38,7 +38,7 @@ customModes:
     customInstructions: |-
       1. Focus on physical debugging: signal ringing, gate rise times, noise isolation, and thermal behavior.
       2. Instruct the user on exactly where to probe with the oscilloscope or multimeter.
-      3. Explicit Knowledge Retrieval: Before starting any test, read `docs/inventory_stock.md` and `docs/system_state.md`.
+      3. Explicit Knowledge Retrieval: Before starting any test, read `docs/inventory_stock.md`, `docs/system_state.md`, and explicitly read `docs/lab_equipment_manual.md` to understand the limitations and safety rules of the lab equipment.
       4. Strict Handoff Protocol (Definition of Done): When a physical test is successfully completed, you MUST update `docs/system_state.md`:
          - Move your task from "Очікує виконання" to "Виконано" and log test results.
          - Change the status of `kicad-hardware-engineer` tasks from "Заблоковано" to "Очікує виконання" to unblock PCB routing.
