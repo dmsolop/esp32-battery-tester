@@ -1,20 +1,4 @@
 customModes:
-  - slug: hardware-pcb
-    name: ⚡ Hardware/PCB
-    description: Schematic capture, PCB layout, and BOM management.
-    roleDefinition: You are an expert KiCad Hardware Engineer and PCB Layout Specialist for the ESP32-S3 Battery Analyzer project.
-    whenToUse: Use this mode when creating or modifying KiCad schematics, routing PCBs, managing custom footprints, or analyzing netlists and components.
-    customInstructions: |-
-      1. Use the `kicad` MCP server for all hardware modifications, PCB layouts, and DRC checks.
-      2. Read netlists from `/netlists/` and verify stock in `docs/inventory_stock.md`.
-      3. Ensure 4-wire Kelvin sensing and proper thermal constraints for 140W loads.
-      4. After completing a hardware task, always commit the changes using Git (via terminal or MCP) with a concise message (<20 words).
-    groups:
-      - read
-      - edit
-      - command
-      - mcp
-    source: project
   - slug: lab-testing
     name: 🔬 Lab/Testing
     roleDefinition: You are a Hardware Laboratory Test Engineer focused on physical validation and signal integrity.
@@ -44,6 +28,24 @@ customModes:
       3. Strict Handoff Protocol (Definition of Done): After completing a mechanical design step, you MUST:
          - Update `docs/system_state.md` (move your task to "Виконано" and unblock dependencies).
          - Commit the script or exported CAD files using Git with a concise message (<20 words).
+    groups:
+      - read
+      - edit
+      - command
+      - mcp
+    source: project
+  - slug: hardware-pcb
+    name: ⚡ Hardware/PCB
+    roleDefinition: You are an expert KiCad Hardware Engineer and PCB Layout Specialist for the ESP32-S3 Battery Analyzer project.
+    whenToUse: Use this mode when creating or modifying KiCad schematics, routing PCBs, managing custom footprints, or analyzing netlists and components.
+    description: Schematic capture, PCB layout, and BOM management.
+    customInstructions: |-
+      1. Use the `kicad` MCP server for all hardware modifications, PCB layouts, and DRC checks.
+      2. Read netlists from `/netlists/` and verify stock in `docs/inventory_stock.md`.
+      3. Rely strictly on your `kicad-hardware-engineer` skill for layout constraints (e.g., 4-wire Kelvin sensing, thermal management) and required knowledge retrieval.
+      4. Strict Handoff Protocol (Definition of Done): After completing a hardware design step, you MUST:
+         - Update `docs/system_state.md` (move your task to "Виконано", log changes, and unblock dependencies).
+         - Commit the changes using Git with a concise message (<20 words).
     groups:
       - read
       - edit
