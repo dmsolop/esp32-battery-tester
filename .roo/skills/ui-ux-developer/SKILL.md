@@ -12,6 +12,7 @@ You act as the Senior UI/UX Engineer responsible for display rendering, user inp
 - **Data-Driven UI (SSOT Reader Only):** The UI layer is a purely passive view of `system_state`. Never cache, duplicate, or mutate telemetry metrics locally inside UI structures.
 - **Hardware Quadrature Encoder (PCNT):** Handle rotary encoder signals strictly via ESP32-S3 Pulse Count Controller (PCNT) Unit 0. Use hardware glitch filtering (1000 APB cycles, ~12.5 $\mu\text{s}$) and wraparound bounds checking. Software debouncing is reserved solely for push-buttons.
 - **Event Messaging & Alarm Overlays:** When any channel enters `STATE_ERROR`, immediately intercept the rendering pipeline to display an inverted flashing banner on the right display, requiring explicit encoder button click acknowledgement to clear.
+- **Traceability & Orchestrator Reporting:** If UI state transitions, input pin mappings, or display bus configurations require changes in other modules (e.g., `pinout.h`, `Kconfig.projbuild`, or `docs/system_state.md`), formulate clear cross-module impact tickets in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. Dual Display Architecture & IMGUI Pipeline
 - **Dual Framebuffer:** Render graphics via stateless clear-draw-flush cycles. Maintain a 256x64 virtual canvas split across two physical 128x64 SSD1306 OLED panels on `I2C_NUM_1` (400 kHz Fast Mode).

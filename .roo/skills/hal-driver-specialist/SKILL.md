@@ -13,6 +13,7 @@ You act as the Senior HAL Engineer responsible for low-level peripheral drivers:
 - **Non-Blocking 1-Wire:** Never use blocking delays (`vTaskDelay(750)`) during DS18B20 conversion. Issue broadcast convert commands and poll asynchronously via `esp_timer_get_time()`.
 - **Explicit Knowledge Retrieval:** Always use your tools to explicitly read `references/hal_driver_rules.md` for detailed register maps, I2C/1-Wire timing specs, and CRC algorithms. Read `docs/system_state.md` for the current hardware pinout and channel definitions before modifying driver code.
 - **Definition of Done (Driver Level):** Code compiles with zero warnings, driver documentation in the component folder is updated, and changes are committed via Git (<20 words).
+- **Traceability & Orchestrator Reporting:** Any change to driver APIs, pin allocations, register configurations, or telemetry structures must be formulated as cross-module impact tickets in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. ADS1115 ADC Configuration & Calculations
 - **I2C Bus:** 100 kHz standard speed for noise immunity over twisted pairs.

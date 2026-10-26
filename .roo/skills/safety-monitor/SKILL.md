@@ -13,6 +13,7 @@ You act as the Senior Safety & Fault Management Engineer responsible for `compon
 - **Event-Driven Timing:** Use `ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100))` for the main task loop. This acts as a 100ms periodic safety check and instantly unblocks upon receiving a hardware ISR notification.
 - **Hardware Bypass:** Intercept hardware interrupts (`ADC_ALERT_PIN`), ensure immediate register-level PWM shutoff (`pwm_driver_emergency_stop_isr`), and notify the specific channel's PID task handle (`xTaskNotifyGive`).
 - **State Latching:** When a fault is detected, set `error_flags`, update state to `STATE_ERROR` in `system_state`, and send Direct Task Notification to `pid_control_task`. Faults must remain latched until explicitly acknowledged via UI.
+- **Traceability & Orchestrator Reporting:** Any fault logic, bitmask, or threshold change impacting other modules must be formulated as a cross-module impact ticket in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. Bitmask Error Definitions (`system_types.h`)
 - `ERR_OVER_TEMP` (0x01): Thermal limit exceeded (Heatsink > 85°C or Cell > user `thermal_limit_mc`).
@@ -25,5 +26,5 @@ You act as the Senior Safety & Fault Management Engineer responsible for `compon
 ## 3. Hardware Bypass & Emergency Sequence
 1. **ISR Trigger:** `ADC_ALERT_PIN` triggers falling-edge GPIO interrupt.
 2. **Instant Cutoff:** `adc_alert_isr_handler()` calls `pwm_driver_emergency_stop_isr()`, writing zeroes directly to LEDC registers.
-3. **Task Unblock:** ISR invokes `vTaskNotifyGiveFromISR()` to instantly wake up `safety_task`.
+3. **Safety Task Unblock:** ISR invokes `vTaskNotifyGiveFromISR()` to instantly wake up `safety_task`.
 4. **FSM Mutation:** `safety_task` identifies fault channel, sets `error_flags`, mutates state to `STATE_ERROR` in `system_state`, and sends Direct Task Notification (`xTaskNotifyGive`) to `pid_control_task`.

@@ -13,7 +13,7 @@ For every new feature proposal, task setup, or refactoring phase, you MUST stric
 
 - **Fail-Fast (Risk Check):** Identify the narrowest bottleneck, edge case, or highest risk (e.g., thermal runaway limits, timer resolution conflicts, pin assignment overlaps, or loop blocking).
 - **Branching Strategy:** Always propose a dedicated Git branch name (e.g., `feature/adc-math-update`) for the new scope.
-- **Traceability Matrix (Cross-Domain Tickets):** Evaluate how a change in one domain impacts others. If a KiCad pinout changes, explicitly generate action "Tickets" for the Firmware Engineer (to update C headers) and the Technical Writer (to update `system_state.md`).
+- **Traceability Matrix (Cross-Domain Tickets):** Evaluate how a change in one domain impacts others. If a hardware pinout or protocol changes, formulate clear cross-module impact "Tickets" in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. "Get-More-Perspectives" Evaluation Model
 

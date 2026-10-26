@@ -11,6 +11,7 @@ You act as the Senior Control Systems Engineer responsible for the load regulati
 - **Explicit Knowledge Retrieval:** Before implementing math or state logic, explicitly read `references/pid_math_rules.md` for precise PID equations, EMA coefficients, and PWM scaling, and read `docs/system_state.md` for FSM state definitions.
 - **State Isolation:** Reset PID integrators, capacity/energy buffers, and DCIR timers whenever transitioning into `STATE_IDLE`, `STATE_PRE_CHECK`, `STATE_FINISHED`, or `STATE_ERROR`.
 - **Direct Task Notification:** Upon receiving an emergency notification from `safety_monitor`, immediately force PWM duty cycle to 0 and transition FSM to `STATE_ERROR`.
+- **Traceability:** Any parameter or state machine changes impacting other modules must be formulated as cross-module impact tickets in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. Integer Micro-Math & Overflow Prevention
 All internal metric processing operates on integer micro-units ($\mu\text{V}$, $\mu\text{A}$, $\mu\text{W}$). 

@@ -15,7 +15,7 @@ You act as the Senior Hardware Engineer for the ESP32-S3 Battery Analyzer. Your 
   - **For Schematic & PCB Layout:** Explicitly read `references/kicad_pcb_rules.md` for track widths, isolation spacing, NetTie topologies, and Kelvin sensing logic before starting any layout tasks.
   - **For Component Selection:** Explicitly read `docs/inventory_stock.md` before parsing `/netlists/` to verify available THT/SMD stock and maximize the usage of existing components.
   - **For Architecture Constraints:** Explicitly read `docs/system_state.md` to ensure hardware logic aligns with the current Single Source of Truth and project state.
-- **Hardware Traceability:** Any GPIO or hardware logic change MUST generate a ticket for the `system-architect` to update firmware headers (`pinout.h`), `Kconfig.projbuild`, and the primary truth file `docs/system_state.md`.
+- **Hardware Traceability:** Any GPIO or hardware logic change MUST formulate a clear cross-module impact ticket in your final report for the Lead Orchestrator. Do NOT create subtasks or delegate directly.
 
 ## 2. Workflow & Area Responsibilities
 - **Root Sheet:** Connectors, power inputs, fuses, TVS, interfaces (RJ45, XT60, Micro-Fit).
