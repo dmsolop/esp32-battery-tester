@@ -2513,30 +2513,6 @@
 		)
 		(uuid "fdcf52fa-b8ee-4900-8710-750c95595903")
 	)
-	(global_label "I2C_UI_SCL"
-		(shape input)
-		(at 92.71 100.33 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "209d522e-78ee-4ac0-aeae-e170cc5e0881")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 79.2624 100.33 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
 	(global_label "1W_CH1"
 		(shape input)
 		(at 92.71 110.49 180)
@@ -2582,6 +2558,30 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_UI_SDA"
+		(shape input)
+		(at 92.71 102.87 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "398f3618-7ebe-43cb-8ef9-4a86e1b23794")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 79.2019 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 	)
@@ -2825,30 +2825,6 @@
 			)
 		)
 	)
-	(global_label "I2C_PWR_SDA"
-		(shape input)
-		(at 92.71 102.87 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b6838c09-3ca8-473e-990e-1f8b1a7f2e07")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 77.1458 102.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
 	(global_label "ENC_B"
 		(shape input)
 		(at 92.71 128.27 180)
@@ -2897,30 +2873,6 @@
 			)
 		)
 	)
-	(global_label "I2C_UI_SDA"
-		(shape input)
-		(at 92.71 97.79 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "bc50650c-7e23-472e-b500-6e7749717fcf")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 79.2019 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
 	(global_label "1W_CH3"
 		(shape input)
 		(at 92.71 115.57 180)
@@ -2945,30 +2897,6 @@
 			)
 		)
 	)
-	(global_label "I2C_PWR_SCL"
-		(shape input)
-		(at 92.71 105.41 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c8c00038-34ff-46be-abf6-097f67aff81c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 77.2063 105.41 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
 	(global_label "ENC_A"
 		(shape input)
 		(at 92.71 125.73 180)
@@ -2982,6 +2910,30 @@
 		(uuid "ca92368a-81d2-4b20-8d4c-8c64364f0725")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 83.9191 125.73 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "I2C_UI_SCL"
+		(shape input)
+		(at 92.71 105.41 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "dcdfaaa1-6ff2-4adc-abcd-81d0391c0e15")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 79.2624 105.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3062,6 +3014,54 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_PWR_SCL"
+		(shape input)
+		(at 92.71 100.33 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f3a758d0-9e13-42bb-8432-291934e03b69")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 77.2063 100.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "I2C_PWR_SDA"
+		(shape input)
+		(at 92.71 97.79 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f4b8898d-af18-4cab-84d4-d397814c1a5a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 77.1458 97.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 	)
