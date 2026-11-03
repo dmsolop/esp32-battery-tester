@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-10-25T13:50:18")
+		(date "2026-11-04T00:27:41")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -7091,8 +7091,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "7")
-				(pinfunction "IO7_7")
+				(pin "5")
+				(pinfunction "IO5_5")
 				(pintype "bidirectional")
 			)
 		)
@@ -7151,8 +7151,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "6")
-				(pinfunction "IO6_6")
+				(pin "4")
+				(pinfunction "IO4_4")
 				(pintype "bidirectional")
 			)
 		)
@@ -7179,8 +7179,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "5")
-				(pinfunction "IO5_5")
+				(pin "7")
+				(pinfunction "IO7_7")
 				(pintype "bidirectional")
 			)
 		)
@@ -7207,8 +7207,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "4")
-				(pinfunction "IO4_4")
+				(pin "6")
+				(pinfunction "IO6_6")
 				(pintype "bidirectional")
 			)
 		)

@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-11-04T00:25:04")
+		(date "2026-11-04T00:33:29")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
