@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-10-25T13:50:53")
+		(date "2026-11-04T00:25:04")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -1104,15 +1104,15 @@
 		)
 		(comp
 			(ref "Q1")
-			(value "IRFP250N")
+			(value "IRFP150N")
 			(footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
-			(datasheet "https://www.alldatasheet.com/datasheet-pdf/view/68504/IRF/IRFP250N.html")
+			(datasheet "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 			(description "30A, 200V, N-Channel Power MOSFET, TO-247")
 			(fields
 				(field
 					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Vertical")
 				(field
-					(name "Datasheet") "https://www.alldatasheet.com/datasheet-pdf/view/68504/IRF/IRFP250N.html")
+					(name "Datasheet") "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 				(field
 					(name "Description") "30A, 200V, N-Channel Power MOSFET, TO-247")
 			)
@@ -1161,15 +1161,15 @@
 		)
 		(comp
 			(ref "Q2")
-			(value "IRFP250N")
+			(value "IRFP150N")
 			(footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
-			(datasheet "https://www.alldatasheet.com/datasheet-pdf/view/68504/IRF/IRFP250N.html")
+			(datasheet "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 			(description "30A, 200V, N-Channel Power MOSFET, TO-247")
 			(fields
 				(field
 					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Vertical")
 				(field
-					(name "Datasheet") "https://www.alldatasheet.com/datasheet-pdf/view/68504/IRF/IRFP250N.html")
+					(name "Datasheet") "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 				(field
 					(name "Description") "30A, 200V, N-Channel Power MOSFET, TO-247")
 			)
