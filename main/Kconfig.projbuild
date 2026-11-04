@@ -56,29 +56,44 @@ menu "Battery Tester Config"
         menu "Power & Thermal Control (PWM Outputs)"
             config PWM_CH0_PIN
                 int "MOSFET Gate Drive CH0"
+                range 0 48
                 default 38
             config PWM_CH1_PIN
                 int "MOSFET Gate Drive CH1"
-                default 39
+                range 0 48
+                default 1
             config PWM_CH2_PIN
                 int "MOSFET Gate Drive CH2"
+                range 0 48
                 default 40
             config PWM_CH3_PIN
                 int "MOSFET Gate Drive CH3"
-                default 41
+                range 0 48
+                default 2
 
             config FAN_CH0_PIN
                 int "Cooling Fan PWM CH0"
-                default 42
+                range 0 48
+                default 12
             config FAN_CH1_PIN
                 int "Cooling Fan PWM CH1"
-                default 48
+                range 0 48
+                default 13
             config FAN_CH2_PIN
                 int "Cooling Fan PWM CH2"
-                default 1
+                range 0 48
+                default 14
             config FAN_CH3_PIN
                 int "Cooling Fan PWM CH3"
-                default 2
+                range 0 48
+                default 21
+
+            config BUZZER_PIN
+                int "Buzzer GPIO Pin"
+                range 0 48
+                default 42
+                help
+                    GPIO pin for piezoelectric buzzer via transistor driver with 4.7k external pull-down to GND.
         endmenu
 
     endmenu
