@@ -7,7 +7,7 @@
 - **Master-Slave Isolation:** The ESP32-S3 Master board is the digital "cold zone"[cite: 4]. High-current discharge occurs on isolated Slave modules[cite: 4].
 - **Communication Bus:** High-frequency signals (I2C, 1-Wire, PWM) are routed via shielded RJ45 cables (FTP/STP)[cite: 4]. The cable shield is tied to analog GND, acting as a Faraday cage to block EMI[cite: 4].
 - **Power Stage (Per Channel):** Maximum dissipation is >140W, up to 30A[cite: 4]. Uses dual IRFP250N MOSFETs (TO-247) in a "Sandwich" topology between two Intel Celeron heatsinks[cite: 4]. Hardware current balancing is enforced via dual independent CC-loops using an LM358 Op-Amp[cite: 4].
-- **Precision Sensing (4-Wire Kelvin):** Current is measured across a 3x 33 mOhm 2512 SMD Metal Strip resistor array (11 mOhm equivalent, up to 6W dissipation)[cite: 4]. Kelvin connections are routed directly on the PCB copper[cite: 4].
+- **Precision Sensing (4-Wire Kelvin):** Current is measured across a single 5 mOhm (R005) 2512 SMD Manganese-Copper alloy precision shunt per MOSFET leg (3W rating, 1.125W dissipation at 15A)[cite: 4]. Kelvin connections are routed directly from the inner pads on the PCB copper[cite: 4].
 - **ADC Scaling:** ADS1115 PGA dynamically scales to maintain 16-bit resolution across the 1V–60V range[cite: 4].
 - **Hardware Bypass (Safety):** The `ADC_ALERT_PIN` triggers a hardware interrupt (GPIO 47) to instantly zero the PWM duty cycle via LEDC registers during over-current or over-voltage events[cite: 4].
 
