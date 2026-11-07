@@ -58,10 +58,10 @@
 - [ ] Провести тестування стабільності струму за допомогою ЛБЖ та осцилографа, переконатися у відсутності високочастотних осциляцій та перевірити чистий нуль при `PWM = 0`.
 - [ ] Розробити план випробувань внутрішнього опору та падіння напруги на циліндричних Li-ion і NiMH комірках.
 
-### 💻 Firmware Engineers (`load-control-engineer` & `hal-driver-specialist`) (Статус: Очікує виконання - AGILE)
-- [ ] **[Ticket-PID-1]** У `components/load_control/pwm_driver.c` та `include/pwm_driver.h` перевести ШІМ на частоту `19531 Hz` (`20 kHz`) та роздільну здатність `LEDC_TIMER_12_BIT` (`PWM_MAX_DUTY = 4095`).
-- [ ] **[Ticket-PID-2]** У `components/load_control/pid_service.c` усунути подвійне інтегрування (`ctx->current_output += output`), реалізувавши чисту позиційну форму ПІД із динамічним Anti-Windup згідно з `references/pid_math_rules.md`.
-- [ ] **[Ticket-ADC-1]** У `components/adc_driver/adc_driver.c` усунути втрату точності при цілочисельному діленні `(raw_adc * 125) / 16` (перераховувати `raw_adc` одразу в мкА без проміжного усічення мкВ) та додати підтримку двоканального опитування `AIN0` (`0xCB83`) + `AIN1` (`0xDB83`) для сумування струму обох плечей `Q1 + Q2` на шунтах `5 mOhm`.
+### 💻 Firmware Engineers (`load-control-engineer` & `hal-driver-specialist`) (Статус: В процесі - AGILE)
+- [x] **[Ticket-PID-1]** У `components/load_control/pwm_driver.c` та `include/pwm_driver.h` перевести ШІМ на частоту `19531 Hz` (`20 kHz`) та роздільну здатність `LEDC_TIMER_12_BIT` (`PWM_MAX_DUTY = 4095`).
+- [x] **[Ticket-PID-2]** У `components/load_control/pid_service.c` усунути подвійне інтегрування (`ctx->current_output += output`), реалізувавши чисту позиційну форму ПІД із динамічним Anti-Windup згідно з `references/pid_math_rules.md`.
+- [x] **[Ticket-ADC-1]** У `components/adc_driver/adc_driver.c` та `adc_driver.h` усунено втрату точності при цілочисельному діленні (реалізовано формулу `(raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM)` у 64-бітному просторі) та додано підтримку опитування обох каналів струму `AIN0` (`0xCB83`, Q1) та `AIN1` (`0xDB83`, Q2) із збереженням зворотної сумісності для поточного макету на 0.27 Ом.
 
 ### 👑 Master System Orchestrator (Статус: Очікує виконання)
 - [ ] Делегувати виконання `Ticket-PID-1`, `Ticket-PID-2` та `Ticket-ADC-1` у режим `code`.

@@ -16,14 +16,24 @@
 #define ADS1115_REG_CONVERSION 0x00
 #define ADS1115_REG_CONFIG 0x01
 
+// ADS1115 Config bits (PGA +/-0.256V, 128 SPS, single-shot mode)
+// AIN0 vs GND: MUX = 100 -> 0xCB83 (I_SENSE_Q1)
+// AIN1 vs GND: MUX = 101 -> 0xDB83 (I_SENSE_Q2)
+// AIN2 vs AIN3 (диференційно): MUX = 011, PGA +/-4.096V -> 0xB383 (V_SENSE Kelvin)
+#define ADS1115_CONFIG_CURRENT_AIN0 0xCB83
+#define ADS1115_CONFIG_CURRENT_AIN1 0xDB83
+#define ADS1115_CONFIG_VOLTAGE_DIFF 0xB383
+
 #ifndef CONFIG_SHUNT_RESISTOR_MOHM
-#define CONFIG_SHUNT_RESISTOR_MOHM 270 // TODO  виставити правильне значення
+#define CONFIG_SHUNT_RESISTOR_MOHM 270 // За замовчуванням 270 мОм (макет), для фінальної плати 5 мОм
 #endif
 
 typedef struct
 {
     int32_t voltage_offset_uv;
-    int32_t current_offset_ua;
+    int32_t current_offset_q1_ua;
+    int32_t current_offset_q2_ua;
+    bool dual_branch_enabled;
 } adc_calib_t;
 
 static uint32_t s_mock_voltage[4] = {4100000, 4110000, 4120000, 4130000};
@@ -127,68 +137,70 @@ esp_err_t adc_driver_init(void)
 
 static adc_calib_t s_calib[4] = {0};
 
+void adc_driver_set_dual_branch_mode(uint8_t channel, bool enable_dual)
+{
+    if (channel < 4)
+    {
+        s_calib[channel].dual_branch_enabled = enable_dual;
+        ESP_LOGI(TAG, "CH%d: Dual branch mode set to %s", channel, enable_dual ? "ENABLED" : "DISABLED");
+    }
+}
+
 void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off_ua)
 {
     if (channel < 4)
     {
         s_calib[channel].voltage_offset_uv = v_off_uv;
-        s_calib[channel].current_offset_ua = i_off_ua;
+        // Для сумісності з поточним макетом: якщо режим одноплечовий, калібруємо Q1 і скидаємо Q2
+        s_calib[channel].current_offset_q1_ua = i_off_ua;
+        s_calib[channel].current_offset_q2_ua = 0;
     }
 }
 
-static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_val_uv)
+void adc_driver_set_zero_offset_branch(uint8_t channel, adc_current_channel_t branch, int32_t i_off_ua)
 {
-    if (channel > 3)
+    if (channel < 4)
+    {
+        if (branch == ADC_CURRENT_SENSE_Q1)
+        {
+            s_calib[channel].current_offset_q1_ua = i_off_ua;
+        }
+        else if (branch == ADC_CURRENT_SENSE_Q2)
+        {
+            s_calib[channel].current_offset_q2_ua = i_off_ua;
+        }
+    }
+}
+
+static esp_err_t ads1115_read_raw(uint8_t channel, uint16_t config, int16_t *out_raw)
+{
+    if (channel > 3 || out_raw == NULL)
         return ESP_ERR_INVALID_ARG;
+
+    if (s_ads_handles[channel] == NULL)
+        return ESP_ERR_INVALID_STATE;
 
     if (xSemaphoreTake(s_i2c_mutex, pdMS_TO_TICKS(50)) == pdTRUE)
     {
-        esp_err_t err = ESP_OK;
+        uint8_t write_buf[3] = {
+            ADS1115_REG_CONFIG,
+            (uint8_t)(config >> 8),
+            (uint8_t)(config & 0xFF)};
 
-        if (s_ads_handles[channel] != NULL)
+        esp_err_t err = i2c_master_transmit(s_ads_handles[channel], write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
+        if (err == ESP_OK)
         {
-            // Диференційний вимір напруги Кельвіна AIN2-AIN3 (PGA = +/-4.096V -> 0xB383)
-            // Вимір струму з шунта AIN1-GND (PGA = +/-0.256V -> 0xDB83)
-            uint16_t config = is_current ? 0xDB83 : 0xB383;
+            // 128 SPS -> ~7.81 ms період перетворення ADS1115. Затримка 10 мс гарантує готовність результату
+            vTaskDelay(pdMS_TO_TICKS(10));
 
-            uint8_t write_buf[3] = {
-                ADS1115_REG_CONFIG,
-                (uint8_t)(config >> 8),
-                (uint8_t)(config & 0xFF)};
+            uint8_t reg_addr = ADS1115_REG_CONVERSION;
+            uint8_t read_buf[2] = {0};
 
-            err = i2c_master_transmit(s_ads_handles[channel], write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS);
+            err = i2c_master_transmit_receive(s_ads_handles[channel], &reg_addr, 1, read_buf, 2, I2C_MASTER_TIMEOUT_MS);
             if (err == ESP_OK)
             {
-                vTaskDelay(pdMS_TO_TICKS(10));
-
-                uint8_t reg_addr = ADS1115_REG_CONVERSION;
-                uint8_t read_buf[2] = {0};
-
-                err = i2c_master_transmit_receive(s_ads_handles[channel], &reg_addr, 1, read_buf, 2, I2C_MASTER_TIMEOUT_MS);
-                if (err == ESP_OK)
-                {
-                    int16_t raw_adc = (read_buf[0] << 8) | read_buf[1];
-                    if (raw_adc < 0)
-                        raw_adc = 0;
-
-                    if (is_current)
-                    {
-                        // 1 LSB при PGA +/-0.256V = 7.8125 мкВ (125 / 16)
-                        *out_val_uv = (uint32_t)(((uint64_t)raw_adc * 125) / 16);
-                    }
-                    else
-                    {
-                        // 1 LSB при PGA +/-4.096V = 125 мкВ
-                        // Множимо на коефіцієнт Кельвін-дільника 21.5 (205k / 10k -> * 43 / 2)
-                        uint64_t adc_uv = (uint64_t)raw_adc * 125;
-                        *out_val_uv = (uint32_t)((adc_uv * 43) / 2);
-                    }
-                }
+                *out_raw = (int16_t)((read_buf[0] << 8) | read_buf[1]);
             }
-        }
-        else
-        {
-            err = ESP_ERR_INVALID_STATE;
         }
 
         xSemaphoreGive(s_i2c_mutex);
@@ -199,44 +211,103 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 
 esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
 {
-    // #ifndef NDEBUG
-    //     *voltage_uv = s_mock_voltage[channel];
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    //     return ESP_OK;
-    // #else
-    uint32_t raw_voltage = 0;
-    esp_err_t err = i2c_read_adc(channel, false, &raw_voltage);
+    if (channel > 3 || voltage_uv == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    int16_t raw_adc = 0;
+    esp_err_t err = ads1115_read_raw(channel, ADS1115_CONFIG_VOLTAGE_DIFF, &raw_adc);
     if (err == ESP_OK)
     {
+        if (raw_adc < 0)
+            raw_adc = 0;
+
+        // 1 LSB при PGA +/-4.096V = 125 мкВ
+        // Кельвін-дільник 21.5 (205k / 10k -> * 43 / 2)
+        // Обчислення в uint64_t для виключення переповнення
+        uint64_t adc_uv = (uint64_t)raw_adc * 125ULL;
+        uint32_t raw_voltage = (uint32_t)((adc_uv * 43ULL) / 2ULL);
+
         int32_t compensated = (int32_t)raw_voltage - s_calib[channel].voltage_offset_uv;
         *voltage_uv = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
     return err;
-    // #endif
 }
 
-esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua, int32_t *pid_current_ua)
+// Точний розрахунок струму з raw ADC без проміжного урізання мікровольт
+// LSB при PGA +/-0.256V = 7.8125 мкВ = 125 / 16 мкВ
+// I_uA = (V_shunt_uV * 1000) / R_shunt_mohm = (raw_adc * 125 * 1000) / (16 * R_shunt_mohm)
+//      = (raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM)
+static inline int32_t raw_adc_to_current_ua(int16_t raw_adc)
 {
-    // #ifndef NDEBUG
-    //     *current_ua = s_mock_current[channel];
-    //     *pid_current_ua = s_mock_current[channel];
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    //     return ESP_OK;
-    // #else
-    uint32_t shunt_voltage_uv = 0;
-    esp_err_t err = i2c_read_adc(channel, true, &shunt_voltage_uv);
+    if (raw_adc >= 0)
+    {
+        return (int32_t)(((uint64_t)raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM));
+    }
+    else
+    {
+        return -(int32_t)(((uint64_t)(-raw_adc) * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM));
+    }
+}
+
+esp_err_t adc_driver_read_current_branch(uint8_t channel, adc_current_channel_t branch, uint32_t *current_ua, int32_t *pid_current_ua)
+{
+    if (channel > 3 || current_ua == NULL || pid_current_ua == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    uint16_t config = (branch == ADC_CURRENT_SENSE_Q1) ? ADS1115_CONFIG_CURRENT_AIN0 : ADS1115_CONFIG_CURRENT_AIN1;
+    int16_t raw_adc = 0;
+    esp_err_t err = ads1115_read_raw(channel, config, &raw_adc);
     if (err == ESP_OK)
     {
-        // Захист від Integer Overflow: проміжне множення у 64-бітному просторі
-        uint32_t raw_current = (uint32_t)(((uint64_t)shunt_voltage_uv * 1000) / CONFIG_SHUNT_RESISTOR_MOHM);
-        int32_t compensated = (int32_t)raw_current - s_calib[channel].current_offset_ua;
-        // ПІД-регулятор тепер отримує чесні від'ємні значення шумів
-        // тому що це потрібно для розрахунку PID-регулювання
+        int32_t offset = (branch == ADC_CURRENT_SENSE_Q1) ? s_calib[channel].current_offset_q1_ua : s_calib[channel].current_offset_q2_ua;
+
+        // ПІД-регулятор повинен бачити сирі від'ємні коливання шуму навколо нуля
+        int32_t raw_current = raw_adc_to_current_ua(raw_adc);
+        int32_t compensated = raw_current - offset;
         *pid_current_ua = compensated;
         *current_ua = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
     return err;
-    // #endif
+}
+
+esp_err_t adc_driver_read_current_dual(uint8_t channel, uint32_t *i_q1_ua, uint32_t *i_q2_ua, uint32_t *total_ua, int32_t *pid_total_ua)
+{
+    if (channel > 3 || i_q1_ua == NULL || i_q2_ua == NULL || total_ua == NULL || pid_total_ua == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    int32_t pid_q1 = 0;
+    esp_err_t err = adc_driver_read_current_branch(channel, ADC_CURRENT_SENSE_Q1, i_q1_ua, &pid_q1);
+    if (err != ESP_OK)
+        return err;
+
+    int32_t pid_q2 = 0;
+    err = adc_driver_read_current_branch(channel, ADC_CURRENT_SENSE_Q2, i_q2_ua, &pid_q2);
+    if (err != ESP_OK)
+        return err;
+
+    *pid_total_ua = pid_q1 + pid_q2;
+    int32_t compensated_total = *pid_total_ua;
+    *total_ua = (compensated_total < 0) ? 0 : (uint32_t)compensated_total;
+
+    return ESP_OK;
+}
+
+esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua, int32_t *pid_current_ua)
+{
+    if (channel > 3 || current_ua == NULL || pid_current_ua == NULL)
+        return ESP_ERR_INVALID_ARG;
+
+    if (s_calib[channel].dual_branch_enabled)
+    {
+        uint32_t i_q1 = 0, i_q2 = 0;
+        return adc_driver_read_current_dual(channel, &i_q1, &i_q2, current_ua, pid_current_ua);
+    }
+    else
+    {
+        // Одноплечовий режим (поточний макет на 1 транзисторі / шунті 0.27 Ом):
+        // Опитуємо AIN0 (I_SENSE_Q1)
+        return adc_driver_read_current_branch(channel, ADC_CURRENT_SENSE_Q1, current_ua, pid_current_ua);
+    }
 }
 
 void adc_driver_set_mock_voltage(uint8_t channel, uint32_t voltage_uv)
