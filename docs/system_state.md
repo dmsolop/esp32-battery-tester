@@ -62,6 +62,9 @@
 - [x] **[Ticket-PID-1]** У `components/load_control/pwm_driver.c` та `include/pwm_driver.h` перевести ШІМ на частоту `19531 Hz` (`20 kHz`) та роздільну здатність `LEDC_TIMER_12_BIT` (`PWM_MAX_DUTY = 4095`).
 - [x] **[Ticket-PID-2]** У `components/load_control/pid_service.c` усунути подвійне інтегрування (`ctx->current_output += output`), реалізувавши чисту позиційну форму ПІД із динамічним Anti-Windup згідно з `references/pid_math_rules.md`.
 - [x] **[Ticket-ADC-1]** У `components/adc_driver/adc_driver.c` та `adc_driver.h` усунено втрату точності при цілочисельному діленні (реалізовано формулу `(raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM)` у 64-бітному просторі) та додано підтримку опитування обох каналів струму `AIN0` (`0xCB83`, Q1) та `AIN1` (`0xDB83`, Q2) із збереженням зворотної сумісності для поточного макету на 0.27 Ом.
+- [x] **[Cross-Ticket-CTRL-1]** Реалізовано команду CLI `raw_pwm <ch> <duty>` у `components/cli/cli.c` з прямим викликом `hw_set_load_pwm()` для тестування Vref та відкриття MOSFET в обхід автоматів стану.
+- [x] **[Cross-Ticket-CTRL-2]** Адаптовано таймінги та поріг `STATE_SELF_TEST` у `components/load_control/load_control.c` під ФНЧ Варіанта Б2 (циклічний поллінг до 200 мс, поріг детекції 10 мА).
+- [x] **[Ticket-UI-1]** Реалізовано інтерактивний 2-етапний режим редагування параметрів у підменю `UI_STATE_SETTINGS` (`components/ui_interface/ui_interface.c`): вибір пунктів 0..2 (струм, напруга, температура) енкодером, вхід/вихід з режиму редагування (`is_editing`) за кліком кнопки енкодера з візуальною індикацією `> <`, крок струму 50 мА (50..3000 мА), крок напруги 50 мВ (2500..4500 мВ), крок температури 1 °C (30..80 °C), синхронізація в `system_state` та оновлення лімітів сенсорів.
 
 ### 👑 Master System Orchestrator (Статус: Очікує виконання)
 - [ ] Делегувати виконання `Ticket-PID-1`, `Ticket-PID-2` та `Ticket-ADC-1` у режим `code`.

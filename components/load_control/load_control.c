@@ -25,7 +25,7 @@ static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
     CONFIG_PWM_CH3_PIN};
 
 // Апаратне керування MOSFET через генерацію V_REF
-static void hw_set_load_pwm(uint8_t channel, uint32_t duty)
+void hw_set_load_pwm(uint8_t channel, uint32_t duty)
 {
     if (duty == 0)
     {
@@ -128,26 +128,40 @@ static void pid_control_task(void *pvParameters)
             ESP_LOGI(TAG, "CH%d: Zero offset calibrated: %ld uA", channel, raw_pid_ua);
 
             // Крок 3. Перевірка силового ланцюга (Power Path Check)
-            // Даємо мінімальний тестовий ШІМ (~5-10% від 4095 = ~200..400)
+            // Даємо тестовий ШІМ (~10% від 4095: duty=400 створює V_ref ~32 мВ після дільника 10:1;
+            // при шунті 0.27 Ом очікуваний струм становить ~119 мА, при 5 мОм > 1 А).
             hw_set_load_pwm(channel, 400); // 400 відліків для 12-бітного ШІМ
-            vTaskDelay(pdMS_TO_TICKS(50)); // Очікування відгуку хімії
 
+            // Враховуємо динаміку:
+            // 1) Дволанковий ФНЧ Б2 (R1=10k, R2=10k, C1=100nF, C2=100nF) має тау ~1.5..2 мс, встановлення > 10..15 мс.
+            // 2) АЦП ADS1115 (128 SPS) має період перетворення ~7.8 мс.
+            // 3) Хімічна та індуктивна релаксація силового контуру.
+            // Використовуємо циклічне опитування з таймаутом 200 мс (затримка кроку 20 мс) до появи ненульового струму.
             uint32_t ping_current_ua = 0;
-            adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);
+            for (int poll = 0; poll < 10; poll++)
+            {
+                vTaskDelay(pdMS_TO_TICKS(20)); // Сумарно до 200 мс очікування встановлення
+                adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);
+                if (ping_current_ua >= 10000) // Поріг детекції струму: 10 мА (захист від шуму ОП при очікуваних >100 мА)
+                {
+                    break;
+                }
+            }
+
             ESP_LOGW(TAG, "DEBUG: Ping current = %lu uA (raw = %ld)", ping_current_ua, raw_pid_ua);
             hw_set_load_pwm(channel, 0); // Миттєво закриваємо транзистор
 
-            if (ping_current_ua < 1000)
-            { // Якщо струм менше 1 мА - фізичний обрив
+            if (ping_current_ua < 10000)
+            { // Якщо струм менше 10 мА - фізичний обрив кола / вимкнене джерело / спрацював запобіжник
                 metrics.state = STATE_ERROR;
                 metrics.error_flags |= ERR_OPEN_CIRCUIT;
-                ESP_LOGE(TAG, "CH%d: Power Path Check FAILED (Open Circuit).", channel);
+                ESP_LOGE(TAG, "CH%d: Power Path Check FAILED (Open Circuit: I=%lu uA < 10mA).", channel, ping_current_ua);
             }
             else
             {
                 metrics.state = STATE_PRE_CHECK;
                 metrics.state_start_time_us = 0; // Скидаємо таймер для коректного старту OCV паузи
-                ESP_LOGI(TAG, "CH%d: Self-Test PASSED. Moving to PRE_CHECK.", channel);
+                ESP_LOGI(TAG, "CH%d: Self-Test PASSED (Ping I=%lu uA). Moving to PRE_CHECK.", channel, ping_current_ua);
             }
 
             system_state_set_metrics(channel, &metrics);

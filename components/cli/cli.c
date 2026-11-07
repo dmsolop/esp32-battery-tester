@@ -1,6 +1,7 @@
 #include "cli.h"
 #include "system_state.h"
 #include "adc_driver.h"
+#include "load_control.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
@@ -21,7 +22,7 @@ static void cli_task(void *arg)
     char line[128];
     int pos = 0;
 
-    ESP_LOGI(TAG, "CLI started. Type: start <ch>, stop <ch>, fault <ch>, set_v/set_i/set_t <ch> <val>");
+    ESP_LOGI(TAG, "CLI started. Type: start <ch>, stop <ch>, fault <ch>, raw_pwm <ch> <duty>, set_v/set_i/set_t <ch> <val>");
 
     while (1)
     {
@@ -66,6 +67,27 @@ static void cli_task(void *arg)
                     {
                         ESP_LOGI(TAG, "=> Command received: FAULT channel %d", ch);
                         system_state_set_channel_state(ch, STATE_ERROR);
+                    }
+                    else if (strcmp(cmd, "raw_pwm") == 0 && parsed == 3)
+                    {
+                        if (val < 0)
+                        {
+                            val = 0;
+                        }
+                        else if (val > 4095)
+                        {
+                            val = 4095;
+                        }
+
+                        // Обчислення розрахункової опорної напруги V_ref (ФНЧ Варіант Б2 з дільником 10:1, V_pwm = 3.3V)
+                        // V_pwm_mv = (val * 3300) / 4095
+                        // V_ref_mv = V_pwm_mv / 10 = (val * 330) / 4095
+                        float v_pwm_v = ((float)val / 4095.0f) * 3.3f;
+                        float v_ref_mv = (v_pwm_v / 10.0f) * 1000.0f;
+
+                        hw_set_load_pwm((uint8_t)ch, (uint32_t)val);
+                        ESP_LOGI(TAG, "=> Command received: RAW_PWM CH%d duty=%ld/4095 -> V_pwm=%.3fV, V_ref_calc=%.2fmV",
+                                 ch, val, v_pwm_v, v_ref_mv);
                     }
                     else if (strcmp(cmd, "set_v") == 0 && parsed == 3)
                     {

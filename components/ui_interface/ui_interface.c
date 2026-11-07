@@ -117,7 +117,7 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t 
 }
 
 // --- Рендеринг правого екрана: PRO налаштування ---
-static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t state)
+static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t state, bool is_editing)
 {
     char title[20];
     snprintf(title, sizeof(title), "-- CH%d SETUP --", ch);
@@ -128,25 +128,34 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
 
     char buf[20];
     snprintf(buf, sizeof(buf), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
-    display_engine_draw_string(rx + 4, 16, buf, 1);
+    display_engine_draw_string(rx + 8, 16, buf, 1);
 
     snprintf(buf, sizeof(buf), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
-    display_engine_draw_string(rx + 4, 28, buf, 1);
+    display_engine_draw_string(rx + 8, 28, buf, 1);
 
     snprintf(buf, sizeof(buf), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
-    display_engine_draw_string(rx + 4, 40, buf, 1);
+    display_engine_draw_string(rx + 8, 40, buf, 1);
 
-    display_engine_draw_string(rx + 4, 52, "[ <- BACK ]", 1);
+    display_engine_draw_string(rx + 8, 52, "[ <- BACK ]", 1);
 
     if (state == UI_STATE_SETTINGS && selected_param < 4)
     {
         int cursor_y[] = {16, 28, 40, 52};
-        display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
+        if (is_editing && selected_param < 3)
+        {
+            // У режимі редагування обрамляємо параметр символами > <
+            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
+            display_engine_draw_string(rx + 82, cursor_y[selected_param], "<", 1);
+        }
+        else
+        {
+            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
+        }
     }
 }
 
 // --- Головна функція рендерингу ---
-static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state)
+static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state, bool is_editing)
 {
     display_engine_clear();
     render_left(selected_ch, state);
@@ -183,7 +192,7 @@ static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state)
         break;
 
     case UI_STATE_SETTINGS:
-        render_settings(rx, selected_ch, selected_param, state);
+        render_settings(rx, selected_ch, selected_param, state, is_editing);
         break;
 
     case UI_STATE_GRAPH:
@@ -201,6 +210,7 @@ static void ui_task(void *pvParameters)
     int selected_ch = 0;
     int selected_param = 0;
     int menu_items = 4;
+    bool is_editing = false;
 
     while (1)
     {
@@ -221,28 +231,71 @@ static void ui_task(void *pvParameters)
             // Скидаємо UI на базовий вигляд каналу
             current_state = UI_STATE_CH_DETAIL;
             selected_param = 0;
+            is_editing = false;
             btn_clicked = false; // "Поглинаємо" клік, щоб він не викликав інших дій
         }
 
-        // --- Оновлення вибору через енкодер ---
+        // --- Оновлення вибору або редагування значення через енкодер ---
         if (diff != 0)
         {
-            switch (current_state)
+            if (current_state == UI_STATE_SETTINGS && is_editing)
             {
-            case UI_STATE_CH_LIST:
-                menu_items = 4;
-                selected_ch = (selected_ch + diff + menu_items) % menu_items;
-                break;
-            case UI_STATE_CH_DETAIL:
-                menu_items = 4;
-                selected_param = (selected_param + diff + menu_items) % menu_items;
-                break;
-            case UI_STATE_SETTINGS:
-                menu_items = 4;
-                selected_param = (selected_param + diff + menu_items) % menu_items;
-                break;
-            default:
-                break;
+                // Режим редагування параметрів у Settings
+                if (selected_param == 0)
+                {
+                    // Струм: крок 50 мА, діапазон 50..3000 мА
+                    int32_t val = (int32_t)cur_m.settings.target_current_ma + diff * 50;
+                    if (val < 50)
+                        val = 50;
+                    if (val > 3000)
+                        val = 3000;
+                    cur_m.settings.target_current_ma = (uint32_t)val;
+                    system_state_set_metrics(selected_ch, &cur_m);
+                }
+                else if (selected_param == 1)
+                {
+                    // Напруга відсічки: крок 50 мВ, діапазон 2500..4500 мВ
+                    int32_t val = (int32_t)cur_m.settings.cutoff_voltage_mv + diff * 50;
+                    if (val < 2500)
+                        val = 2500;
+                    if (val > 4500)
+                        val = 4500;
+                    cur_m.settings.cutoff_voltage_mv = (uint32_t)val;
+                    system_state_set_metrics(selected_ch, &cur_m);
+                }
+                else if (selected_param == 2)
+                {
+                    // Температура: крок 1 °C (1000 mc), діапазон 30..80 °C (30000..80000 mc)
+                    int32_t cur_temp_c = cur_m.settings.thermal_limit_mc / 1000;
+                    int32_t val = cur_temp_c + diff * 1;
+                    if (val < 30)
+                        val = 30;
+                    if (val > 80)
+                        val = 80;
+                    cur_m.settings.thermal_limit_mc = val * 1000;
+                    system_state_set_metrics(selected_ch, &cur_m);
+                    system_state_update_sensor_limits(selected_ch);
+                }
+            }
+            else
+            {
+                switch (current_state)
+                {
+                case UI_STATE_CH_LIST:
+                    menu_items = 4;
+                    selected_ch = (selected_ch + diff + menu_items) % menu_items;
+                    break;
+                case UI_STATE_CH_DETAIL:
+                    menu_items = 4;
+                    selected_param = (selected_param + diff + menu_items) % menu_items;
+                    break;
+                case UI_STATE_SETTINGS:
+                    menu_items = 4;
+                    selected_param = (selected_param + diff + menu_items) % menu_items;
+                    break;
+                default:
+                    break;
+                }
             }
         }
 
@@ -272,6 +325,7 @@ static void ui_task(void *pvParameters)
                 {
                     current_state = UI_STATE_SETTINGS;
                     selected_param = 0;
+                    is_editing = false;
                 }
                 else if (selected_param == 3)
                 {
@@ -285,6 +339,12 @@ static void ui_task(void *pvParameters)
                 {
                     current_state = UI_STATE_CH_DETAIL;
                     selected_param = 2;
+                    is_editing = false;
+                }
+                else if (selected_param >= 0 && selected_param <= 2)
+                {
+                    // Перемикання режиму редагування на параметрах 0, 1, 2
+                    is_editing = !is_editing;
                 }
                 break;
 
@@ -296,7 +356,7 @@ static void ui_task(void *pvParameters)
             }
         }
 
-        ui_render(selected_ch, selected_param, current_state);
+        ui_render(selected_ch, selected_param, current_state, is_editing);
         display_engine_update();
 
         vTaskDelay(pdMS_TO_TICKS(50));
