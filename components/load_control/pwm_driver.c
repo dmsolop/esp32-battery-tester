@@ -5,8 +5,8 @@
 
 #define PWM_TIMER LEDC_TIMER_0
 #define PWM_MODE LEDC_LOW_SPEED_MODE
-#define PWM_RESOLUTION LEDC_TIMER_13_BIT
-#define PWM_FREQ_HZ 5000 // 5 кГц для ефективного згладжування RC-фільтром
+#define PWM_RESOLUTION LEDC_TIMER_12_BIT
+#define PWM_FREQ_HZ 19531 // ~20 кГц (19531 Гц) для LEDC_TIMER_12_BIT (80MHz / 4096)
 
 esp_err_t load_control_pwm_init(uint8_t channel, int gpio_num)
 {

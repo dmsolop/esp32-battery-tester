@@ -44,7 +44,9 @@ static void pid_control_task(void *pvParameters)
     channel_metrics_t metrics;
 
     pid_context_t channel_pid;
-    pid_service_init(&channel_pid, 0.005f, 0.001f, 0.0f, 0.0f, (float)PWM_MAX_DUTY);
+    // Адаптовані коефіцієнти позиційного ПІД під 12-бітний ШІМ (0..4095)
+    // та дільник 10:1 (V_ref = V_pwm * 0.1, R_shunt = 0.27 Ом для макету, ~3000 мкА/duty)
+    pid_service_init(&channel_pid, 0.002f, 0.005f, 0.0f, 0.0f, (float)PWM_MAX_DUTY);
 
     int channel_pwm_pin = pwm_pins[channel];
     if (load_control_pwm_init(channel, channel_pwm_pin) != ESP_OK)
@@ -126,9 +128,9 @@ static void pid_control_task(void *pvParameters)
             ESP_LOGI(TAG, "CH%d: Zero offset calibrated: %ld uA", channel, raw_pid_ua);
 
             // Крок 3. Перевірка силового ланцюга (Power Path Check)
-            // Даємо мінімальний ШІМ (наприклад, 5% від 8191 = ~400)
-            hw_set_load_pwm(channel, 1200); // TODO Повернути до 400 для релізу. 120 були вибрані для тестування при макетуванні
-            vTaskDelay(pdMS_TO_TICKS(50));  // Очікування відгуку хімії
+            // Даємо мінімальний тестовий ШІМ (~5-10% від 4095 = ~200..400)
+            hw_set_load_pwm(channel, 400); // 400 відліків для 12-бітного ШІМ
+            vTaskDelay(pdMS_TO_TICKS(50)); // Очікування відгуку хімії
 
             uint32_t ping_current_ua = 0;
             adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);

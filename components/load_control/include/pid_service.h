@@ -1,15 +1,18 @@
 #pragma once
 
+#include <stdbool.h>
+
 typedef struct
 {
     float kp;
     float ki;
     float kd;
     float integral;
-    float prev_error;
-    float current_output; // Внутрішня пам'ять поточного рівня ШІМ
-    float out_min;        // Мінімальний ліміт ШІМ
-    float out_max;        // Максимальний ліміт ШІМ
+    float prev_measured;      // Для Derivative-on-Measurement замість prev_error
+    bool prev_measured_valid; // Прапорець ініціалізації першого виміру
+    float current_output;     // Поточний рівень виходу ШІМ (позиційна форма)
+    float out_min;            // Мінімальний ліміт ШІМ
+    float out_max;            // Максимальний ліміт ШІМ
 } pid_context_t;
 
 // Ініціалізація контексту регулятора із заданими коефіцієнтами та лімітами
@@ -18,5 +21,5 @@ void pid_service_init(pid_context_t *ctx, float kp, float ki, float kd, float ou
 // Миттєве скидання накопиченої помилки та обнулення виходу ШІМ
 void pid_service_reset(pid_context_t *ctx);
 
-// Головна функція розрахунку. Повертає готове значення керуючого впливу
+// Головна функція розрахунку. Повертає готове значення керуючого впливу (позиційна форма P + I + D)
 float pid_service_compute(pid_context_t *ctx, float setpoint, float measured_value, float dt_sec);
