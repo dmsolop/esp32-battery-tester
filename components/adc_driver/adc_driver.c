@@ -17,7 +17,7 @@
 #define ADS1115_REG_CONFIG 0x01
 
 #ifndef CONFIG_SHUNT_RESISTOR_MOHM
-#define CONFIG_SHUNT_RESISTOR_MOHM 500 // Дефолт 0.5 Ом
+#define CONFIG_SHUNT_RESISTOR_MOHM 270 // TODO  виставити правильне значення
 #endif
 
 typedef struct
@@ -147,11 +147,9 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 
         if (s_ads_handles[channel] != NULL)
         {
-            // TODO: Розділити конфігурацію PGA (Config Register) для ADS1115
-            // - Для каналу напруги: залишити PGA = +/- 4.096V (біти 11-9 = 001).
-            // - Для каналу струму (шунт 5 мОм): встановити PGA = +/- 0.256V (біти 11-9 = 101) для точності 1.56 мА/біт.
-            uint16_t config = 0x0383;
-            config |= (is_current ? 0xD000 : 0xC000);
+            // Диференційний вимір напруги Кельвіна AIN2-AIN3 (PGA = +/-4.096V -> 0xB383)
+            // Вимір струму з шунта AIN1-GND (PGA = +/-0.256V -> 0xDB83)
+            uint16_t config = is_current ? 0xDB83 : 0xB383;
 
             uint8_t write_buf[3] = {
                 ADS1115_REG_CONFIG,
@@ -172,7 +170,19 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
                     int16_t raw_adc = (read_buf[0] << 8) | read_buf[1];
                     if (raw_adc < 0)
                         raw_adc = 0;
-                    *out_val_uv = (uint32_t)raw_adc * 125;
+
+                    if (is_current)
+                    {
+                        // 1 LSB при PGA +/-0.256V = 7.8125 мкВ (125 / 16)
+                        *out_val_uv = (uint32_t)(((uint64_t)raw_adc * 125) / 16);
+                    }
+                    else
+                    {
+                        // 1 LSB при PGA +/-4.096V = 125 мкВ
+                        // Множимо на коефіцієнт Кельвін-дільника 21.5 (205k / 10k -> * 43 / 2)
+                        uint64_t adc_uv = (uint64_t)raw_adc * 125;
+                        *out_val_uv = (uint32_t)((adc_uv * 43) / 2);
+                    }
                 }
             }
         }
@@ -189,11 +199,11 @@ static esp_err_t i2c_read_adc(uint8_t channel, bool is_current, uint32_t *out_va
 
 esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
 {
-#ifndef NDEBUG
-    *voltage_uv = s_mock_voltage[channel];
-    vTaskDelay(pdMS_TO_TICKS(10));
-    return ESP_OK;
-#else
+    // #ifndef NDEBUG
+    //     *voltage_uv = s_mock_voltage[channel];
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    //     return ESP_OK;
+    // #else
     uint32_t raw_voltage = 0;
     esp_err_t err = i2c_read_adc(channel, false, &raw_voltage);
     if (err == ESP_OK)
@@ -202,17 +212,17 @@ esp_err_t adc_driver_read_voltage(uint8_t channel, uint32_t *voltage_uv)
         *voltage_uv = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
     return err;
-#endif
+    // #endif
 }
 
 esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua, int32_t *pid_current_ua)
 {
-#ifndef NDEBUG
-    *current_ua = s_mock_current[channel];
-    *pid_current_ua = s_mock_current[channel];
-    vTaskDelay(pdMS_TO_TICKS(10));
-    return ESP_OK;
-#else
+    // #ifndef NDEBUG
+    //     *current_ua = s_mock_current[channel];
+    //     *pid_current_ua = s_mock_current[channel];
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    //     return ESP_OK;
+    // #else
     uint32_t shunt_voltage_uv = 0;
     esp_err_t err = i2c_read_adc(channel, true, &shunt_voltage_uv);
     if (err == ESP_OK)
@@ -226,7 +236,7 @@ esp_err_t adc_driver_read_current(uint8_t channel, uint32_t *current_ua, int32_t
         *current_ua = (compensated < 0) ? 0 : (uint32_t)compensated;
     }
     return err;
-#endif
+    // #endif
 }
 
 void adc_driver_set_mock_voltage(uint8_t channel, uint32_t voltage_uv)

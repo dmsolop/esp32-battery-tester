@@ -127,11 +127,12 @@ static void pid_control_task(void *pvParameters)
 
             // Крок 3. Перевірка силового ланцюга (Power Path Check)
             // Даємо мінімальний ШІМ (наприклад, 5% від 8191 = ~400)
-            hw_set_load_pwm(channel, 400);
-            vTaskDelay(pdMS_TO_TICKS(20)); // Очікування відгуку хімії
+            hw_set_load_pwm(channel, 1200); // TODO Повернути до 400 для релізу. 120 були вибрані для тестування при макетуванні
+            vTaskDelay(pdMS_TO_TICKS(50));  // Очікування відгуку хімії
 
             uint32_t ping_current_ua = 0;
             adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);
+            ESP_LOGW(TAG, "DEBUG: Ping current = %lu uA (raw = %ld)", ping_current_ua, raw_pid_ua);
             hw_set_load_pwm(channel, 0); // Миттєво закриваємо транзистор
 
             if (ping_current_ua < 1000)

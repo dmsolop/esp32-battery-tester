@@ -19,7 +19,7 @@ static SemaphoreHandle_t s_state_mutex = NULL;
 
 // Матриця безпечних заводських налаштувань для кожної хімії
 static const channel_settings_t s_default_settings[3] = {
-    [CHEM_LI_ION] = {.chem = CHEM_LI_ION, .target_current_ma = 1000, .cutoff_voltage_mv = 3000, .thermal_limit_mc = 60000, .pro_pid_override = false, .kp = 0.0f, .ki = 0.0f, .kd = 0.0f},
+    [CHEM_LI_ION] = {.chem = CHEM_LI_ION, .target_current_ma = 300, .cutoff_voltage_mv = 3000, .thermal_limit_mc = 60000, .pro_pid_override = false, .kp = 0.0f, .ki = 0.0f, .kd = 0.0f},
     [CHEM_NIMH] = {.chem = CHEM_NIMH, .target_current_ma = 500, .cutoff_voltage_mv = 1000, .thermal_limit_mc = 50000, .pro_pid_override = false, .kp = 0.0f, .ki = 0.0f, .kd = 0.0f},
     [CHEM_LIFEPO4] = {.chem = CHEM_LIFEPO4, .target_current_ma = 1000, .cutoff_voltage_mv = 2500, .thermal_limit_mc = 50000, .pro_pid_override = false, .kp = 0.0f, .ki = 0.0f, .kd = 0.0f}};
 
