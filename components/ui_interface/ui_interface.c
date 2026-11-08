@@ -2,6 +2,8 @@
 #include "display_engine.h"
 #include "input_service.h"
 #include "system_state.h"
+#include "load_control.h"
+#include "adc_driver.h"
 #include "icons.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -14,13 +16,15 @@ typedef enum
     UI_STATE_CH_LIST,
     UI_STATE_CH_DETAIL,
     UI_STATE_SETTINGS,
-    UI_STATE_GRAPH
+    UI_STATE_GRAPH,
+    UI_STATE_TEST_DIAG
 } ui_state_t;
 
 #define VISIBLE_ROWS 4
-#define CH_DETAIL_TOTAL_ITEMS 5
-#define SETTINGS_TOTAL_ITEMS 4
+#define CH_DETAIL_TOTAL_ITEMS 6
+#define SETTINGS_TOTAL_ITEMS 7
 #define LIVE_MONITOR_TOTAL_ITEMS 7
+#define TEST_DIAG_TOTAL_ITEMS 8
 
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
 
@@ -179,7 +183,8 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, int scroll_
     items[1] = is_active ? "[ [] STOP  ]" : "[ -> START ]";
     items[2] = "[ LIVE MONITOR ]";
     items[3] = "[ PRO SETS ]";
-    items[4] = "[ <- BACK  ]";
+    items[4] = "[ TESTS & SAFE ]";
+    items[5] = "[ <- BACK  ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -222,15 +227,22 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     char buf_i[24];
     char buf_v[24];
     char buf_t[24];
+    char buf_cap[24];
+    char buf_tim[24];
     snprintf(buf_i, sizeof(buf_i), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
     snprintf(buf_v, sizeof(buf_v), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
     snprintf(buf_t, sizeof(buf_t), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
+    snprintf(buf_cap, sizeof(buf_cap), "CapLim: %4lu mAh", (unsigned long)m.settings.capacity_limit_mah);
+    snprintf(buf_tim, sizeof(buf_tim), "TimeLim: %3lu min", (unsigned long)(m.settings.time_limit_s / 60));
 
     const char *items[SETTINGS_TOTAL_ITEMS];
     items[0] = buf_i;
     items[1] = buf_v;
     items[2] = buf_t;
-    items[3] = "[ <- BACK ]";
+    items[3] = buf_cap;
+    items[4] = buf_tim;
+    items[5] = "[ Reset Defaults ]";
+    items[6] = "[ <- BACK ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -244,10 +256,10 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
 
         if (state == UI_STATE_SETTINGS && item_idx == selected_param)
         {
-            if (is_editing && selected_param < 3)
+            if (is_editing && selected_param <= 4)
             {
                 display_engine_draw_string(rx + 0, y_pos, ">", 1);
-                display_engine_draw_string(rx + 82, y_pos, "<", 1);
+                display_engine_draw_string(rx + 112, y_pos, "<", 1);
             }
             else
             {
@@ -434,8 +446,83 @@ static void render_live_monitor(int rx, uint8_t ch, int selected_param, int scro
     }
 }
 
+// --- Рендеринг правого екрана: Тести, діагностика та безпека ---
+static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing, uint16_t raw_pwm_val)
+{
+    char title[20];
+    snprintf(title, sizeof(title), "- CH%d TEST/DIAG -", ch);
+    display_engine_draw_string(rx + 4, 4, title, 1);
+
+    channel_metrics_t m;
+    system_state_get_metrics(ch, &m);
+
+    // Рахуємо кількість прив'язаних 1-Wire датчиків
+    int bound_sensors = 0;
+    for (int i = 0; i < MAX_SENSORS_PER_CHANNEL; i++)
+    {
+        if (m.temp_sensors[i].is_bound)
+        {
+            bound_sensors++;
+        }
+    }
+
+    char buf_pwm[24];
+    char buf_sag[24];
+    char buf_pk[24];
+    char buf_1w[24];
+    snprintf(buf_pwm, sizeof(buf_pwm), "RawPWM: %4u", raw_pwm_val);
+    snprintf(buf_sag, sizeof(buf_sag), "Sag/DCIR:%4umO", (unsigned int)(m.internal_res_mohm % 10000U));
+    snprintf(buf_pk, sizeof(buf_pk), "NiMH Pk:%4lumV", (unsigned long)(m.peak_voltage_uv / 1000));
+    snprintf(buf_1w, sizeof(buf_1w), "1W Sens: %d bound", bound_sensors);
+
+    const char *items[TEST_DIAG_TOTAL_ITEMS];
+    items[0] = "[ HW Self-Test ]";
+    items[1] = "[ Pre-Check OCV ]";
+    items[2] = "[ Zero Calib REL ]";
+    items[3] = buf_pwm;
+    items[4] = buf_sag;
+    items[5] = buf_pk;
+    items[6] = buf_1w;
+    items[7] = "[ <- BACK ]";
+
+    int base_y[] = {16, 28, 40, 52};
+
+    for (int row = 0; row < VISIBLE_ROWS; row++)
+    {
+        int item_idx = scroll_offset + row;
+        if (item_idx >= TEST_DIAG_TOTAL_ITEMS)
+            break;
+
+        int y_pos = base_y[row];
+
+        if (state == UI_STATE_TEST_DIAG && item_idx == selected_param)
+        {
+            if (is_editing && selected_param == 3)
+            {
+                display_engine_draw_string(rx + 0, y_pos, ">", 1);
+                display_engine_draw_string(rx + 98, y_pos, "<", 1);
+            }
+            else
+            {
+                display_engine_draw_string(rx + 0, y_pos, ">", 1);
+            }
+        }
+        display_engine_draw_string(rx + 8, y_pos, items[item_idx], 1);
+    }
+
+    // Візуальні індикатори прокрутки у правій колонці (X = rx + 120 = 248)
+    if (scroll_offset > 0)
+    {
+        display_engine_draw_string(rx + 120, 16, "^", 1);
+    }
+    if (scroll_offset + VISIBLE_ROWS < TEST_DIAG_TOTAL_ITEMS)
+    {
+        display_engine_draw_string(rx + 120, 52, "v", 1);
+    }
+}
+
 // --- Головна функція рендерингу ---
-static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing)
+static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing, uint16_t raw_pwm_val)
 {
     display_engine_clear();
     render_left(selected_ch, state);
@@ -478,6 +565,10 @@ static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset
     case UI_STATE_GRAPH:
         render_live_monitor(rx, selected_ch, selected_param, scroll_offset, state);
         break;
+
+    case UI_STATE_TEST_DIAG:
+        render_test_diag(rx, selected_ch, selected_param, scroll_offset, state, is_editing, raw_pwm_val);
+        break;
     }
 }
 
@@ -490,6 +581,7 @@ static void ui_task(void *pvParameters)
     int scroll_offset = 0;
     int menu_items = 4;
     bool is_editing = false;
+    uint16_t raw_pwm_val = 0;
 
     while (1)
     {
@@ -556,6 +648,44 @@ static void ui_task(void *pvParameters)
                     system_state_set_metrics(selected_ch, &cur_m);
                     system_state_update_sensor_limits(selected_ch);
                 }
+                else if (selected_param == 3)
+                {
+                    // Ліміт ємності: крок 250 мА·год, діапазон 500..20000 мА·год
+                    int32_t val = (int32_t)cur_m.settings.capacity_limit_mah + diff * 250;
+                    if (val < 500)
+                        val = 500;
+                    if (val > 20000)
+                        val = 20000;
+                    cur_m.settings.capacity_limit_mah = (uint32_t)val;
+                    system_state_set_metrics(selected_ch, &cur_m);
+                }
+                else if (selected_param == 4)
+                {
+                    // Ліміт часу: крок 15 хв (900 с), діапазон 15..1440 хв (900..86400 с)
+                    int32_t cur_min = (int32_t)(cur_m.settings.time_limit_s / 60);
+                    int32_t val_min = cur_min + diff * 15;
+                    if (val_min < 15)
+                        val_min = 15;
+                    if (val_min > 1440)
+                        val_min = 1440;
+                    cur_m.settings.time_limit_s = (uint32_t)(val_min * 60);
+                    system_state_set_metrics(selected_ch, &cur_m);
+                }
+            }
+            else if (current_state == UI_STATE_TEST_DIAG && is_editing)
+            {
+                // Режим редагування параметрів у Test & Diag
+                if (selected_param == 3)
+                {
+                    // Тестовий ШІМ: крок 50 відліків, діапазон 0..4095
+                    int32_t val = (int32_t)raw_pwm_val + diff * 50;
+                    if (val < 0)
+                        val = 0;
+                    if (val > 4095)
+                        val = 4095;
+                    raw_pwm_val = (uint16_t)val;
+                    load_control_set_raw_pwm(selected_ch, raw_pwm_val);
+                }
             }
             else
             {
@@ -577,6 +707,11 @@ static void ui_task(void *pvParameters)
                     break;
                 case UI_STATE_GRAPH:
                     menu_items = LIVE_MONITOR_TOTAL_ITEMS;
+                    selected_param = (selected_param + diff + menu_items) % menu_items;
+                    update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
+                    break;
+                case UI_STATE_TEST_DIAG:
+                    menu_items = TEST_DIAG_TOTAL_ITEMS;
                     selected_param = (selected_param + diff + menu_items) % menu_items;
                     update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
                     break;
@@ -642,6 +777,14 @@ static void ui_task(void *pvParameters)
                 }
                 else if (selected_param == 4)
                 {
+                    // TESTS & SAFE DIAG
+                    current_state = UI_STATE_TEST_DIAG;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
+                }
+                else if (selected_param == 5)
+                {
                     // BACK TO CH LIST
                     current_state = UI_STATE_CH_LIST;
                     selected_param = 0;
@@ -650,7 +793,7 @@ static void ui_task(void *pvParameters)
                 break;
 
             case UI_STATE_SETTINGS:
-                if (selected_param == 3)
+                if (selected_param == 6)
                 {
                     // BACK TO CH DETAIL
                     current_state = UI_STATE_CH_DETAIL;
@@ -658,10 +801,63 @@ static void ui_task(void *pvParameters)
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
                 }
-                else if (selected_param >= 0 && selected_param <= 2)
+                else if (selected_param == 5)
                 {
-                    // Перемикання режиму редагування на параметрах 0, 1, 2
+                    // [ Reset Defaults ]: скидання до безпечних ROM-значень поточної хімії
+                    system_state_set_chemistry(selected_ch, cur_m.settings.chem);
+                }
+                else if (selected_param >= 0 && selected_param <= 4)
+                {
+                    // Перемикання режиму редагування на параметрах 0..4 (I, V, T, CapLim, TimeLim)
                     is_editing = !is_editing;
+                }
+                break;
+
+            case UI_STATE_TEST_DIAG:
+                if (selected_param == 0)
+                {
+                    // [ HW Self-Test ]: запуск фази самотестування силового тракту з переходом на Live Monitor
+                    system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
+                    current_state = UI_STATE_GRAPH;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
+                }
+                else if (selected_param == 1)
+                {
+                    // [ Pre-Check OCV ]: запуск фази вимірювання ЕРС з переходом на Live Monitor
+                    system_state_set_channel_state(selected_ch, STATE_PRE_CHECK);
+                    current_state = UI_STATE_GRAPH;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
+                }
+                else if (selected_param == 2)
+                {
+                    // [ Zero Calib REL ]: тарування нуля / компенсація зміщення ОП і 2-провідних кабелів
+                    uint32_t zero_current_ua = 0;
+                    int32_t raw_pid_ua = 0;
+                    adc_driver_read_current(selected_ch, &zero_current_ua, &raw_pid_ua);
+                    adc_driver_set_zero_offset(selected_ch, 0, raw_pid_ua);
+                }
+                else if (selected_param == 3)
+                {
+                    // RawPWM: перемикання режиму інтерактивного редагування значення ШІМ
+                    is_editing = !is_editing;
+                }
+                else if (selected_param == 7)
+                {
+                    // BACK TO CH DETAIL
+                    // Якщо був виставлений ручний тестовий ШІМ, безпечно скидаємо його при виході
+                    if (raw_pwm_val > 0)
+                    {
+                        raw_pwm_val = 0;
+                        load_control_set_raw_pwm(selected_ch, 0);
+                    }
+                    current_state = UI_STATE_CH_DETAIL;
+                    selected_param = 4; // Повертаємо курсор на [ TESTS & SAFE ]
+                    update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                    is_editing = false;
                 }
                 break;
 
@@ -674,7 +870,7 @@ static void ui_task(void *pvParameters)
             }
         }
 
-        ui_render(selected_ch, selected_param, scroll_offset, current_state, is_editing);
+        ui_render(selected_ch, selected_param, scroll_offset, current_state, is_editing, raw_pwm_val);
         display_engine_update();
 
         vTaskDelay(pdMS_TO_TICKS(50));
