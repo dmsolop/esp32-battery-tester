@@ -16,8 +16,30 @@ typedef enum
     UI_STATE_GRAPH
 } ui_state_t;
 
-#define CH_DETAIL_ITEMS 3
+#define VISIBLE_ROWS 4
+#define CH_DETAIL_TOTAL_ITEMS 5
+#define SETTINGS_TOTAL_ITEMS 4
+
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
+
+// --- Універсальний механізм віконної прокрутки (Viewport Scrolling) ---
+static void update_scroll_offset(int selected_idx, int total_items, int *scroll_offset, int visible_rows)
+{
+    if (total_items <= visible_rows)
+    {
+        *scroll_offset = 0;
+        return;
+    }
+
+    if (selected_idx < *scroll_offset)
+    {
+        *scroll_offset = selected_idx;
+    }
+    else if (selected_idx >= *scroll_offset + visible_rows)
+    {
+        *scroll_offset = selected_idx - visible_rows + 1;
+    }
+}
 
 // --- Словник подій (всі рядки вирівняні до 14 символів для центрування) ---
 static const char *get_error_msg(uint32_t error_flags)
@@ -93,7 +115,7 @@ static void render_left(uint8_t selected_ch, ui_state_t state)
 }
 
 // --- Рендеринг правого екрана: головний екран каналу ---
-static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t state)
+static void render_ch_detail(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state)
 {
     char title[20];
     snprintf(title, sizeof(title), "--- CH %d ---", ch);
@@ -102,22 +124,51 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, ui_state_t 
     channel_metrics_t m;
     system_state_get_metrics(ch, &m);
 
-    char chem_str[20];
-    snprintf(chem_str, sizeof(chem_str), "Chem: %s", s_chem_names[m.settings.chem]);
-    display_engine_draw_string(rx + 4, 18, chem_str, 1);
-    display_engine_draw_string(rx + 4, 30, "[ -> START ]", 1);
-    display_engine_draw_string(rx + 4, 42, "[ SETTINGS ]", 1);
-    display_engine_draw_string(rx + 4, 54, "[ <- BACK  ]", 1);
+    bool is_active = (m.state == STATE_SELF_TEST ||
+                      m.state == STATE_PRE_CHECK ||
+                      m.state == STATE_DISCHARGING ||
+                      m.state == STATE_CHARGING);
 
-    if (state == UI_STATE_CH_DETAIL && selected_param < CH_DETAIL_ITEMS + 1)
+    char chem_str[24];
+    snprintf(chem_str, sizeof(chem_str), "Chem: %s", s_chem_names[m.settings.chem]);
+
+    const char *items[CH_DETAIL_TOTAL_ITEMS];
+    items[0] = chem_str;
+    items[1] = is_active ? "[ [] STOP  ]" : "[ -> START ]";
+    items[2] = "[ LIVE MON ]";
+    items[3] = "[ PRO SETS ]";
+    items[4] = "[ <- BACK  ]";
+
+    int base_y[] = {16, 28, 40, 52};
+
+    for (int row = 0; row < VISIBLE_ROWS; row++)
     {
-        int cursor_y[] = {18, 30, 42, 54};
-        display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
+        int item_idx = scroll_offset + row;
+        if (item_idx >= CH_DETAIL_TOTAL_ITEMS)
+            break;
+
+        int y_pos = base_y[row];
+
+        if (state == UI_STATE_CH_DETAIL && item_idx == selected_param)
+        {
+            display_engine_draw_string(rx + 0, y_pos, ">", 1);
+        }
+        display_engine_draw_string(rx + 8, y_pos, items[item_idx], 1);
+    }
+
+    // Візуальні індикатори прокрутки у правій колонці (X = rx + 120 = 248)
+    if (scroll_offset > 0)
+    {
+        display_engine_draw_string(rx + 120, 16, "^", 1);
+    }
+    if (scroll_offset + VISIBLE_ROWS < CH_DETAIL_TOTAL_ITEMS)
+    {
+        display_engine_draw_string(rx + 120, 52, "v", 1);
     }
 }
 
 // --- Рендеринг правого екрана: PRO налаштування ---
-static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t state, bool is_editing)
+static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing)
 {
     char title[20];
     snprintf(title, sizeof(title), "-- CH%d SETUP --", ch);
@@ -126,36 +177,57 @@ static void render_settings(int rx, uint8_t ch, int selected_param, ui_state_t s
     channel_metrics_t m;
     system_state_get_metrics(ch, &m);
 
-    char buf[20];
-    snprintf(buf, sizeof(buf), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
-    display_engine_draw_string(rx + 8, 16, buf, 1);
+    char buf_i[24];
+    char buf_v[24];
+    char buf_t[24];
+    snprintf(buf_i, sizeof(buf_i), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
+    snprintf(buf_v, sizeof(buf_v), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
+    snprintf(buf_t, sizeof(buf_t), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
 
-    snprintf(buf, sizeof(buf), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
-    display_engine_draw_string(rx + 8, 28, buf, 1);
+    const char *items[SETTINGS_TOTAL_ITEMS];
+    items[0] = buf_i;
+    items[1] = buf_v;
+    items[2] = buf_t;
+    items[3] = "[ <- BACK ]";
 
-    snprintf(buf, sizeof(buf), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
-    display_engine_draw_string(rx + 8, 40, buf, 1);
+    int base_y[] = {16, 28, 40, 52};
 
-    display_engine_draw_string(rx + 8, 52, "[ <- BACK ]", 1);
-
-    if (state == UI_STATE_SETTINGS && selected_param < 4)
+    for (int row = 0; row < VISIBLE_ROWS; row++)
     {
-        int cursor_y[] = {16, 28, 40, 52};
-        if (is_editing && selected_param < 3)
+        int item_idx = scroll_offset + row;
+        if (item_idx >= SETTINGS_TOTAL_ITEMS)
+            break;
+
+        int y_pos = base_y[row];
+
+        if (state == UI_STATE_SETTINGS && item_idx == selected_param)
         {
-            // У режимі редагування обрамляємо параметр символами > <
-            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
-            display_engine_draw_string(rx + 82, cursor_y[selected_param], "<", 1);
+            if (is_editing && selected_param < 3)
+            {
+                display_engine_draw_string(rx + 0, y_pos, ">", 1);
+                display_engine_draw_string(rx + 82, y_pos, "<", 1);
+            }
+            else
+            {
+                display_engine_draw_string(rx + 0, y_pos, ">", 1);
+            }
         }
-        else
-        {
-            display_engine_draw_string(rx + 0, cursor_y[selected_param], ">", 1);
-        }
+        display_engine_draw_string(rx + 8, y_pos, items[item_idx], 1);
+    }
+
+    // Візуальні індикатори прокрутки у правій колонці (X = rx + 120 = 248)
+    if (scroll_offset > 0)
+    {
+        display_engine_draw_string(rx + 120, 16, "^", 1);
+    }
+    if (scroll_offset + VISIBLE_ROWS < SETTINGS_TOTAL_ITEMS)
+    {
+        display_engine_draw_string(rx + 120, 52, "v", 1);
     }
 }
 
 // --- Головна функція рендерингу ---
-static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state, bool is_editing)
+static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing)
 {
     display_engine_clear();
     render_left(selected_ch, state);
@@ -188,11 +260,11 @@ static void ui_render(uint8_t selected_ch, int selected_param, ui_state_t state,
         break;
 
     case UI_STATE_CH_DETAIL:
-        render_ch_detail(rx, selected_ch, selected_param, state);
+        render_ch_detail(rx, selected_ch, selected_param, scroll_offset, state);
         break;
 
     case UI_STATE_SETTINGS:
-        render_settings(rx, selected_ch, selected_param, state, is_editing);
+        render_settings(rx, selected_ch, selected_param, scroll_offset, state, is_editing);
         break;
 
     case UI_STATE_GRAPH:
@@ -209,6 +281,7 @@ static void ui_task(void *pvParameters)
     ui_state_t current_state = UI_STATE_CH_LIST;
     int selected_ch = 0;
     int selected_param = 0;
+    int scroll_offset = 0;
     int menu_items = 4;
     bool is_editing = false;
 
@@ -231,6 +304,7 @@ static void ui_task(void *pvParameters)
             // Скидаємо UI на базовий вигляд каналу
             current_state = UI_STATE_CH_DETAIL;
             selected_param = 0;
+            scroll_offset = 0;
             is_editing = false;
             btn_clicked = false; // "Поглинаємо" клік, щоб він не викликав інших дій
         }
@@ -282,16 +356,18 @@ static void ui_task(void *pvParameters)
                 switch (current_state)
                 {
                 case UI_STATE_CH_LIST:
-                    menu_items = 4;
+                    menu_items = CONFIG_MAX_CHANNELS;
                     selected_ch = (selected_ch + diff + menu_items) % menu_items;
                     break;
                 case UI_STATE_CH_DETAIL:
-                    menu_items = 4;
+                    menu_items = CH_DETAIL_TOTAL_ITEMS;
                     selected_param = (selected_param + diff + menu_items) % menu_items;
+                    update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
                     break;
                 case UI_STATE_SETTINGS:
-                    menu_items = 4;
+                    menu_items = SETTINGS_TOTAL_ITEMS;
                     selected_param = (selected_param + diff + menu_items) % menu_items;
+                    update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
                     break;
                 default:
                     break;
@@ -307,38 +383,68 @@ static void ui_task(void *pvParameters)
             case UI_STATE_CH_LIST:
                 current_state = UI_STATE_CH_DETAIL;
                 selected_param = 0;
+                scroll_offset = 0;
                 break;
 
             case UI_STATE_CH_DETAIL:
                 if (selected_param == 0)
                 {
-                    cur_m.settings.chem = (battery_chem_t)((cur_m.settings.chem + 1) % 3);
-                    system_state_set_metrics(selected_ch, &cur_m);
+                    // Дозволено перемикання хімії лише коли канал у STATE_IDLE або STATE_FINISHED
+                    if (cur_m.state == STATE_IDLE || cur_m.state == STATE_FINISHED)
+                    {
+                        battery_chem_t next_chem = (battery_chem_t)((cur_m.settings.chem + 1) % 3);
+                        system_state_set_chemistry(selected_ch, next_chem);
+                    }
                 }
                 else if (selected_param == 1)
                 {
-                    system_state_set_channel_state(selected_ch, STATE_SELF_TEST); // Замінено PRE_CHECK на SELF_TEST
-                    current_state = UI_STATE_GRAPH;
-                    selected_param = 0;
+                    // Динамічна дія запуску/зупинки
+                    bool is_active = (cur_m.state == STATE_SELF_TEST ||
+                                      cur_m.state == STATE_PRE_CHECK ||
+                                      cur_m.state == STATE_DISCHARGING ||
+                                      cur_m.state == STATE_CHARGING);
+                    if (is_active)
+                    {
+                        // Негайна зупинка розряду
+                        system_state_set_channel_state(selected_ch, STATE_IDLE);
+                    }
+                    else
+                    {
+                        // Запуск розряду
+                        system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
+                    }
                 }
                 else if (selected_param == 2)
                 {
-                    current_state = UI_STATE_SETTINGS;
+                    // LIVE MONITOR
+                    current_state = UI_STATE_GRAPH;
                     selected_param = 0;
-                    is_editing = false;
+                    scroll_offset = 0;
                 }
                 else if (selected_param == 3)
                 {
+                    // PRO SETTINGS
+                    current_state = UI_STATE_SETTINGS;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
+                }
+                else if (selected_param == 4)
+                {
+                    // BACK TO CH LIST
                     current_state = UI_STATE_CH_LIST;
                     selected_param = 0;
+                    scroll_offset = 0;
                 }
                 break;
 
             case UI_STATE_SETTINGS:
                 if (selected_param == 3)
                 {
+                    // BACK TO CH DETAIL
                     current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 2;
+                    selected_param = 3; // Повертаємо курсор на пункт [ PRO SETS ]
+                    update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
                 }
                 else if (selected_param >= 0 && selected_param <= 2)
@@ -349,14 +455,15 @@ static void ui_task(void *pvParameters)
                 break;
 
             case UI_STATE_GRAPH:
-                system_state_set_channel_state(selected_ch, STATE_IDLE);
+                // Вихід з екрана моніторингу назад у CH_DETAIL БЕЗ зупинки розряду
                 current_state = UI_STATE_CH_DETAIL;
-                selected_param = 0;
+                selected_param = 2; // Курсор на [ LIVE MON ]
+                update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                 break;
             }
         }
 
-        ui_render(selected_ch, selected_param, current_state, is_editing);
+        ui_render(selected_ch, selected_param, scroll_offset, current_state, is_editing);
         display_engine_update();
 
         vTaskDelay(pdMS_TO_TICKS(50));
