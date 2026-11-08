@@ -85,7 +85,7 @@ static void cli_task(void *arg)
                         float v_pwm_v = ((float)val / 4095.0f) * 3.3f;
                         float v_ref_mv = (v_pwm_v / 10.0f) * 1000.0f;
 
-                        hw_set_load_pwm((uint8_t)ch, (uint32_t)val);
+                        load_control_set_raw_pwm((uint8_t)ch, (uint16_t)val);
                         ESP_LOGI(TAG, "=> Command received: RAW_PWM CH%d duty=%ld/4095 -> V_pwm=%.3fV, V_ref_calc=%.2fmV",
                                  ch, val, v_pwm_v, v_ref_mv);
                     }

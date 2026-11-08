@@ -16,6 +16,7 @@
 
 static const char *TAG = "LOAD_CTRL";
 static TaskHandle_t s_pid_tasks[CONFIG_MAX_CHANNELS] = {NULL};
+static volatile bool s_manual_override[CONFIG_MAX_CHANNELS] = {false};
 
 // Жорстке відображення логічних каналів на фізичні безпечні піни
 static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
@@ -34,6 +35,25 @@ void hw_set_load_pwm(uint8_t channel, uint32_t duty)
     else
     {
         load_control_pwm_set(channel, duty);
+    }
+}
+
+void load_control_set_raw_pwm(uint8_t channel, uint16_t duty)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+
+    if (duty > 0)
+    {
+        s_manual_override[channel] = true;
+        hw_set_load_pwm(channel, (uint32_t)duty);
+    }
+    else
+    {
+        hw_set_load_pwm(channel, 0);
+        s_manual_override[channel] = false;
     }
 }
 
@@ -65,6 +85,7 @@ static void pid_control_task(void *pvParameters)
         if (notification > 0)
         {
             ESP_LOGW(TAG, "CH%d: Emergency Abort received! Cutting power.", channel);
+            s_manual_override[channel] = false;
             hw_set_load_pwm(channel, 0);
 
             metrics.state = STATE_ERROR;
@@ -83,13 +104,17 @@ static void pid_control_task(void *pvParameters)
         case STATE_FINISHED:
         case STATE_CHARGING: // Тимчасова заглушка для проходження компіляції
         case STATE_ERROR:
-            hw_set_load_pwm(channel, 0);
+            if (!s_manual_override[channel])
+            {
+                hw_set_load_pwm(channel, 0);
+            }
             dcir_service_reset(channel);
             pid_service_reset(&channel_pid);
             integration_service_reset(&metrics);
             analyzer_service_reset(channel); // Скидаємо буфери
             break;
         case STATE_SELF_TEST:
+            s_manual_override[channel] = false;
             // Крок 1. Валідація термодатчиків (Thermal Sanity)
             bool thermal_ok = true;
             for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
@@ -168,6 +193,7 @@ static void pid_control_task(void *pvParameters)
             break;
 
         case STATE_PRE_CHECK:
+            s_manual_override[channel] = false;
             hw_set_load_pwm(channel, 0);
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
 
@@ -196,6 +222,7 @@ static void pid_control_task(void *pvParameters)
             break;
 
         case STATE_DISCHARGING:
+            s_manual_override[channel] = false;
             metrics.elapsed_time_us += dt_us; // Накопичуємо час
 
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
