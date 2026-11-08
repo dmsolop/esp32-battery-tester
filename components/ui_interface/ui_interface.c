@@ -6,6 +6,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 // --- Стани кінцевого автомата UI ---
 typedef enum
@@ -19,6 +20,7 @@ typedef enum
 #define VISIBLE_ROWS 4
 #define CH_DETAIL_TOTAL_ITEMS 5
 #define SETTINGS_TOTAL_ITEMS 4
+#define LIVE_MONITOR_TOTAL_ITEMS 7
 
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
 
@@ -84,6 +86,46 @@ static const char *state_to_str(channel_state_t state)
     }
 }
 
+static const char *state_to_short_str(channel_state_t state)
+{
+    switch (state)
+    {
+    case STATE_IDLE:
+        return "IDLE";
+    case STATE_SELF_TEST:
+        return "TEST";
+    case STATE_PRE_CHECK:
+        return "PRE";
+    case STATE_CHARGING:
+        return "CHRG";
+    case STATE_DISCHARGING:
+        return "DISCH";
+    case STATE_FINISHED:
+        return "DONE";
+    case STATE_ERROR:
+        return "ERR";
+    default:
+        return "???";
+    }
+}
+
+static const char *soh_to_str(soh_verdict_t soh)
+{
+    switch (soh)
+    {
+    case SOH_EXCELLENT:
+    case SOH_GOOD:
+        return "GOOD";
+    case SOH_DEGRADED:
+        return "DEGR";
+    case SOH_DEAD:
+        return "DEAD";
+    case SOH_UNKNOWN:
+    default:
+        return "---";
+    }
+}
+
 // --- Рендеринг лівого екрана ---
 static void render_left(uint8_t selected_ch, ui_state_t state)
 {
@@ -135,7 +177,7 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, int scroll_
     const char *items[CH_DETAIL_TOTAL_ITEMS];
     items[0] = chem_str;
     items[1] = is_active ? "[ [] STOP  ]" : "[ -> START ]";
-    items[2] = "[ LIVE MON ]";
+    items[2] = "[ LIVE MONITOR ]";
     items[3] = "[ PRO SETS ]";
     items[4] = "[ <- BACK  ]";
 
@@ -226,6 +268,172 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     }
 }
 
+// --- Рендеринг правого екрана: Живий моніторинг параметрів каналу ---
+static void render_live_monitor(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state)
+{
+    channel_metrics_t m;
+    system_state_get_metrics(ch, &m);
+
+    // Заголовок правого екрана: CH<X> LIVE [<STATE>]
+    char title[64];
+    snprintf(title, sizeof(title), "CH%d LIVE [%s]", ch, state_to_short_str(m.state));
+    display_engine_draw_string(rx + 4, 4, title, 1);
+
+    // Рядок 0: V:%4dmV I:%4dmA
+    char row0[64];
+    snprintf(row0, sizeof(row0), "V:%4lumV I:%4lumA",
+             (unsigned long)(m.voltage_uv / 1000),
+             (unsigned long)(m.current_ua / 1000));
+
+    // Рядок 1: DCIR:%4lumO P:%lu.%luW
+    // Розрахунок потужності P_mw = (uint64_t)abs(m.voltage_uv) * abs(m.current_ua) / 1000000000ULL
+    uint64_t p_mw = ((uint64_t)m.voltage_uv * (uint64_t)m.current_ua) / 1000000000ULL;
+    unsigned int p_w_int = (unsigned int)((p_mw / 1000ULL) % 1000U);
+    unsigned int p_w_tenth = (unsigned int)((p_mw % 1000ULL) / 100ULL);
+    char row1[128];
+    int len1 = snprintf(row1, sizeof(row1), "DCIR:%4umO P:%u.%u",
+                        (unsigned int)(m.internal_res_mohm % 10000U),
+                        p_w_int,
+                        p_w_tenth);
+    if (len1 >= 0 && len1 < (int)sizeof(row1) - 1)
+    {
+        row1[len1] = 'W';
+        row1[len1 + 1] = '\0';
+    }
+
+    // Рядок 2: Температури 2 радіаторів «Sandwich» (HS1, HS2)
+    const temp_sensor_data_t *hs1 = NULL;
+    const temp_sensor_data_t *hs2 = NULL;
+    const temp_sensor_data_t *cell = NULL;
+
+    for (int i = 0; i < MAX_SENSORS_PER_CHANNEL; i++)
+    {
+        if (m.temp_sensors[i].is_bound)
+        {
+            if (m.temp_sensors[i].role == SENSOR_ROLE_HEATSINK)
+            {
+                if (!hs1)
+                {
+                    hs1 = &m.temp_sensors[i];
+                }
+                else if (!hs2)
+                {
+                    hs2 = &m.temp_sensors[i];
+                }
+            }
+            else if (m.temp_sensors[i].role == SENSOR_ROLE_CELL)
+            {
+                if (!cell)
+                {
+                    cell = &m.temp_sensors[i];
+                }
+            }
+        }
+    }
+
+    char hs1_str[16];
+    if (hs1)
+    {
+        int32_t t = hs1->current_temp_mc;
+        int32_t deg = t / 1000;
+        int32_t dec = abs(t % 1000) / 100;
+        snprintf(hs1_str, sizeof(hs1_str), "%2ld.%ldC", (long)deg, (long)dec);
+    }
+    else
+    {
+        snprintf(hs1_str, sizeof(hs1_str), "--.-C");
+    }
+
+    char hs2_str[16];
+    if (hs2)
+    {
+        int32_t t = hs2->current_temp_mc;
+        int32_t deg = t / 1000;
+        int32_t dec = abs(t % 1000) / 100;
+        snprintf(hs2_str, sizeof(hs2_str), "%2ld.%ldC", (long)deg, (long)dec);
+    }
+    else
+    {
+        snprintf(hs2_str, sizeof(hs2_str), "--.-C");
+    }
+
+    char row2[64];
+    snprintf(row2, sizeof(row2), "HS1:%s HS2:%s", hs1_str, hs2_str);
+
+    // Рядок 3: Температура комірки та ліміт: Cell:%2d.%dC (M:%2dC)
+    long therm_limit_c = (long)(m.settings.thermal_limit_mc / 1000);
+    char row3[64];
+    if (cell)
+    {
+        int32_t t = cell->current_temp_mc;
+        int32_t deg = t / 1000;
+        int32_t dec = abs(t % 1000) / 100;
+        snprintf(row3, sizeof(row3), "Cell:%2ld.%ldC (M:%2ldC)", (long)deg, (long)dec, therm_limit_c);
+    }
+    else
+    {
+        snprintf(row3, sizeof(row3), "Cell:--.-C (M:%2ldC)", therm_limit_c);
+    }
+
+    // Рядок 4: C:%4lumAh E:%4lumWh
+    char row4[64];
+    snprintf(row4, sizeof(row4), "C:%4lumAh E:%4lumWh",
+             (unsigned long)m.capacity_mah,
+             (unsigned long)m.energy_mwh);
+
+    // Рядок 5: OCV:%4dmV Pk:%4d
+    char row5[64];
+    snprintf(row5, sizeof(row5), "OCV:%4lumV Pk:%4lu",
+             (unsigned long)(m.ocv_uv / 1000),
+             (unsigned long)(m.peak_voltage_uv / 1000));
+
+    // Рядок 6: T:%02lu:%02lu SOH:%s
+    uint64_t elapsed_s = m.elapsed_time_us / 1000000ULL;
+    unsigned long minutes = (unsigned long)(elapsed_s / 60ULL);
+    unsigned long seconds = (unsigned long)(elapsed_s % 60ULL);
+    char row6[64];
+    snprintf(row6, sizeof(row6), "T:%02lu:%02lu SOH:%s",
+             minutes,
+             seconds,
+             soh_to_str(m.soh));
+
+    const char *items[LIVE_MONITOR_TOTAL_ITEMS];
+    items[0] = row0;
+    items[1] = row1;
+    items[2] = row2;
+    items[3] = row3;
+    items[4] = row4;
+    items[5] = row5;
+    items[6] = row6;
+
+    int base_y[] = {16, 28, 40, 52};
+
+    for (int row = 0; row < VISIBLE_ROWS; row++)
+    {
+        int item_idx = scroll_offset + row;
+        if (item_idx >= LIVE_MONITOR_TOTAL_ITEMS)
+            break;
+
+        int y_pos = base_y[row];
+
+        if (state == UI_STATE_GRAPH && item_idx == selected_param)
+        {
+            display_engine_draw_string(rx + 0, y_pos, ">", 1);
+        }
+        display_engine_draw_string(rx + 8, y_pos, items[item_idx], 1);
+    }
+
+    // Візуальні індикатори прокрутки у правій колонці (X = rx + 120 = 248)
+    if (scroll_offset > 0)
+    {
+        display_engine_draw_string(rx + 120, 16, "^", 1);
+    }
+    if (scroll_offset + VISIBLE_ROWS < LIVE_MONITOR_TOTAL_ITEMS)
+    {
+        display_engine_draw_string(rx + 120, 52, "v", 1);
+    }
+}
+
 // --- Головна функція рендерингу ---
 static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset, ui_state_t state, bool is_editing)
 {
@@ -268,9 +476,7 @@ static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset
         break;
 
     case UI_STATE_GRAPH:
-        display_engine_draw_string(rx + 4, 4, "-- GRAPH --", 1);
-        display_engine_draw_string(rx + 10, 30, "[ COMING SOON ]", 1);
-        display_engine_draw_string(rx + 20, 50, "Click to Exit", 1);
+        render_live_monitor(rx, selected_ch, selected_param, scroll_offset, state);
         break;
     }
 }
@@ -366,6 +572,11 @@ static void ui_task(void *pvParameters)
                     break;
                 case UI_STATE_SETTINGS:
                     menu_items = SETTINGS_TOTAL_ITEMS;
+                    selected_param = (selected_param + diff + menu_items) % menu_items;
+                    update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
+                    break;
+                case UI_STATE_GRAPH:
+                    menu_items = LIVE_MONITOR_TOTAL_ITEMS;
                     selected_param = (selected_param + diff + menu_items) % menu_items;
                     update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
                     break;
