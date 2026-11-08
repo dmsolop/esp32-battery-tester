@@ -6,7 +6,7 @@
 ## 1. Hardware Architecture & Limits
 - **Master-Slave Isolation:** The ESP32-S3 Master board is the digital "cold zone"[cite: 4]. High-current discharge occurs on isolated Slave modules[cite: 4].
 - **Communication Bus:** High-frequency signals (I2C, 1-Wire, PWM) are routed via shielded RJ45 cables (FTP/STP)[cite: 4]. The cable shield is tied to analog GND, acting as a Faraday cage to block EMI[cite: 4].
-- **Power Stage (Per Channel):** Maximum dissipation is >140W, up to 30A[cite: 4]. Uses dual IRFP250N MOSFETs (TO-247) in a "Sandwich" topology between two Intel Celeron heatsinks[cite: 4]. Hardware current balancing is enforced via dual independent CC-loops using an LM358 Op-Amp[cite: 4].
+- **Power Stage (Per Channel):** Maximum dissipation is >140W, up to 30A[cite: 4]. Uses dual IRFP150N MOSFETs (TO-247) in a "Sandwich" topology between two Intel Celeron heatsinks[cite: 4]. Hardware current balancing is enforced via dual independent CC-loops using an LM358 Op-Amp[cite: 4].
 - **Precision Sensing (4-Wire Kelvin):** Current is measured across a single 5 mOhm (R005) 2512 SMD Manganese-Copper alloy precision shunt per MOSFET leg (3W rating, 1.125W dissipation at 15A)[cite: 4]. Kelvin connections are routed directly from the inner pads on the PCB copper[cite: 4].
 - **ADC Scaling:** ADS1115 PGA dynamically scales to maintain 16-bit resolution across the 1V–60V range[cite: 4].
 - **Hardware Bypass (Safety):** The `ADC_ALERT_PIN` triggers a hardware interrupt (GPIO 47) to instantly zero the PWM duty cycle via LEDC registers during over-current or over-voltage events[cite: 4].
@@ -38,7 +38,10 @@ The system is governed by a strict FSM. PWM generation is ONLY allowed in `STATE
 - **Volatile PRO Settings:** Custom high-risk settings (e.g., 30A limits) are kept strictly in RAM[cite: 4].
 - **Safe Boot:** On reset, the FSM restores safe, hardcoded ROM defaults (e.g., 1A discharge, 60°C limit) based on the last saved chemistry, preventing accidental high-current discharge into a new battery[cite: 4].
 
-## 6. Diagnostic Algorithms
+## 6. NVS Security & Diagnostic Algorithms
+- **NVS Wear Leveling:** Stores ONLY the selected chemistry type (`battery_chem_t`).
+- **Volatile PRO Settings:** Custom high-risk settings (e.g., 30A limits) are kept strictly in RAM.
+- **Safe Boot:** On reset, the FSM restores safe, hardcoded ROM defaults (e.g., 1A discharge, 60°C limit) based on the last saved chemistry.
 - **NiMH/NiCd Termination:** Employs $-\Delta V$ drop detection (5-10mV) and dynamic $dT/dt$ thermal derivative analysis (>1°C/min) to prevent overcharging[cite: 4].
 - **Voltage Sag Detection:** Calculates initial voltage drop in the first millisecond of discharge to reject degraded or fake cells (high internal resistance)[cite: 4].
 - **1-Wire Auto-Routing:** The system dynamically assigns limits based on EEPROM roles (`0x01` = Heatsink hard limit 85°C, `0x02` = Cell dynamic limit)[cite: 4].
