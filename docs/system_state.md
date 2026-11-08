@@ -1,88 +1,89 @@
 # System State: ESP32-S3 Smart Modular Battery Analyzer
 
-**Останнє оновлення:** Листопад 2026
-**Поточна фаза:** Етап інженерного прототипування та макетування (блокує трасування плат).
+**Last Updated:** November 2026
+**Current Phase:** Engineering Prototyping and Breadboarding (blocking PCB routing).
 
 ---
 
-## 1. Поточний статус (Current Status)
-- Розробляється ієрархічна схема для підлеглої плати (`slave_board`) і головної плати (`battery_analyzer_hw`).
-- Трасування (Routing) призупинено до повного завершення лабораторного прототипування та тестування силового каскаду.
-- Затверджено глобальний пінаут мікроконтролера ESP32-S3-WROOM-1 з урахуванням апаратних обмежень (Boot, Strapping, USB) та розділення високочастотних і аналогових сигналів.
-- Проведено архітектурний аудит математичної моделі ПІД-регулятора, тракту ЦАП ШІМ (Варіант Б2) та струмовимірювальних шунтів (`2512 R005` 5 мОм).
+## 1. Current Status
+- Developing hierarchical schematics for the slave board (`slave_board`) and master board (`battery_analyzer_hw`).
+- PCB Routing is suspended until full completion of laboratory prototyping and testing of the power stage.
+- Approved global pinout for the ESP32-S3-WROOM-1 MCU, accounting for hardware constraints (Boot, Strapping, USB) and separation of high-frequency and analog signals.
+- Conducted architectural audit of the PID controller mathematical model, PWM DAC path (Variant B2), and current sensing shunts (`2512 R005` 5 mOhm).
 
-## 2. Останні рішення та домовленості (Changelog & Agreements)
-- **Архітектурний аудит ПІД-регулятора, ФНЧ ШІМ (Варіант Б2) та перехід на одиночні шунти 2512 R005 (Листопад 2026):**
-    - **Усунення подвійного інтегрування у ПІД:** Виявлено математичну колізію у `components/load_control/pid_service.c` (поєднання позиційного інтеграла `ctx->integral += error * dt_sec` з інкрементальним накопиченням виходу `ctx->current_output += output`, що створювало ланку $I^2$ та автоколивання). Затверджено перехід на чисту позиційну форму ПІД згідно з `references/pid_math_rules.md` з динамічним Anti-Windup.
-    - **Затвердження пасивного ФНЧ з дільником (Варіант Б2) та ШІМ 20 кГц:** Для формування опорної напруги `V_REF` затверджено дволанковий пасивний RC-фільтр на швидких конденсаторах `100 nF` із вбудованим резистивним дільником (`R1 = 10 kOhm` для макету з `0.27 Ohm` або `33 kOhm` для `5 mOhm`, `R_div = 1.0 kOhm || C1 = 100 nF`, `R2 = 4.7..10 kOhm`, `C2 = 100 nF`) при частоті ШІМ `19.53 kHz` (`20 kHz`, 12 біт, `PWM_MAX_DUTY = 4095`). Це забезпечує пульсації `< 0.59 mV (pk-pk)`, час встановлення `1.5..3.0 ms` та ідеальний нуль при `PWM = 0` без помилки зміщення нуля другого ОП.
-    - **Перехід на одиночні манганінові шунти 2512 R005 (5 мОм, 3 Вт):** Замість паралельної збірки з трьох резисторів по 33 мОм (11 мОм) на кожне плече MOSFET затверджено використання одного прецизійного мідно-марганцевого шунта `2512 R005` (`0.005 Ohm`, `3W`, `0.5%`) на кожен транзистор (`R5` для `Q1` та `R8` для `Q2`, видалення `R6, R7, R9, R10`). Потужність розсіювання при 15 А на плече знижується до `1.125 W` (запас `>60%`), спрощується Кельвінівська топологія. Для двоплечової плати обов'язковим є сумування струмів обох каналів АЦП (`AIN0 + AIN1`).
-- **Уніфікація пінауту для сумісності з ESP32-S3-DevKitC-1 (N16R8) та захисту від WPU при скиданні (Листопад 2026):**
-    - Затверджено та синхронізовано уніфікований пінаут (Варіант Б) між схемою `mcu_core.kicad_sch` та конфігурацією прошивки (`Kconfig.projbuild`, `sdkconfig`):
-        - **Силовий ШІМ навантаження (`PWM_CH0..3`):** перенесено `PWM_CH1` на `IO1`, `PWM_CH3` на `IO2` (разом з `IO38` для CH0 та `IO40` для CH2). Всі 4 піни мають стан `Hi-Z` при скиданні МК, що повністю виключає паразитне привідкривання силових MOSFET через внутрішню підтяжку (`Internal Weak Pull-Up`) на `IO39` та `IO41`.
-        - **ШІМ охолодження (`FAN_CH0..3`):** призначено на `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3). Звільнено `IO48` для повної апаратної сумісності з вбудованим світлодіодом WS2812 на платах `ESP32-S3-DevKitC-1`.
-        - **Звукова індикація (Buzzer):** призначено `BUZZER_PIN` на `IO42` з обов'язковим зовнішнім стягуючим резистором `4.7 kOhm` на `GND` для надійного закриття транзисторного ключа під час завантаження/скидання МК.
-        - Повністю звільнено піни `IO39`, `IO41`, `IO48`.
-    - **Верифікація нетліста Master-плати:** Оновлений нетліст `battery_analyzer_hw.net` повністю верифіковано. Усі ланцюги мікроконтролера U3 (ESP32-S3-WROOM-1) відповідають уніфікованому пінауту Варіанта Б: `PWM_CH0..3` (`IO38`, `IO1`, `IO40`, `IO2`), `FAN_CH0..3` (`IO12`, `IO13`, `IO14`, `IO21`), `BUZZER_PIN` (`IO42` зі стяжкою R36 4.7k на GND), `IO39`/`IO41`/`IO48` (`NC`), `I2C_PWR` (`IO4`/`IO5`), `I2C_UI` (`IO6`/`IO7`), `1W_CH0..3` (`IO8..11`), органи введення (`IO15..18`), `ADC_ALERT` (`IO47`), `USB_D-/D+` (`IO19`/`IO20`).
-- **Синхронізація I2C та верифікація нетлістів (Листопад 2026):**
-    - Узгоджено та синхронізовано апаратний пінаут шин I2C у нетлісті `battery_analyzer_hw.net` з прошивкою ESP-IDF:
-        - `I2C_PWR` (силова шина телеметрії Slave-модулів): `SDA` = `IO4`, `SCL` = `IO5`.
-        - `I2C_UI` (дисплеї SSD1306): `SDA` = `IO6`, `SCL` = `IO7`.
-    - Проведено повну верифікацію нетлістів `battery_analyzer_hw.net` та `slave_board.net` перед початком збирання макету:
-        - Підтверджено цілісність симетричних силових ліній: `LOAD_FORCE_+` (XT60 пін 1 -> F1 -> Drain Q1/Q2 -> C3/C4 -> Катод TVS D1 SMCJ58A) та `GND_PWR` (`LOAD_FORCE_-`, XT60 пін 2 -> шунти -> Анод TVS D1 -> NetTie NT1 до сигнальної `GND`).
-        - Підтверджено диференційне підключення Кельвіна: `LOAD_SENSE_+` (Micro-Fit J_SENSE1 пін 1) -> R15 (190k) -> AIN2 (U2 ADS1115), `LOAD_SENSE_-` (Micro-Fit J_SENSE1 пін 2) -> R16 (10k) + C9 (100nF) -> AIN3 (U2 ADS1115).
-        - Підтверджено підключення вимірювання струму: `I_SENSE_Q1` -> AIN0, `I_SENSE_Q2` -> AIN1.
-- **Пріоритет макетування:** Будь-які роботи з трасування PCB заборонені до успішної валідації стабільності струму на макеті.
-- **Звукова індикація (Buzzer):** Затверджено додавання п'єзовипромінювача для аварій (OVP, OCP, OTP) та UI-фідбеку. Керування через транзисторний ключ.
-- **Конфігурація ADS1115 (PGA):** Динамічне масштабування розділено: канал напруги = +/- 4.096V (біти 11-9 = 001), канал струму = +/- 0.256V (біти 11-9 = 101).
-- **Локальні vs Глобальні мітки:** Затверджено використання локальних міток для внутрішньоаркушевих з'єднань з метою збереження чистоти глобального простору імен.
-    - `V_REF` залишається локальною на аркуші `/Power_Stage/`.
-    - `FAN_GND` залишається локальною на аркуші `/cooling_thermal/`.
-- **PWM_IN:** Підтверджено, що мітка `PWM_IN` на аркуші `/Power_Stage/` вже є глобальною і коректно отримує сигнал від конектора RJ45 (J1).
-- **ЕМС та умови тестування:** Враховується робота в умовах панельної забудови (залізобетонні стіни). Розводка вимагає суворого екранування. Для перевірок наведень використовується SOONDA S8602.
+## 2. Changelog & Agreements
+- **Architectural audit of PID controller, PWM LPF (Variant B2), and transition to single 2512 R005 shunts (November 2026):**
+- **Elimination of double integration in PID:** Identified a mathematical collision in `components/load_control/pid_service.c` (combining the positional integral `ctx->integral += error * dt_sec` with incremental output accumulation `ctx->current_output += output`, which created an $I^2$ link and self-oscillations). Approved transition to a pure positional PID form according to `references/pid_math_rules.md` with dynamic Anti-Windup.
+- **Approval of passive LPF with divider (Variant B2) and 20 kHz PWM:** To generate the `V_REF` reference voltage, a dual-stage passive RC filter on fast `100 nF` capacitors with a built-in resistive divider was approved (`R1 = 10 kOhm` for breadboard with `0.27 Ohm` or `33 kOhm` for `5 mOhm`, `R_div = 1.0 kOhm || C1 = 100 nF`, `R2 = 4.7..10 kOhm`, `C2 = 100 nF`) at a PWM frequency of `19.53 kHz` (`20 kHz`, 12-bit, `PWM_MAX_DUTY = 4095`). This ensures ripple `< 0.59 mV (pk-pk)`, settling time `1.5..3.0 ms`, and a perfect zero at `PWM = 0` without the second Op-Amp zero-offset error.
+- **Transition to single Manganin 2512 R005 shunts (5 mOhm, 3W):** Instead of a parallel array of three 33 mOhm resistors (11 mOhm) per MOSFET leg, the use of one precision Copper-Manganese `2512 R005` shunt (`0.005 Ohm`, `3W`, `0.5%`) per transistor was approved (`R5` for `Q1` and `R8` for `Q2`, removing `R6, R7, R9, R10`). Power dissipation at 15 A per leg drops to `1.125 W` (`>60%` margin), simplifying the Kelvin topology. For the dual-leg board, summing the currents of both ADC channels (`AIN0 + AIN1`) is mandatory.
+- **Pinout unification for compatibility with ESP32-S3-DevKitC-1 (N16R8) and protection against WPU upon reset (November 2026):**
+- Unified pinout (Variant B) approved and synchronized between the `mcu_core.kicad_sch` schematic and firmware config (`Kconfig.projbuild`, `sdkconfig`):
+- **Power Load PWM (`PWM_CH0..3`):** moved `PWM_CH1` to `IO1`, `PWM_CH3` to `IO2` (along with `IO38` for CH0 and `IO40` for CH2). All 4 pins have a `Hi-Z` state upon MCU reset, completely eliminating parasitic partial opening of power MOSFETs due to internal weak pull-ups (`Internal Weak Pull-Up`) on `IO39` and `IO41`.
+- **Cooling FAN PWM (`FAN_CH0..3`):** assigned to `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3). Freed `IO48` for full hardware compatibility with the built-in WS2812 LED on `ESP32-S3-DevKitC-1` boards.
+- **Audio Indication (Buzzer):** assigned `BUZZER_PIN` to `IO42` with a mandatory external `4.7 kOhm` pull-down resistor to `GND` to reliably close the transistor switch during MCU boot/reset.
+- Completely freed pins `IO39`, `IO41`, `IO48`.
+- **Master Board Netlist Verification:** The updated `battery_analyzer_hw.net` netlist is fully verified. All circuits of the U3 microcontroller (ESP32-S3-WROOM-1) comply with Variant B unified pinout: `PWM_CH0..3` (`IO38`, `IO1`, `IO40`, `IO2`), `FAN_CH0..3` (`IO12`, `IO13`, `IO14`, `IO21`), `BUZZER_PIN` (`IO42` with R36 4.7k pull-down to GND), `IO39`/`IO41`/`IO48` (`NC`), `I2C_PWR` (`IO4`/`IO5`), `I2C_UI` (`IO6`/`IO7`), `1W_CH0..3` (`IO8..11`), input devices (`IO15..18`), `ADC_ALERT` (`IO47`), `USB_D-/D+` (`IO19`/`IO20`).
+- **I2C Synchronization and Netlist Verification (November 2026):**
+- Coordinated and synchronized I2C bus hardware pinout in the `battery_analyzer_hw.net` netlist with the ESP-IDF firmware:
+- `I2C_PWR` (power telemetry bus for Slave modules): `SDA` = `IO4`, `SCL` = `IO5`.
+- `I2C_UI` (SSD1306 displays): `SDA` = `IO6`, `SCL` = `IO7`.
+- Conducted full verification of `battery_analyzer_hw.net` and `slave_board.net` netlists before starting breadboard assembly:
+- Confirmed integrity of symmetrical power lines: `LOAD_FORCE_+` (XT60 pin 1 -> F1 -> Drain Q1/Q2 -> C3/C4 -> TVS D1 SMCJ58A Cathode) and `GND_PWR` (`LOAD_FORCE_-`, XT60 pin 2 -> shunts -> TVS D1 Anode -> NetTie NT1 to signal `GND`).
+- Confirmed differential Kelvin connection: `LOAD_SENSE_+` (Micro-Fit J_SENSE1 pin 1) -> R15 (190k) -> AIN2 (U2 ADS1115), `LOAD_SENSE_-` (Micro-Fit J_SENSE1 pin 2) -> R16 (10k) + C9 (100nF) -> AIN3 (U2 ADS1115).
+- Confirmed current measurement connection: `I_SENSE_Q1` -> AIN0, `I_SENSE_Q2` -> AIN1.
+- **Prototyping Priority:** Any PCB routing work is prohibited until successful validation of current stability on the breadboard.
+- **Audio Indication (Buzzer):** Approved addition of a piezo transducer for alarms (OVP, OCP, OTP) and UI feedback. Controlled via transistor switch.
+- **ADS1115 (PGA) Configuration:** Dynamic scaling split: voltage channel = +/- 4.096V (bits 11-9 = 001), current channel = +/- 0.256V (bits 11-9 = 101).
+- **Local vs Global Labels:** Approved use of local labels for intra-sheet connections to preserve global namespace cleanliness.
+- `V_REF` remains local on the `/Power_Stage/` sheet.
+- `FAN_GND` remains local on the `/cooling_thermal/` sheet.
+- **PWM_IN:** Confirmed that the `PWM_IN` label on the `/Power_Stage/` sheet is already global and correctly receives the signal from the RJ45 connector (J1).
+- **EMC and Testing Conditions:** Factoring in operation in panel buildings (reinforced concrete walls). Routing requires strict shielding. SOONDA S8602 is used for interference checks.
 
-## 3. Апаратний базис (Hardware Baseline)
-- **MCU:** ESP32-S3-WROOM-1 / сумісний з ESP32-S3-DevKitC-1 (N16R8).
-- **Power Stage:** MOSFET IRLZ44N (або IRFP150N/IRFP250N), IRLML2502TRPBF-JSM, діоди 1N4148W SOD-323, одиночні прецизійні манганінові шунти 2512 R005 (0.005 Ohm / 5 mOhm, 3W, 0.5%) по одному на кожен MOSFET (на час макетування на breadboard — керамічний 0.27 Ohm / 270 mOhm).
-- **АЦП та переривання:** ADS1115 (I2C_PWR_SDA: `IO4`, I2C_PWR_SCL: `IO5`, ADC_ALERT: `IO47`).
-- **ШІМ Навантаження (PWM):** `IO38` (CH0), `IO1` (CH1), `IO40` (CH2), `IO2` (CH3) — усі Hi-Z при скиданні, частота `19.53 kHz` (`20 kHz`, 12-bit, пасивний 2-ланковий ФНЧ Варіант Б2 з дільником та конденсаторами `100 nF`).
-- **ШІМ Охолодження (FAN):** `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3) (Охолодження: Intel A65061-002).
-- **Температурні датчики (1-Wire):** `IO8`, `IO9`, `IO10`, `IO11`.
-- **UI (RTC-домен):** I2C_UI (I2C_UI_SDA: `IO6`, I2C_UI_SCL: `IO7`), Енкодер (`IO15`, `IO16`, `IO17`), Кнопка тарування (`IO18`).
-- **Індикація:** П'єзовипромінювач (Buzzer) через транзисторний ключ на `IO42` (із зовнішньою стяжкою `4.7 kOhm` на `GND`).
-- **Вільні / резервні піни:** `IO39`, `IO41`, `IO48` (RGB LED WS2812 на DevKit).
+## 3. Hardware Baseline
+- **MCU:** ESP32-S3-WROOM-1 / compatible with ESP32-S3-DevKitC-1 (N16R8).
+- **Power Stage:** MOSFET IRLZ44N (or IRFP150N/IRFP250N), IRLML2502TRPBF-JSM, 1N4148W SOD-323 diodes, single precision Manganin 2512 R005 shunts (0.005 Ohm / 5 mOhm, 3W, 0.5%) one per MOSFET (during breadboard prototyping — ceramic 0.27 Ohm / 270 mOhm).
+- **ADC & Interrupts:** ADS1115 (I2C_PWR_SDA: `IO4`, I2C_PWR_SCL: `IO5`, ADC_ALERT: `IO47`).
+- **Load PWM:** `IO38` (CH0), `IO1` (CH1), `IO40` (CH2), `IO2` (CH3) — all Hi-Z on reset, frequency `19.53 kHz` (`20 kHz`, 12-bit, Variant B2 passive dual-stage LPF with divider and `100 nF` capacitors).
+- **Cooling FAN PWM:** `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3) (Cooling: Intel A65061-002).
+- **Temperature Sensors (1-Wire):** `IO8`, `IO9`, `IO10`, `IO11`.
+- **UI (RTC-domain):** I2C_UI (I2C_UI_SDA: `IO6`, I2C_UI_SCL: `IO7`), Encoder (`IO15`, `IO16`, `IO17`), Tare Button (`IO18`).
+- **Indication:** Piezo transducer (Buzzer) via transistor switch on `IO42` (with external `4.7 kOhm` pull-down to `GND`).
+- **Free / Reserved Pins:** `IO39`, `IO41`, `IO48` (RGB LED WS2812 on DevKit).
 
-## 4. Черга завдань для агентів (Active Handoff / Queue)
+## 4. Active Handoff / Queue
 
-### 🔬 Hardware Lab Engineer (Статус: В процесі - Етап 3, аудит периферії та виявлені блокери)
-- [x] **БЛОКЕР:** Зібрати на макеті дволанковий пасивний ФНЧ з дільником 10:1 (Варіант Б2: `R1=10k`, `R_div=1.0k || C1=100nF`, `R2=4.7k..10k`, `C2=100nF`) та перевірити стабільність струму на частоті ШІМ 20 кГц. Успішно валідовано на FNIRSI DPOS350P: наростання 2.5 мс, мінімальні пульсації, стабільний струм 300 мА (V_shunt 80 мВ, V_gate 2.19 В) та 1000 мА (V_shunt 290 мВ, V_gate 2.56 В), при Reset струм скидається до 0.00 А без викидів.
-- [x] Провести тестування стабільності струму за допомогою ЛБЖ та осцилографа, переконатися у відсутності високочастотних осциляцій та перевірити чистий нуль при `PWM = 0` і скиданні МК.
-- [x] **Аудит Етапу 3 (Периферія 1-Wire, Кулер IO12, I2C/PCNT):** Виявлено апаратні та програмні розриви, сформовано Cross-Module Impact Tickets для Orchestrator:
-    - **[Cross-Ticket-TEMP-1]** У `components/temp_sensor/temp_service.c` функція `temp_service_auto_assign()` прив'язує датчики виключно при зчитуванні ролі `T_L = 0x01` або `0x02` з EEPROM. Нові/заводські DS18B20 мають дефолтні байти, тому не прив'язуються (`is_bound = false`) і функція `temp_service_read_sensors()` взагалі не викликає читання температури. Необхідно додати дефолтний фолбек: якщо на шині знайдено датчики, автоматично призначати 1-й датчик як `SENSOR_ROLE_HEATSINK`, а 2-й як `SENSOR_ROLE_CELL`.
-    - **[Cross-Ticket-CLI-TEMP]** Додати у `components/cli/cli.c` команду `temp` або `sensors` для виведення в консоль сирих адрес ROM, статусів прив'язки та поточної температури кожного каналу в °C. Додати температуру в циклічний вивід телеметрії.
-    - **[Cross-Ticket-FAN-1]** Реалізувати драйвер ШІМ кулера на `CONFIG_FAN_CH0_PIN` (`IO12`) (частота 25 кГц, LEDC) та додати команду CLI `fan <duty_percent>` (0..100%) для ручного тестування обдуву на лабораторному столі без необхідності чекати тривалого нагріву радіатора.
-    - **[Cross-Ticket-UI-TEMP]** Додати відображення реальної виміряної температури радіатора на екранах SSD1306 (наразі відображається лише заданий ліміт відключення `T: XX C`).
-- [ ] Розробити план випробувань внутрішнього опору та падіння напруги на циліндричних Li-ion і NiMH комірках.
-### 💻 Firmware Engineers (`load-control-engineer` & `hal-driver-specialist`) (Статус: В процесі - AGILE)
-- [x] **[Ticket-PID-1]** У `components/load_control/pwm_driver.c` та `include/pwm_driver.h` перевести ШІМ на частоту `19531 Hz` (`20 kHz`) та роздільну здатність `LEDC_TIMER_12_BIT` (`PWM_MAX_DUTY = 4095`).
-- [x] **[Ticket-PID-2]** У `components/load_control/pid_service.c` усунути подвійне інтегрування (`ctx->current_output += output`), реалізувавши чисту позиційну форму ПІД із динамічним Anti-Windup згідно з `references/pid_math_rules.md`.
-- [x] **[Ticket-ADC-1]** У `components/adc_driver/adc_driver.c` та `adc_driver.h` усунено втрату точності при цілочисельному діленні (реалізовано формулу `(raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM)` у 64-бітному просторі) та додано підтримку опитування обох каналів струму `AIN0` (`0xCB83`, Q1) та `AIN1` (`0xDB83`, Q2) із збереженням зворотної сумісності для поточного макету на 0.27 Ом.
-- [x] **[Cross-Ticket-CTRL-1]** Реалізовано команду CLI `raw_pwm <ch> <duty>` у `components/cli/cli.c` з прямим викликом `hw_set_load_pwm()` для тестування Vref та відкриття MOSFET в обхід автоматів стану.
-- [x] **[Cross-Ticket-CTRL-2]** Адаптовано таймінги та поріг `STATE_SELF_TEST` у `components/load_control/load_control.c` під ФНЧ Варіанта Б2 (циклічний поллінг до 200 мс, поріг детекції 10 мА).
-- [x] **[Ticket-CTRL-3]** Усунено дефект затирання тестового ШІМ: додано прапорець `manual_override` та функцію `load_control_set_raw_pwm(ch, duty)`. Фоновий таск `pid_control_task` не скидає ШІМ у станах `STATE_IDLE`/`STATE_ERROR`, якщо активний ручний режим, і безпечно скидає `manual_override` при аварії або переході в штатні тестові цикли.
-- [x] **[Ticket-UI-1]** Реалізовано інтерактивний 2-етапний режим редагування параметрів у підменю `UI_STATE_SETTINGS` (`components/ui_interface/ui_interface.c`): вибір пунктів 0..2 (струм, напруга, температура) енкодером, вхід/вихід з режиму редагування (`is_editing`) за кліком кнопки енкодера з візуальною індикацією `> <`, крок струму 50 мА (50..3000 мА), крок напруги 50 мВ (2500..4500 мВ), крок температури 1 °C (30..80 °C), синхронізація в `system_state` та оновлення лімітів сенсорів.
+### 🔬 Hardware Lab Engineer (Status: In Progress - Stage 3, peripheral audit and identified blockers)
+- [x] **BLOCKER:** Assemble on breadboard the Variant B2 dual-stage passive LPF with 10:1 divider (`R1=10k`, `R_div=1.0k || C1=100nF`, `R2=4.7k..10k`, `C2=100nF`) and check current stability at 20 kHz PWM frequency. Successfully validated on FNIRSI DPOS350P: 2.5 ms rise time, minimal ripple, stable current of 300 mA (V_shunt 80 mV, V_gate 2.19 V) and 1000 mA (V_shunt 290 mV, V_gate 2.56 V), on Reset current drops to 0.00 A without spikes.
+- [x] Conduct current stability testing using Bench Power Supply and oscilloscope, verify absence of high-frequency oscillations, and ensure a clean zero at `PWM = 0` and MCU reset.
+- [x] **Audit Stage 3 (1-Wire Peripherals, FAN IO12, I2C/PCNT):** Hardware and software disconnects identified, Cross-Module Impact Tickets generated for Orchestrator:
+- **[Cross-Ticket-TEMP-1]** In `components/temp_sensor/temp_service.c`, the `temp_service_auto_assign()` function binds sensors strictly upon reading role `T_L = 0x01` or `0x02` from EEPROM. New/factory DS18B20s have default bytes, so they don't bind (`is_bound = false`) and `temp_service_read_sensors()` never calls for temperature conversion. Need to add a default fallback: if sensors are found on the bus, automatically assign 1st sensor as `SENSOR_ROLE_HEATSINK` and 2nd as `SENSOR_ROLE_CELL`.
+- **[Cross-Ticket-CLI-TEMP]** Add a `temp` or `sensors` command in `components/cli/cli.c` to output raw ROM addresses, binding statuses, and current temperature of each channel in °C to the console. Add temperature to cyclic telemetry output.
+- **[Cross-Ticket-FAN-1]** Implement Fan PWM driver on `CONFIG_FAN_CH0_PIN` (`IO12`) (25 kHz frequency, LEDC) and add CLI command `fan <duty_percent>` (0..100%) for manual airflow testing on the lab bench without needing to wait for prolonged heatsink warmup.
+- **[Cross-Ticket-UI-TEMP]** Add rendering of real measured heatsink temperature on SSD1306 screens (currently only the set shutdown limit `T: XX C` is displayed).
+- [ ] Develop test plan for internal resistance and voltage sag on cylindrical Li-ion and NiMH cells.
 
-### 👑 Master System Orchestrator (Статус: Очікує виконання)
-- [ ] Делегувати виконання `Ticket-PID-1`, `Ticket-PID-2` та `Ticket-ADC-1` у режим `code`.
-- [ ] Створити неблокуючий таск у FreeRTOS для генерації звукових патернів зумера без затримки основного циклу керування.
-- [ ] Підготувати програмну архітектуру для обробки глобального переривання `ADC_ALERT` на піні `IO47`.
-- [ ] Перевірити логіку поділу I2C шин (`I2C_UI` та `I2C_PWR`) на рівні прошивки.
+### 💻 Firmware Engineers (`load-control-engineer` & `hal-driver-specialist`) (Status: In Progress - AGILE)
+- [x] **[Ticket-PID-1]** In `components/load_control/pwm_driver.c` and `include/pwm_driver.h`, switch PWM to `19531 Hz` (`20 kHz`) frequency and `LEDC_TIMER_12_BIT` resolution (`PWM_MAX_DUTY = 4095`).
+- [x] **[Ticket-PID-2]** In `components/load_control/pid_service.c`, eliminate double integration (`ctx->current_output += output`) by implementing a pure positional PID form with dynamic Anti-Windup per `references/pid_math_rules.md`.
+- [x] **[Ticket-ADC-1]** In `components/adc_driver/adc_driver.c` and `adc_driver.h`, resolved precision loss during integer division (implemented formula `(raw_adc * 15625ULL) / (2ULL * CONFIG_SHUNT_RESISTOR_MOHM)` in 64-bit space) and added support for polling both current channels `AIN0` (`0xCB83`, Q1) and `AIN1` (`0xDB83`, Q2) while maintaining backward compatibility for current 0.27 Ohm breadboard.
+- [x] **[Cross-Ticket-CTRL-1]** Implemented CLI command `raw_pwm <ch> <duty>` in `components/cli/cli.c` with direct call to `hw_set_load_pwm()` for Vref testing and MOSFET opening bypassing state machines.
+- [x] **[Cross-Ticket-CTRL-2]** Adapted timings and `STATE_SELF_TEST` threshold in `components/load_control/load_control.c` for Variant B2 LPF (cyclic polling up to 200 ms, 10 mA detection threshold).
+- [x] **[Ticket-CTRL-3]** Resolved test PWM overwrite defect: added `manual_override` flag and `load_control_set_raw_pwm(ch, duty)` function. The background `pid_control_task` does not reset PWM in `STATE_IDLE`/`STATE_ERROR` states if manual mode is active, and safely clears `manual_override` upon fault or transition to standard test cycles.
+- [x] **[Ticket-UI-1]** Implemented interactive 2-stage parameter editing mode in the `UI_STATE_SETTINGS` submenu (`components/ui_interface/ui_interface.c`): selection of items 0..2 (current, voltage, temp) via encoder, enter/exit edit mode (`is_editing`) via encoder button click with visual `> <` indication, current step 50 mA (50..3000 mA), voltage step 50 mV (2500..4500 mV), temp step 1 °C (30..80 °C), synchronization to `system_state` and updating sensor limits.
 
-### 🛠 KiCad Hardware Engineer (Статус: Очікує виконання - Розблоковано для схемних робіт)
-- [ ] **[Ticket-HW-1]** У `hardware/slave_board/power_stage.kicad_sch` замінити масиви шунтів `R5..R7` та `R8..R10` (3x 33 mOhm) на одиночні шунти `R5` та `R8` номіналом `0.005` (`2512 R005`, 5 mOhm, 3W), видаливши `R6, R7, R9, R10`.
-- [ ] **[Ticket-HW-2]** У `hardware/slave_board/power_stage.kicad_sch` оновити ФНЧ ШІМ до Варіанта Б2 (`C1 = 100nF`, `C2 = 100nF`, додати резистор дільника до GND паралельно `C1`).
-- [ ] Продовжити трасування силових модулів 140W (4-провідна схема Кельвіна) **ТІЛЬКИ ПІСЛЯ** успішного тесту від Lab Engineer.
-- [ ] Переконатися, що топологія полігонів `GND_PWR` та `FAN_GND` не створює земляних петель.
-- [ ] Перевірити застосування європейської нотації та налаштування HandSolder rules.
+### 👑 Master System Orchestrator (Status: Pending)
+- [ ] Delegate execution of `Ticket-PID-1`, `Ticket-PID-2` and `Ticket-ADC-1` to `code` mode.
+- [ ] Create a non-blocking FreeRTOS task to generate buzzer audio patterns without delaying main control cycle.
+- [ ] Prepare software architecture to handle global `ADC_ALERT` interrupt on pin `IO47`.
+- [ ] Verify logic separating I2C buses (`I2C_UI` and `I2C_PWR`) at the firmware level.
+
+### 🛠 KiCad Hardware Engineer (Status: Pending - Unblocked for schematic tasks)
+- [ ] **[Ticket-HW-1]** In `hardware/slave_board/power_stage.kicad_sch`, replace shunt arrays `R5..R7` and `R8..R10` (3x 33 mOhm) with single `0.005` shunts (`2512 R005`, 5 mOhm, 3W) as `R5` and `R8`, deleting `R6, R7, R9, R10`.
+- [ ] **[Ticket-HW-2]** In `hardware/slave_board/power_stage.kicad_sch`, update PWM LPF to Variant B2 (`C1 = 100nF`, `C2 = 100nF`, add divider resistor to GND parallel to `C1`).
+- [ ] Continue routing 140W power modules (4-wire Kelvin sensing) **ONLY AFTER** successful test by Lab Engineer.
+- [ ] Ensure `GND_PWR` and `FAN_GND` polygon topology does not create ground loops.
+- [ ] Verify application of European notation and HandSolder rules configuration.
 
 ---
-*Примітка для агентів: Після завершення своїх задач, ви зобов'язані оновити цей файл, змінити статус виконання та додати нові завдання або виявлені проблеми в лог.*
+*Note for agents: Upon completion of your tasks, you are required to update this file, change execution status, and add new tasks or identified issues to the log.*
