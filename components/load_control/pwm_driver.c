@@ -49,13 +49,58 @@ esp_err_t load_control_pwm_set(uint8_t channel, uint32_t duty)
     return ledc_update_duty(PWM_MODE, (ledc_channel_t)channel);
 }
 
+esp_err_t load_control_fan_pwm_init(uint8_t channel, int gpio_num)
+{
+    if (channel >= 4 || gpio_num < 0)
+    {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    // Канали кулерів призначаються на LEDC_CHANNEL_4..LEDC_CHANNEL_7
+    ledc_channel_t fan_channel = (ledc_channel_t)(LEDC_CHANNEL_4 + channel);
+
+    ledc_channel_config_t fan_conf = {
+        .gpio_num = gpio_num,
+        .speed_mode = PWM_MODE,
+        .channel = fan_channel,
+        .intr_type = LEDC_INTR_DISABLE,
+        .timer_sel = PWM_TIMER,
+        .duty = 0, // Стартуємо з вимкненого кулера
+        .hpoint = 0};
+
+    return ledc_channel_config(&fan_conf);
+}
+
+esp_err_t load_control_fan_pwm_set(uint8_t channel, uint32_t duty)
+{
+    if (channel >= 4)
+    {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (duty > PWM_MAX_DUTY)
+    {
+        duty = PWM_MAX_DUTY;
+    }
+
+    ledc_channel_t fan_channel = (ledc_channel_t)(LEDC_CHANNEL_4 + channel);
+    ledc_set_duty(PWM_MODE, fan_channel, duty);
+    return ledc_update_duty(PWM_MODE, fan_channel);
+}
+
 // Функція екстреної зупинки, що виконується з переривання (ISR)
 void IRAM_ATTR pwm_driver_emergency_stop_isr(void)
 {
-    // Проходимо по 4 робочих каналах і на апаратному рівні вписуємо нуль у регістри
+    // Проходимо по 4 робочих каналах навантаження і на апаратному рівні вписуємо нуль у регістри
     for (int i = 0; i < 4; i++)
     {
         LEDC.channel_group[PWM_MODE].channel[i].duty.duty = 0;
         LEDC.channel_group[PWM_MODE].channel[i].conf1.duty_start = 1; // Тригер оновлення регістра
+    }
+    // Кулери при екстреній аварії вмикаємо на 100% (4095) для посиленого охолодження аварійного транзистора
+    for (int i = 4; i < 8; i++)
+    {
+        LEDC.channel_group[PWM_MODE].channel[i].duty.duty = (PWM_MAX_DUTY << 4);
+        LEDC.channel_group[PWM_MODE].channel[i].conf1.duty_start = 1;
     }
 }

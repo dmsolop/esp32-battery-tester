@@ -17,6 +17,8 @@
 static const char *TAG = "LOAD_CTRL";
 static TaskHandle_t s_pid_tasks[CONFIG_MAX_CHANNELS] = {NULL};
 static volatile bool s_manual_override[CONFIG_MAX_CHANNELS] = {false};
+static volatile bool s_fan_manual_override[CONFIG_MAX_CHANNELS] = {false};
+static volatile uint8_t s_fan_duty_pct[CONFIG_MAX_CHANNELS] = {0};
 
 // Жорстке відображення логічних каналів на фізичні безпечні піни
 static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
@@ -24,6 +26,12 @@ static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
     CONFIG_PWM_CH1_PIN,
     CONFIG_PWM_CH2_PIN,
     CONFIG_PWM_CH3_PIN};
+
+static const int fan_pins[CONFIG_MAX_CHANNELS] = {
+    CONFIG_FAN_CH0_PIN,
+    CONFIG_FAN_CH1_PIN,
+    CONFIG_FAN_CH2_PIN,
+    CONFIG_FAN_CH3_PIN};
 
 // Апаратне керування MOSFET через генерацію V_REF
 void hw_set_load_pwm(uint8_t channel, uint32_t duty)
@@ -57,6 +65,44 @@ void load_control_set_raw_pwm(uint8_t channel, uint16_t duty)
     }
 }
 
+void load_control_set_fan_pwm(uint8_t channel, uint8_t duty_percent)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+
+    if (duty_percent > 100)
+    {
+        duty_percent = 100;
+    }
+
+    s_fan_duty_pct[channel] = duty_percent;
+    s_fan_manual_override[channel] = true;
+
+    // Масштабування 0..100% у 0..4095
+    uint32_t raw_duty = ((uint32_t)duty_percent * PWM_MAX_DUTY) / 100;
+    load_control_fan_pwm_set(channel, raw_duty);
+}
+
+uint8_t load_control_get_fan_pwm(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return 0;
+    }
+    return s_fan_duty_pct[channel];
+}
+
+void load_control_set_fan_manual_override(uint8_t channel, bool manual)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+    s_fan_manual_override[channel] = manual;
+}
+
 // Функція таски для окремого каналу
 static void pid_control_task(void *pvParameters)
 {
@@ -72,6 +118,12 @@ static void pid_control_task(void *pvParameters)
     if (load_control_pwm_init(channel, channel_pwm_pin) != ESP_OK)
     {
         ESP_LOGE(TAG, "CH%d: Failed to init PWM on pin %d", channel, channel_pwm_pin);
+    }
+
+    int fan_pwm_pin = fan_pins[channel];
+    if (load_control_fan_pwm_init(channel, fan_pwm_pin) != ESP_OK)
+    {
+        ESP_LOGE(TAG, "CH%d: Failed to init Fan PWM on pin %d", channel, fan_pwm_pin);
     }
 
     int64_t last_time_us = esp_timer_get_time();
@@ -97,6 +149,41 @@ static void pid_control_task(void *pvParameters)
         int64_t current_time_us = esp_timer_get_time();
         int64_t dt_us = current_time_us - last_time_us;
         last_time_us = current_time_us;
+
+        // Автоматичне терморегулювання кулера охолодження (якщо немає ручного перевизначення)
+        if (!s_fan_manual_override[channel])
+        {
+            int32_t max_hs_temp_mc = 0;
+            for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
+            {
+                if (metrics.temp_sensors[s].is_bound && metrics.temp_sensors[s].role == SENSOR_ROLE_HEATSINK)
+                {
+                    if (metrics.temp_sensors[s].current_temp_mc > max_hs_temp_mc)
+                    {
+                        max_hs_temp_mc = metrics.temp_sensors[s].current_temp_mc;
+                    }
+                }
+            }
+
+            uint8_t target_fan_pct = 0;
+            if (max_hs_temp_mc < 40000)
+            {
+                target_fan_pct = 0; // До 40 C кулер вимкнений (тихий режим)
+            }
+            else if (max_hs_temp_mc >= 75000)
+            {
+                target_fan_pct = 100; // Від 75 C 100% обертів
+            }
+            else
+            {
+                // Від 40 C до 75 C лінійне зростання 30%..100%
+                target_fan_pct = 30 + (uint8_t)(((int64_t)(max_hs_temp_mc - 40000) * 70) / (75000 - 40000));
+            }
+
+            s_fan_duty_pct[channel] = target_fan_pct;
+            uint32_t raw_fan_duty = ((uint32_t)target_fan_pct * PWM_MAX_DUTY) / 100;
+            load_control_fan_pwm_set(channel, raw_fan_duty);
+        }
 
         switch (metrics.state)
         {

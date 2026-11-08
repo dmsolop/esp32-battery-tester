@@ -83,3 +83,30 @@ bool ds18b20_read_temperature(gpio_num_t pin, const uint8_t *rom, int32_t *temp_
 
     return true;
 }
+
+bool ds18b20_write_scratchpad(gpio_num_t pin, const uint8_t *rom, uint8_t th, uint8_t tl, uint8_t config)
+{
+    if (!onewire_match_rom(pin, rom))
+    {
+        return false;
+    }
+
+    onewire_write_byte(pin, DS18B20_CMD_WRITE_SCRATCH); // 0x4E
+    onewire_write_byte(pin, th);
+    onewire_write_byte(pin, tl);
+    onewire_write_byte(pin, config);
+    return true;
+}
+
+bool ds18b20_copy_scratchpad(gpio_num_t pin, const uint8_t *rom)
+{
+    if (!onewire_match_rom(pin, rom))
+    {
+        return false;
+    }
+
+    onewire_write_byte(pin, DS18B20_CMD_COPY_SCRATCH); // 0x48
+    // Час збереження у вбудовану EEPROM становить макс 10 мс
+    esp_rom_delay_us(10000);
+    return true;
+}

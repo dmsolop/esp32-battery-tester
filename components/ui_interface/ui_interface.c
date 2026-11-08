@@ -4,6 +4,7 @@
 #include "system_state.h"
 #include "load_control.h"
 #include "adc_driver.h"
+#include "temp_service.h"
 #include "icons.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -24,7 +25,7 @@ typedef enum
 #define CH_DETAIL_TOTAL_ITEMS 6
 #define SETTINGS_TOTAL_ITEMS 7
 #define LIVE_MONITOR_TOTAL_ITEMS 7
-#define TEST_DIAG_TOTAL_ITEMS 8
+#define TEST_DIAG_TOTAL_ITEMS 9
 
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
 
@@ -458,32 +459,43 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
 
     // Рахуємо кількість прив'язаних 1-Wire датчиків
     int bound_sensors = 0;
+    int hs_count = 0;
+    int cell_count = 0;
     for (int i = 0; i < MAX_SENSORS_PER_CHANNEL; i++)
     {
         if (m.temp_sensors[i].is_bound)
         {
             bound_sensors++;
+            if (m.temp_sensors[i].role == SENSOR_ROLE_HEATSINK)
+                hs_count++;
+            else if (m.temp_sensors[i].role == SENSOR_ROLE_CELL)
+                cell_count++;
         }
     }
 
+    uint8_t fan_pct = load_control_get_fan_pwm(ch);
+
     char buf_pwm[24];
+    char buf_fan[24];
     char buf_sag[24];
     char buf_pk[24];
     char buf_1w[24];
     snprintf(buf_pwm, sizeof(buf_pwm), "RawPWM: %4u", raw_pwm_val);
+    snprintf(buf_fan, sizeof(buf_fan), "FanPWM: %3u%%", (unsigned int)fan_pct);
     snprintf(buf_sag, sizeof(buf_sag), "Sag/DCIR:%4umO", (unsigned int)(m.internal_res_mohm % 10000U));
     snprintf(buf_pk, sizeof(buf_pk), "NiMH Pk:%4lumV", (unsigned long)(m.peak_voltage_uv / 1000));
-    snprintf(buf_1w, sizeof(buf_1w), "1W Sens: %d bound", bound_sensors);
+    snprintf(buf_1w, sizeof(buf_1w), "1W:H%d/C%d [SCAN]", hs_count, cell_count);
 
     const char *items[TEST_DIAG_TOTAL_ITEMS];
     items[0] = "[ HW Self-Test ]";
     items[1] = "[ Pre-Check OCV ]";
     items[2] = "[ Zero Calib REL ]";
     items[3] = buf_pwm;
-    items[4] = buf_sag;
-    items[5] = buf_pk;
-    items[6] = buf_1w;
-    items[7] = "[ <- BACK ]";
+    items[4] = buf_fan;
+    items[5] = buf_sag;
+    items[6] = buf_pk;
+    items[7] = buf_1w;
+    items[8] = "[ <- BACK ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -497,7 +509,7 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
 
         if (state == UI_STATE_TEST_DIAG && item_idx == selected_param)
         {
-            if (is_editing && selected_param == 3)
+            if (is_editing && (selected_param == 3 || selected_param == 4))
             {
                 display_engine_draw_string(rx + 0, y_pos, ">", 1);
                 display_engine_draw_string(rx + 98, y_pos, "<", 1);
@@ -677,7 +689,7 @@ static void ui_task(void *pvParameters)
                 // Режим редагування параметрів у Test & Diag
                 if (selected_param == 3)
                 {
-                    // Тестовий ШІМ: крок 50 відліків, діапазон 0..4095
+                    // Тестовий ШІМ навантаження: крок 50 відліків, діапазон 0..4095
                     int32_t val = (int32_t)raw_pwm_val + diff * 50;
                     if (val < 0)
                         val = 0;
@@ -685,6 +697,17 @@ static void ui_task(void *pvParameters)
                         val = 4095;
                     raw_pwm_val = (uint16_t)val;
                     load_control_set_raw_pwm(selected_ch, raw_pwm_val);
+                }
+                else if (selected_param == 4)
+                {
+                    // Керування ШІМ вентилятора: крок 10%, діапазон 0..100%
+                    uint8_t cur_fan = load_control_get_fan_pwm(selected_ch);
+                    int32_t val_fan = (int32_t)cur_fan + diff * 10;
+                    if (val_fan < 0)
+                        val_fan = 0;
+                    if (val_fan > 100)
+                        val_fan = 100;
+                    load_control_set_fan_pwm(selected_ch, (uint8_t)val_fan);
                 }
             }
             else
@@ -842,10 +865,31 @@ static void ui_task(void *pvParameters)
                 }
                 else if (selected_param == 3)
                 {
-                    // RawPWM: перемикання режиму інтерактивного редагування значення ШІМ
+                    // RawPWM: перемикання режиму інтерактивного редагування значення ШІМ навантаження
+                    is_editing = !is_editing;
+                }
+                else if (selected_param == 4)
+                {
+                    // FanPWM: перемикання режиму інтерактивного редагування ШІМ кулера
                     is_editing = !is_editing;
                 }
                 else if (selected_param == 7)
+                {
+                    // 1W: пересканування та циклічне перепризначення ролей для тестування
+                    // Перепризначення ролі першого прив'язаного датчика або повторне сканування
+                    if (cur_m.temp_sensors[0].is_bound)
+                    {
+                        sensor_role_t next_role = (cur_m.temp_sensors[0].role == SENSOR_ROLE_HEATSINK) ? SENSOR_ROLE_CELL : SENSOR_ROLE_HEATSINK;
+                        temp_service_bind_sensor_role(selected_ch, 0, next_role);
+                    }
+                    else
+                    {
+                        temp_service_auto_assign(selected_ch, cur_m.temp_sensors);
+                        system_state_set_metrics(selected_ch, &cur_m);
+                        system_state_update_sensor_limits(selected_ch);
+                    }
+                }
+                else if (selected_param == 8)
                 {
                     // BACK TO CH DETAIL
                     // Якщо був виставлений ручний тестовий ШІМ, безпечно скидаємо його при виході
@@ -854,6 +898,9 @@ static void ui_task(void *pvParameters)
                         raw_pwm_val = 0;
                         load_control_set_raw_pwm(selected_ch, 0);
                     }
+                    // Повертаємо кулер у режим автоматичного терморегулювання
+                    load_control_set_fan_manual_override(selected_ch, false);
+
                     current_state = UI_STATE_CH_DETAIL;
                     selected_param = 4; // Повертаємо курсор на [ TESTS & SAFE ]
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);

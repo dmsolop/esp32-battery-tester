@@ -14,7 +14,7 @@ static const char *TAG = "TELEMETRY";
 static void telemetry_task(void *pvParameters)
 {
     channel_metrics_t metrics;
-    char json_buffer[256];
+    char json_buffer[384];
 
     while (1)
     {
@@ -24,11 +24,41 @@ static void telemetry_task(void *pvParameters)
         {
             if (system_state_get_metrics(i, &metrics) == ESP_OK)
             {
-                // Формуємо простий JSON-рядок для кожного каналу
+                // Отримуємо температури радіаторів (до 2) та комірки (до 1)
+                int32_t t_hs1_mc = 0;
+                int32_t t_hs2_mc = 0;
+                int32_t t_cell_mc = 0;
+                bool hs1_found = false;
+
+                for (int s = 0; s < MAX_SENSORS_PER_CHANNEL; s++)
+                {
+                    if (metrics.temp_sensors[s].is_bound)
+                    {
+                        if (metrics.temp_sensors[s].role == SENSOR_ROLE_HEATSINK)
+                        {
+                            if (!hs1_found)
+                            {
+                                t_hs1_mc = metrics.temp_sensors[s].current_temp_mc;
+                                hs1_found = true;
+                            }
+                            else
+                            {
+                                t_hs2_mc = metrics.temp_sensors[s].current_temp_mc;
+                            }
+                        }
+                        else if (metrics.temp_sensors[s].role == SENSOR_ROLE_CELL)
+                        {
+                            t_cell_mc = metrics.temp_sensors[s].current_temp_mc;
+                        }
+                    }
+                }
+
+                // Формуємо розширений JSON-рядок для кожного каналу з температурами у міліградусах
                 snprintf(json_buffer, sizeof(json_buffer),
-                         "{\"ch\":%d,\"state\":%d,\"v_uv\":%lu,\"i_ua\":%lu,\"mah\":%lu,\"mwh\":%lu}",
-                         i, metrics.state, metrics.voltage_uv, metrics.current_ua,
-                         metrics.capacity_mah, metrics.energy_mwh);
+                         "{\"ch\":%d,\"state\":%d,\"v_uv\":%lu,\"i_ua\":%lu,\"mah\":%lu,\"mwh\":%lu,\"t_hs1_mc\":%ld,\"t_hs2_mc\":%ld,\"t_cell_mc\":%ld}",
+                         i, metrics.state, (unsigned long)metrics.voltage_uv, (unsigned long)metrics.current_ua,
+                         (unsigned long)metrics.capacity_mah, (unsigned long)metrics.energy_mwh,
+                         (long)t_hs1_mc, (long)t_hs2_mc, (long)t_cell_mc);
 
                 // Тут у майбутньому буде відправка через MQTT або WebSocket
                 ESP_LOGI(TAG, "JSON: %s", json_buffer);
@@ -36,7 +66,7 @@ static void telemetry_task(void *pvParameters)
         }
         ESP_LOGI(TAG, "-------------------------");
 
-        // Телеметрію зазвичай відправляють рідше, ніж оновлюють UI (наприклад, раз на 5 секунд)
+        // Телеметрію зазвичай відправляють рідше, ніж оновлюють UI (наприклад, раз на 15 секунд)
         vTaskDelay(pdMS_TO_TICKS(15000));
     }
 }
