@@ -157,6 +157,15 @@ void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off
     }
 }
 
+int32_t adc_driver_get_zero_offset_current(uint8_t channel)
+{
+    if (channel < 4)
+    {
+        return s_calib[channel].current_offset_q1_ua;
+    }
+    return 0;
+}
+
 void adc_driver_set_zero_offset_branch(uint8_t channel, adc_current_channel_t branch, int32_t i_off_ua)
 {
     if (channel < 4)

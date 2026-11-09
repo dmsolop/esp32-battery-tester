@@ -17,6 +17,8 @@
 static const char *TAG = "LOAD_CTRL";
 static TaskHandle_t s_pid_tasks[CONFIG_MAX_CHANNELS] = {NULL};
 static volatile bool s_manual_override[CONFIG_MAX_CHANNELS] = {false};
+static volatile bool s_diag_self_test_only[CONFIG_MAX_CHANNELS] = {false};
+static volatile bool s_diag_precheck_only[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_fan_manual_override[CONFIG_MAX_CHANNELS] = {false};
 static volatile uint8_t s_fan_duty_pct[CONFIG_MAX_CHANNELS] = {0};
 
@@ -44,6 +46,111 @@ void hw_set_load_pwm(uint8_t channel, uint32_t duty)
     {
         load_control_pwm_set(channel, duty);
     }
+}
+
+void load_control_stop(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+    s_manual_override[channel] = false;
+    s_diag_self_test_only[channel] = false;
+    s_diag_precheck_only[channel] = false;
+    hw_set_load_pwm(channel, 0);
+    system_state_set_channel_state(channel, STATE_IDLE);
+    ESP_LOGI(TAG, "CH%d: Stopped immediately by load_control_stop.", channel);
+}
+
+void load_control_start_diag_precheck(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+    s_manual_override[channel] = false;
+    s_diag_self_test_only[channel] = false;
+    s_diag_precheck_only[channel] = true;
+    hw_set_load_pwm(channel, 0);
+
+    channel_metrics_t m;
+    system_state_get_metrics(channel, &m);
+    m.state = STATE_PRE_CHECK;
+    m.state_start_time_us = 0;
+    system_state_set_metrics(channel, &m);
+    ESP_LOGI(TAG, "CH%d: Diag Pre-Check OCV started.", channel);
+}
+
+void load_control_start_diag_self_test(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+    s_manual_override[channel] = false;
+    s_diag_precheck_only[channel] = false;
+    s_diag_self_test_only[channel] = true;
+    hw_set_load_pwm(channel, 0);
+
+    channel_metrics_t m;
+    system_state_get_metrics(channel, &m);
+    m.state = STATE_SELF_TEST;
+    m.state_start_time_us = 0;
+    system_state_set_metrics(channel, &m);
+    ESP_LOGI(TAG, "CH%d: Diag HW Self-Test started.", channel);
+}
+
+void load_control_trigger_dcir_pulse(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+
+    ESP_LOGI(TAG, "CH%d: Triggering interactive single DCIR pulse...", channel);
+
+    // 1. Зчитуємо базову напругу V1 при вимкненому навантаженні
+    hw_set_load_pwm(channel, 0);
+    vTaskDelay(pdMS_TO_TICKS(20));
+
+    uint32_t v1_uv = 0;
+    adc_driver_read_voltage(channel, &v1_uv);
+
+    // 2. Подаємо тестовий імпульс струму ~100 мА
+    // Для R_shunt = 0.27 Ом (макет) та LPF з дільником 10:1 (Vref = Vpwm * 0.1):
+    // 100 мА * 0.27 Ом = 27 мВ -> Vpwm = 270 мВ -> duty ~ 335 відліків
+    hw_set_load_pwm(channel, 350);
+
+    // Очікуємо 100 мс (час релаксації та стабілізації струму)
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    uint32_t v2_uv = 0;
+    uint32_t i2_ua = 0;
+    int32_t raw_pid_ua = 0;
+    adc_driver_read_voltage(channel, &v2_uv);
+    adc_driver_read_current(channel, &i2_ua, &raw_pid_ua);
+
+    // 3. Миттєво знімаємо навантаження
+    hw_set_load_pwm(channel, 0);
+
+    channel_metrics_t m;
+    system_state_get_metrics(channel, &m);
+
+    // При активному навантаженні напруга просідає: v1_uv > v2_uv, dI = i2_ua
+    if (v1_uv > v2_uv && i2_ua >= 10000)
+    {
+        uint32_t delta_v_uv = v1_uv - v2_uv;
+        uint32_t dcir_mohm = (delta_v_uv * 1000) / i2_ua;
+        m.internal_res_mohm = dcir_mohm;
+        ESP_LOGI(TAG, "CH%d: Single DCIR calculated: %lu mOhm (dV=%lu uV, dI=%lu uA)",
+                 channel, dcir_mohm, delta_v_uv, i2_ua);
+    }
+    else
+    {
+        ESP_LOGW(TAG, "CH%d: Single DCIR failed: V1=%lu, V2=%lu, I2=%lu", channel, v1_uv, v2_uv, i2_ua);
+    }
+
+    system_state_set_metrics(channel, &m);
 }
 
 void load_control_set_raw_pwm(uint8_t channel, uint16_t duty)
@@ -191,6 +298,8 @@ static void pid_control_task(void *pvParameters)
         case STATE_FINISHED:
         case STATE_CHARGING: // Тимчасова заглушка для проходження компіляції
         case STATE_ERROR:
+            s_diag_self_test_only[channel] = false;
+            s_diag_precheck_only[channel] = false;
             if (!s_manual_override[channel])
             {
                 hw_set_load_pwm(channel, 0);
@@ -265,15 +374,25 @@ static void pid_control_task(void *pvParameters)
 
             if (ping_current_ua < 10000)
             { // Якщо струм менше 10 мА - фізичний обрив кола / вимкнене джерело / спрацював запобіжник
+                s_diag_self_test_only[channel] = false;
                 metrics.state = STATE_ERROR;
                 metrics.error_flags |= ERR_OPEN_CIRCUIT;
                 ESP_LOGE(TAG, "CH%d: Power Path Check FAILED (Open Circuit: I=%lu uA < 10mA).", channel, ping_current_ua);
             }
             else
             {
-                metrics.state = STATE_PRE_CHECK;
-                metrics.state_start_time_us = 0; // Скидаємо таймер для коректного старту OCV паузи
-                ESP_LOGI(TAG, "CH%d: Self-Test PASSED (Ping I=%lu uA). Moving to PRE_CHECK.", channel, ping_current_ua);
+                if (s_diag_self_test_only[channel])
+                {
+                    s_diag_self_test_only[channel] = false;
+                    metrics.state = STATE_IDLE;
+                    ESP_LOGI(TAG, "CH%d: Diag Self-Test PASSED (Ping I=%lu uA). Returning to IDLE.", channel, ping_current_ua);
+                }
+                else
+                {
+                    metrics.state = STATE_PRE_CHECK;
+                    metrics.state_start_time_us = 0; // Скидаємо таймер для коректного старту OCV паузи
+                    ESP_LOGI(TAG, "CH%d: Self-Test PASSED (Ping I=%lu uA). Moving to PRE_CHECK.", channel, ping_current_ua);
+                }
             }
 
             system_state_set_metrics(channel, &metrics);
@@ -284,7 +403,30 @@ static void pid_control_task(void *pvParameters)
             hw_set_load_pwm(channel, 0);
             adc_driver_read_voltage(channel, &metrics.voltage_uv);
 
-            // Виклик бізнес-логіки діагностики OCV
+            // Якщо це діагностичний запуск [ Pre-Check OCV ], негайно фіксуємо OCV і повертаємося в STATE_IDLE
+            if (s_diag_precheck_only[channel])
+            {
+                s_diag_precheck_only[channel] = false;
+                metrics.ocv_uv = metrics.voltage_uv;
+                metrics.peak_voltage_uv = metrics.voltage_uv;
+
+                if (metrics.ocv_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
+                {
+                    metrics.state = STATE_IDLE;
+                    ESP_LOGI(TAG, "CH%d: Diag Pre-Check OCV: %.3f V. Returning to IDLE safely.",
+                             channel, metrics.ocv_uv / 1000000.0f);
+                }
+                else
+                {
+                    metrics.state = STATE_ERROR;
+                    ESP_LOGE(TAG, "CH%d: Diag Pre-Check OCV too low (%.3f V).",
+                             channel, metrics.ocv_uv / 1000000.0f);
+                }
+                system_state_set_metrics(channel, &metrics);
+                break;
+            }
+
+            // Виклик бізнес-логіки діагностики OCV при штатному старті розряду
             analyzer_verdict_t pre_verdict = analyzer_service_evaluate_pre_check(channel, &metrics);
 
             if (pre_verdict == ANALYZER_FINISHED)

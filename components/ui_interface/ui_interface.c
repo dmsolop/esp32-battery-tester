@@ -8,8 +8,11 @@
 #include "icons.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_log.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+static const char *TAG = "UI_INTERFACE";
 
 // --- Стани кінцевого автомата UI ---
 typedef enum
@@ -25,7 +28,7 @@ typedef enum
 #define VISIBLE_ROWS 4
 #define CH_DETAIL_TOTAL_ITEMS 6
 #define SETTINGS_TOTAL_ITEMS 7
-#define LIVE_MONITOR_TOTAL_ITEMS 7
+#define LIVE_MONITOR_TOTAL_ITEMS 8
 #define TEST_DIAG_TOTAL_ITEMS 9
 #define SENSOR_BIND_TOTAL_ITEMS (MAX_SENSORS_PER_CHANNEL + 2)
 
@@ -412,6 +415,13 @@ static void render_live_monitor(int rx, uint8_t ch, int selected_param, int scro
              seconds,
              soh_to_str(m.soh));
 
+    bool is_active = (m.state == STATE_SELF_TEST ||
+                      m.state == STATE_PRE_CHECK ||
+                      m.state == STATE_DISCHARGING ||
+                      m.state == STATE_CHARGING);
+
+    const char *row7 = is_active ? "[ [] STOP LOAD  ]" : "[ <- BACK       ]";
+
     const char *items[LIVE_MONITOR_TOTAL_ITEMS];
     items[0] = row0;
     items[1] = row1;
@@ -420,6 +430,7 @@ static void render_live_monitor(int rx, uint8_t ch, int selected_param, int scro
     items[4] = row4;
     items[5] = row5;
     items[6] = row6;
+    items[7] = row7;
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -477,25 +488,39 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
 
     uint8_t fan_pct = load_control_get_fan_pwm(ch);
 
+    // Візуальний фідбек для тарування нуля струму: показуємо зафіксований офсет
+    int32_t zero_off_ua = adc_driver_get_zero_offset_current(ch);
+    char buf_zerocal[24];
+    if (zero_off_ua == 0)
+    {
+        snprintf(buf_zerocal, sizeof(buf_zerocal), "[ Zero Calib REL ]");
+    }
+    else
+    {
+        int32_t off_ma_int = zero_off_ua / 1000;
+        int32_t off_ma_frac = abs(zero_off_ua % 1000) / 100;
+        snprintf(buf_zerocal, sizeof(buf_zerocal), "ZCal:%+ld.%ldmA[OK]", (long)off_ma_int, (long)off_ma_frac);
+    }
+
     char buf_pwm[24];
     char buf_fan[24];
     char buf_sag[24];
-    char buf_pk[24];
+    char buf_faults[24];
     char buf_1w[24];
     snprintf(buf_pwm, sizeof(buf_pwm), "RawPWM: %4u", raw_pwm_val);
     snprintf(buf_fan, sizeof(buf_fan), "FanPWM: %3u%%", (unsigned int)fan_pct);
-    snprintf(buf_sag, sizeof(buf_sag), "Sag/DCIR:%4umO", (unsigned int)(m.internal_res_mohm % 10000U));
-    snprintf(buf_pk, sizeof(buf_pk), "NiMH Pk:%4lumV", (unsigned long)(m.peak_voltage_uv / 1000));
+    snprintf(buf_sag, sizeof(buf_sag), "DCIR:%4umO [PUL]", (unsigned int)(m.internal_res_mohm % 10000U));
+    snprintf(buf_faults, sizeof(buf_faults), "Fault:0x%02lX [CLR]", (unsigned long)m.error_flags);
     snprintf(buf_1w, sizeof(buf_1w), "1W:H%d/C%d [ROLES]", hs_count, cell_count);
 
     const char *items[TEST_DIAG_TOTAL_ITEMS];
     items[0] = "[ HW Self-Test ]";
     items[1] = "[ Pre-Check OCV ]";
-    items[2] = "[ Zero Calib REL ]";
+    items[2] = buf_zerocal;
     items[3] = buf_pwm;
     items[4] = buf_fan;
     items[5] = buf_sag;
-    items[6] = buf_pk;
+    items[6] = buf_faults;
     items[7] = buf_1w;
     items[8] = "[ <- BACK ]";
 
@@ -853,8 +878,8 @@ static void ui_task(void *pvParameters)
                                       cur_m.state == STATE_CHARGING);
                     if (is_active)
                     {
-                        // Негайна зупинка розряду
-                        system_state_set_channel_state(selected_ch, STATE_IDLE);
+                        // Негайна зупинка розряду з апаратним обнуленням ШІМ
+                        load_control_stop(selected_ch);
                     }
                     else
                     {
@@ -918,8 +943,8 @@ static void ui_task(void *pvParameters)
             case UI_STATE_TEST_DIAG:
                 if (selected_param == 0)
                 {
-                    // [ HW Self-Test ]: запуск фази самотестування силового тракту з переходом на Live Monitor
-                    system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
+                    // [ HW Self-Test ]: запуск діагностичного самотестування силового тракту (без переходу у розряд)
+                    load_control_start_diag_self_test(selected_ch);
                     current_state = UI_STATE_GRAPH;
                     selected_param = 0;
                     scroll_offset = 0;
@@ -927,8 +952,8 @@ static void ui_task(void *pvParameters)
                 }
                 else if (selected_param == 1)
                 {
-                    // [ Pre-Check OCV ]: запуск фази вимірювання ЕРС з переходом на Live Monitor
-                    system_state_set_channel_state(selected_ch, STATE_PRE_CHECK);
+                    // [ Pre-Check OCV ]: запуск діагностичного вимірювання ЕРС (без переходу у розряд)
+                    load_control_start_diag_precheck(selected_ch);
                     current_state = UI_STATE_GRAPH;
                     selected_param = 0;
                     scroll_offset = 0;
@@ -941,6 +966,7 @@ static void ui_task(void *pvParameters)
                     int32_t raw_pid_ua = 0;
                     adc_driver_read_current(selected_ch, &zero_current_ua, &raw_pid_ua);
                     adc_driver_set_zero_offset(selected_ch, 0, raw_pid_ua);
+                    ESP_LOGI(TAG, "CH%d: Zero Tare Calib executed. Offset = %+ld uA", selected_ch, (long)raw_pid_ua);
                 }
                 else if (selected_param == 3)
                 {
@@ -951,6 +977,22 @@ static void ui_task(void *pvParameters)
                 {
                     // FanPWM: перемикання режиму інтерактивного редагування ШІМ кулера
                     is_editing = !is_editing;
+                }
+                else if (selected_param == 5)
+                {
+                    // [ DCIR Test ]: одиночний імпульсний замір DCIR (100 мс @ 100 мА) з поверненням в IDLE
+                    load_control_trigger_dcir_pulse(selected_ch);
+                }
+                else if (selected_param == 6)
+                {
+                    // [ Clear Faults ]: ручне квітування / скидання аварійного стану каналу з меню тестів
+                    cur_m.error_flags = 0;
+                    if (cur_m.state == STATE_ERROR)
+                    {
+                        cur_m.state = STATE_IDLE;
+                    }
+                    system_state_set_metrics(selected_ch, &cur_m);
+                    ESP_LOGI(TAG, "CH%d: Faults cleared manually from TEST/DIAG menu.", selected_ch);
                 }
                 else if (selected_param == 7)
                 {
@@ -1016,10 +1058,33 @@ static void ui_task(void *pvParameters)
                 break;
 
             case UI_STATE_GRAPH:
-                // Вихід з екрана моніторингу назад у CH_DETAIL БЕЗ зупинки розряду
-                current_state = UI_STATE_CH_DETAIL;
-                selected_param = 2; // Курсор на [ LIVE MON ]
-                update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                // Якщо обрано рядок 7:
+                // Якщо канал активний -> [ [] STOP LOAD ] (зупиняємо розряд через load_control_stop)
+                // Якщо неактивний -> повертаємося назад у CH DETAIL
+                if (selected_param == 7)
+                {
+                    bool is_active = (cur_m.state == STATE_SELF_TEST ||
+                                      cur_m.state == STATE_PRE_CHECK ||
+                                      cur_m.state == STATE_DISCHARGING ||
+                                      cur_m.state == STATE_CHARGING);
+                    if (is_active)
+                    {
+                        load_control_stop(selected_ch);
+                    }
+                    else
+                    {
+                        current_state = UI_STATE_CH_DETAIL;
+                        selected_param = 2; // Курсор на [ LIVE MONITOR ]
+                        update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                    }
+                }
+                else
+                {
+                    // Клік по будь-якому іншому рядку: штатно виходимо в CH DETAIL БЕЗ переривання розряду
+                    current_state = UI_STATE_CH_DETAIL;
+                    selected_param = 2; // Курсор на [ LIVE MONITOR ]
+                    update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                }
                 break;
             }
         }

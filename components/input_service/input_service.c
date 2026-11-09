@@ -10,9 +10,11 @@ static bool s_btn_prev_state = true; // true = не натиснута (чере
 esp_err_t input_service_init(void)
 {
     // Ініціалізація PCNT для енкодера
+    // Збільшено ліміти до +/-30000 для запобігання апаратного скидання лічильника
+    // при регулюванні параметрів з великими значеннями (RawPWM 0..4095 тощо).
     pcnt_unit_config_t unit_config = {
-        .high_limit = 100,
-        .low_limit = -100,
+        .high_limit = 30000,
+        .low_limit = -30000,
     };
     ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &s_pcnt_unit));
 

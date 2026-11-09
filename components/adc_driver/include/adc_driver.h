@@ -46,6 +46,9 @@ extern "C"
     // Встановлення нульового зміщення для калібрування
     void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off_ua);
 
+    // Отримання поточного зміщення нуля струму (у мкА)
+    int32_t adc_driver_get_zero_offset_current(uint8_t channel);
+
     // Встановлення індивідуального зміщення нуля для конкретного плеча струму
     void adc_driver_set_zero_offset_branch(uint8_t channel, adc_current_channel_t branch, int32_t i_off_ua);
 
