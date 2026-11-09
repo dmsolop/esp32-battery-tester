@@ -538,7 +538,7 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
 // --- Рендеринг екрана прив'язки 1-Wire датчиків до ролей ---
 static void render_sensor_bind(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state)
 {
-    char title[20];
+    char title[24];
     snprintf(title, sizeof(title), "- CH%d 1W SENSORS -", ch);
     display_engine_draw_string(rx + 4, 4, title, 1);
 

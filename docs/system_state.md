@@ -90,6 +90,7 @@
   - Added background automatic fan thermal control curve in `components/load_control/load_control.c` (< 40 °C: 0%, 40..75 °C: linear 30..100%, >= 75 °C: 100%) with manual override via `load_control_set_fan_pwm(ch, pct)`.
   - Added interactive `FanPWM: %3u%%` item (editable in 10% steps, 0..100%) and interactive 1-Wire test action `1W:H%d/C%d [SCAN]` into `UI_STATE_TEST_DIAG` in `components/ui_interface/ui_interface.c`.
   - Enriched telemetry JSON output in `components/telemetry/telemetry.c` with `t_hs1_mc`, `t_hs2_mc`, and `t_cell_mc`.
+- [x] **[Ticket-UI-BUF-TRUNC]** Fixed `-Werror=format-truncation=` in [`components/ui_interface/ui_interface.c:541`](components/ui_interface/ui_interface.c:541) (`render_sensor_bind`) by expanding `title` buffer from 20 to 24 bytes, preventing compiler truncation warnings for `uint8_t` channel index string `- CH%d 1W SENSORS -`.
 
 ### 👑 Master System Orchestrator (Status: Pending)
 - [ ] Delegate execution of `Ticket-PID-1`, `Ticket-PID-2` and `Ticket-ADC-1` to `code` mode.
