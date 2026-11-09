@@ -22,6 +22,9 @@ void temp_service_auto_assign(uint8_t channel, temp_sensor_data_t *sensors);
 // та оновленням лімітів у system_state
 esp_err_t temp_service_bind_sensor_role(uint8_t channel, uint8_t sensor_idx, sensor_role_t new_role);
 
+// Примусове ручне пересканування шини OneWire та оновлення прив'язок у system_state
+esp_err_t temp_service_rescan(uint8_t channel);
+
 // Апаратний броадкаст: запускає конвертацію ОДНОЧАСНО на всіх 4 шинах
 bool temp_service_trigger_conversion(void);
 bool temp_service_is_conversion_done(void);

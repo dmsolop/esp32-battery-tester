@@ -208,11 +208,37 @@ esp_err_t temp_service_bind_sensor_role(uint8_t channel, uint8_t sensor_idx, sen
     {
         metrics.temp_sensors[sensor_idx].limit_temp_mc = metrics.settings.thermal_limit_mc;
     }
+    else
+    {
+        metrics.temp_sensors[sensor_idx].limit_temp_mc = 85000;
+    }
 
     system_state_set_metrics(channel, &metrics);
     system_state_update_sensor_limits(channel);
 
     ESP_LOGI(TAG, "CH%d Sensor[%d] role changed to %d and written to EEPROM", channel, sensor_idx, new_role);
+    return ESP_OK;
+}
+
+esp_err_t temp_service_rescan(uint8_t channel)
+{
+    if (channel >= 4)
+    {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    channel_metrics_t metrics;
+    esp_err_t err = system_state_get_metrics(channel, &metrics);
+    if (err != ESP_OK)
+    {
+        return err;
+    }
+
+    temp_service_auto_assign(channel, metrics.temp_sensors);
+    system_state_set_metrics(channel, &metrics);
+    system_state_update_sensor_limits(channel);
+
+    ESP_LOGI(TAG, "CH%d 1-Wire manual rescan complete", channel);
     return ESP_OK;
 }
 

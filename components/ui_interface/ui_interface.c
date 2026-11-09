@@ -18,7 +18,8 @@ typedef enum
     UI_STATE_CH_DETAIL,
     UI_STATE_SETTINGS,
     UI_STATE_GRAPH,
-    UI_STATE_TEST_DIAG
+    UI_STATE_TEST_DIAG,
+    UI_STATE_SENSOR_BIND
 } ui_state_t;
 
 #define VISIBLE_ROWS 4
@@ -26,6 +27,7 @@ typedef enum
 #define SETTINGS_TOTAL_ITEMS 7
 #define LIVE_MONITOR_TOTAL_ITEMS 7
 #define TEST_DIAG_TOTAL_ITEMS 9
+#define SENSOR_BIND_TOTAL_ITEMS (MAX_SENSORS_PER_CHANNEL + 2)
 
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
 
@@ -484,7 +486,7 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
     snprintf(buf_fan, sizeof(buf_fan), "FanPWM: %3u%%", (unsigned int)fan_pct);
     snprintf(buf_sag, sizeof(buf_sag), "Sag/DCIR:%4umO", (unsigned int)(m.internal_res_mohm % 10000U));
     snprintf(buf_pk, sizeof(buf_pk), "NiMH Pk:%4lumV", (unsigned long)(m.peak_voltage_uv / 1000));
-    snprintf(buf_1w, sizeof(buf_1w), "1W:H%d/C%d [SCAN]", hs_count, cell_count);
+    snprintf(buf_1w, sizeof(buf_1w), "1W:H%d/C%d [ROLES]", hs_count, cell_count);
 
     const char *items[TEST_DIAG_TOTAL_ITEMS];
     items[0] = "[ HW Self-Test ]";
@@ -528,6 +530,74 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
         display_engine_draw_string(rx + 120, 16, "^", 1);
     }
     if (scroll_offset + VISIBLE_ROWS < TEST_DIAG_TOTAL_ITEMS)
+    {
+        display_engine_draw_string(rx + 120, 52, "v", 1);
+    }
+}
+
+// --- Рендеринг екрана прив'язки 1-Wire датчиків до ролей ---
+static void render_sensor_bind(int rx, uint8_t ch, int selected_param, int scroll_offset, ui_state_t state)
+{
+    char title[20];
+    snprintf(title, sizeof(title), "- CH%d 1W SENSORS -", ch);
+    display_engine_draw_string(rx + 4, 4, title, 1);
+
+    channel_metrics_t m;
+    system_state_get_metrics(ch, &m);
+
+    char items[SENSOR_BIND_TOTAL_ITEMS][24];
+    for (int i = 0; i < MAX_SENSORS_PER_CHANNEL; i++)
+    {
+        if (m.temp_sensors[i].is_bound)
+        {
+            const char *role_tag = "NONE";
+            if (m.temp_sensors[i].role == SENSOR_ROLE_HEATSINK)
+            {
+                role_tag = "HS  ";
+            }
+            else if (m.temp_sensors[i].role == SENSOR_ROLE_CELL)
+            {
+                role_tag = "CELL";
+            }
+
+            int32_t t = m.temp_sensors[i].current_temp_mc;
+            int32_t deg = t / 1000;
+            // Показуємо індекс, останні 2 байти ROM (CRC / унікальний ID) та поточну температуру в реальному часі
+            snprintf(items[i], sizeof(items[i]), "#%d:%02X%02X %2ldC %s",
+                     i, m.temp_sensors[i].rom[6], m.temp_sensors[i].rom[7], (long)deg, role_tag);
+        }
+        else
+        {
+            snprintf(items[i], sizeof(items[i]), "#%d: --.-C [EMPTY]", i);
+        }
+    }
+
+    snprintf(items[MAX_SENSORS_PER_CHANNEL], sizeof(items[MAX_SENSORS_PER_CHANNEL]), "[ Rescan 1-Wire ]");
+    snprintf(items[MAX_SENSORS_PER_CHANNEL + 1], sizeof(items[MAX_SENSORS_PER_CHANNEL + 1]), "[ <- BACK ]");
+
+    int base_y[] = {16, 28, 40, 52};
+
+    for (int row = 0; row < VISIBLE_ROWS; row++)
+    {
+        int item_idx = scroll_offset + row;
+        if (item_idx >= SENSOR_BIND_TOTAL_ITEMS)
+            break;
+
+        int y_pos = base_y[row];
+
+        if (state == UI_STATE_SENSOR_BIND && item_idx == selected_param)
+        {
+            display_engine_draw_string(rx + 0, y_pos, ">", 1);
+        }
+        display_engine_draw_string(rx + 8, y_pos, items[item_idx], 1);
+    }
+
+    // Візуальні індикатори прокрутки (X = rx + 120 = 248)
+    if (scroll_offset > 0)
+    {
+        display_engine_draw_string(rx + 120, 16, "^", 1);
+    }
+    if (scroll_offset + VISIBLE_ROWS < SENSOR_BIND_TOTAL_ITEMS)
     {
         display_engine_draw_string(rx + 120, 52, "v", 1);
     }
@@ -580,6 +650,10 @@ static void ui_render(uint8_t selected_ch, int selected_param, int scroll_offset
 
     case UI_STATE_TEST_DIAG:
         render_test_diag(rx, selected_ch, selected_param, scroll_offset, state, is_editing, raw_pwm_val);
+        break;
+
+    case UI_STATE_SENSOR_BIND:
+        render_sensor_bind(rx, selected_ch, selected_param, scroll_offset, state);
         break;
     }
 }
@@ -738,6 +812,11 @@ static void ui_task(void *pvParameters)
                     selected_param = (selected_param + diff + menu_items) % menu_items;
                     update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
                     break;
+                case UI_STATE_SENSOR_BIND:
+                    menu_items = SENSOR_BIND_TOTAL_ITEMS;
+                    selected_param = (selected_param + diff + menu_items) % menu_items;
+                    update_scroll_offset(selected_param, menu_items, &scroll_offset, VISIBLE_ROWS);
+                    break;
                 default:
                     break;
                 }
@@ -875,19 +954,11 @@ static void ui_task(void *pvParameters)
                 }
                 else if (selected_param == 7)
                 {
-                    // 1W: пересканування та циклічне перепризначення ролей для тестування
-                    // Перепризначення ролі першого прив'язаного датчика або повторне сканування
-                    if (cur_m.temp_sensors[0].is_bound)
-                    {
-                        sensor_role_t next_role = (cur_m.temp_sensors[0].role == SENSOR_ROLE_HEATSINK) ? SENSOR_ROLE_CELL : SENSOR_ROLE_HEATSINK;
-                        temp_service_bind_sensor_role(selected_ch, 0, next_role);
-                    }
-                    else
-                    {
-                        temp_service_auto_assign(selected_ch, cur_m.temp_sensors);
-                        system_state_set_metrics(selected_ch, &cur_m);
-                        system_state_update_sensor_limits(selected_ch);
-                    }
+                    // [ 1W Sensors & Roles ]: Перехід до екрана детальної прив'язки датчиків
+                    current_state = UI_STATE_SENSOR_BIND;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
                 }
                 else if (selected_param == 8)
                 {
@@ -905,6 +976,42 @@ static void ui_task(void *pvParameters)
                     selected_param = 4; // Повертаємо курсор на [ TESTS & SAFE ]
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
+                }
+                break;
+
+            case UI_STATE_SENSOR_BIND:
+                if (selected_param < MAX_SENSORS_PER_CHANNEL)
+                {
+                    // Клік по датчику #0..#5: циклічне перемикання ролі з негайним записом у EEPROM DS18B20
+                    if (cur_m.temp_sensors[selected_param].is_bound)
+                    {
+                        sensor_role_t next_role = SENSOR_ROLE_NONE;
+                        if (cur_m.temp_sensors[selected_param].role == SENSOR_ROLE_NONE)
+                        {
+                            next_role = SENSOR_ROLE_HEATSINK;
+                        }
+                        else if (cur_m.temp_sensors[selected_param].role == SENSOR_ROLE_HEATSINK)
+                        {
+                            next_role = SENSOR_ROLE_CELL;
+                        }
+                        else
+                        {
+                            next_role = SENSOR_ROLE_HEATSINK;
+                        }
+                        temp_service_bind_sensor_role(selected_ch, selected_param, next_role);
+                    }
+                }
+                else if (selected_param == MAX_SENSORS_PER_CHANNEL)
+                {
+                    // [ Rescan 1-Wire ]: повторне сканування шини для виявлення щойно підключених датчиків
+                    temp_service_rescan(selected_ch);
+                }
+                else if (selected_param == MAX_SENSORS_PER_CHANNEL + 1)
+                {
+                    // [ <- BACK ]: повернення в меню TESTS & SAFE
+                    current_state = UI_STATE_TEST_DIAG;
+                    selected_param = 7; // повертаємо курсор на пункт 1W
+                    update_scroll_offset(selected_param, TEST_DIAG_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                 }
                 break;
 
