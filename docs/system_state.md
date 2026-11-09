@@ -60,14 +60,20 @@
 
 ## 4. Active Handoff / Queue
 
-### 🔬 Hardware Lab Engineer (Status: In Progress - Stage 3, peripheral audit and identified blockers)
+### 🔬 Hardware Lab Engineer (Status: Completed - Interactive Bench Validation of [ TESTS & SAFE ] and [ ROLES ])
 - [x] **BLOCKER:** Assemble on breadboard the Variant B2 dual-stage passive LPF with 10:1 divider (`R1=10k`, `R_div=1.0k || C1=100nF`, `R2=4.7k..10k`, `C2=100nF`) and check current stability at 20 kHz PWM frequency. Successfully validated on FNIRSI DPOS350P: 2.5 ms rise time, minimal ripple, stable current of 300 mA (V_shunt 80 mV, V_gate 2.19 V) and 1000 mA (V_shunt 290 mV, V_gate 2.56 V), on Reset current drops to 0.00 A without spikes.
 - [x] Conduct current stability testing using Bench Power Supply and oscilloscope, verify absence of high-frequency oscillations, and ensure a clean zero at `PWM = 0` and MCU reset.
-- [x] **Audit Stage 3 (1-Wire Peripherals, FAN IO12, I2C/PCNT):** Hardware and software disconnects identified, Cross-Module Impact Tickets generated for Orchestrator:
-- **[Cross-Ticket-TEMP-1]** In `components/temp_sensor/temp_service.c`, the `temp_service_auto_assign()` function binds sensors strictly upon reading role `T_L = 0x01` or `0x02` from EEPROM. New/factory DS18B20s have default bytes, so they don't bind (`is_bound = false`) and `temp_service_read_sensors()` never calls for temperature conversion. Need to add a default fallback: if sensors are found on the bus, automatically assign 1st sensor as `SENSOR_ROLE_HEATSINK` and 2nd as `SENSOR_ROLE_CELL`. (Resolved in Step 4)
-- **[Cross-Ticket-CLI-TEMP]** Add a `temp` or `sensors` command in `components/cli/cli.c` to output raw ROM addresses, binding statuses, and current temperature of each channel in °C to the console. Add temperature to cyclic telemetry output. (Telemetry resolved in Step 4)
-- **[Cross-Ticket-FAN-1]** Implement Fan PWM driver on `CONFIG_FAN_CH0_PIN` (`IO12`) (25 kHz frequency, LEDC) and add CLI command `fan <duty_percent>` (0..100%) for manual airflow testing on the lab bench without needing to wait for prolonged heatsink warmup. (LEDC driver + thermal profile resolved in Step 4)
-- **[Cross-Ticket-UI-TEMP]** Add rendering of real measured heatsink temperature on SSD1306 screens (currently only the set shutdown limit `T: XX C` is displayed). (Resolved in Step 4)
+- [x] **Audit Stage 3 (1-Wire Peripherals, FAN IO12, I2C/PCNT):** Hardware and software disconnects identified, Cross-Module Impact Tickets generated for Orchestrator.
+- [x] **Step-by-Step Bench Validation of `[ TESTS & SAFE ]` and `1W:H%d/C%d [ROLES]` UI Menu:**
+  - `[ HW Self-Test ]`: **PASS**. Transitions FSM to `STATE_SELF_TEST`, verifies power path and switches to Live Monitor.
+  - `[ Pre-Check OCV ]`: **FAIL / BLOCKING FSM BUG**. Successfully measures OCV, but FSM unconditionally transitions to `STATE_DISCHARGING` pulling 950 mA instead of remaining in diagnostic/IDLE mode. Furthermore, Stop button in Live Monitor fails to abort discharge until `ERR_THERMAL_RUNAWAY` (0x08) triggers.
+  - `[ Zero Calib REL ]`: **PARTIAL / UX-BUG**. Correctly records raw ADC zero offset into driver, but lacks visual confirmation on OLED / logs. Intermittent CRC error detected on 1-Wire bus (`ROM: 28C1...`).
+  - `RawPWM: %4u`: **PARTIAL / BUG**. Hardware PWM opens MOSFET and scales discharge current smoothly, but PCNT input jumps erratically (e.g. from 2600 to 250/150) due to 16-bit encoder counter overflow/glitch.
+  - `FanPWM: %3u%%`: **PASS**. Smooth fan control 0..100% in 10% steps, immediate acoustic and airflow response.
+  - `Sag/DCIR: %4umO`: **FAIL / UX-BUG**. Stale value (177 mOhm) persists across restarts; needs metric reset on new test start and an interactive single-pulse DCIR trigger action.
+  - `NiMH Pk: %4lumV`: **FAIL / ARCH-DEFECT**. Static read-only field without clear diagnostic purpose in manual testing menu; needs relocation or replacement with interactive feature.
+  - `1W:H%d/C%d [ROLES]` (`render_sensor_bind`): **PASS**. Full live list #0..#2 with ROM and temperatures, seamless cyclic role toggle (`NONE` -> `HS` -> `CELL`), real-time commit to DS18B20 EEPROM, successful `[ Rescan 1-Wire ]`, and correct counter update in parent menu.
+  - `[ <- BACK ]`: **PASS**. Safely zeros active `RawPWM` to 0 mA and resets cooling fan to automatic thermal curve.
 - [ ] Develop test plan for internal resistance and voltage sag on cylindrical Li-ion and NiMH cells.
 
 ### 💻 Firmware Engineers (`load-control-engineer` & `hal-driver-specialist`) (Status: In Progress - AGILE)
