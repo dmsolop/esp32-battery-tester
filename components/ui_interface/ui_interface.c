@@ -27,7 +27,7 @@ typedef enum
 } ui_state_t;
 
 #define VISIBLE_ROWS 4
-#define CH_DETAIL_TOTAL_ITEMS 5
+#define CH_DETAIL_TOTAL_ITEMS 6
 #define SETTINGS_TOTAL_ITEMS 8
 #define LIVE_MONITOR_TOTAL_ITEMS 8
 #define TEST_DIAG_TOTAL_ITEMS 10
@@ -191,9 +191,10 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, int scroll_
     const char *items[CH_DETAIL_TOTAL_ITEMS];
     items[0] = is_active ? "[ [] STOP      ]" : "[ -> START     ]";
     items[1] = "[ -> DCIR TEST ]";
-    items[2] = chem_str;
-    items[3] = "[ TESTS & SAFE ]";
-    items[4] = "[ <- BACK      ]";
+    items[2] = "[ -> LIVE MON  ]";
+    items[3] = chem_str;
+    items[4] = "[ TESTS & SAFE ]";
+    items[5] = "[ <- BACK      ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -897,9 +898,12 @@ static void ui_task(void *pvParameters)
                     }
                     else
                     {
-                        // Запуск розряду
+                        // Запуск розряду з автоматичним переходом на Live Monitor
                         system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
                         buzzer_play(BUZZER_EVENT_CONFIRM);
+                        current_state = UI_STATE_GRAPH;
+                        selected_param = 0;
+                        scroll_offset = 0;
                     }
                 }
                 else if (selected_param == 1)
@@ -912,6 +916,14 @@ static void ui_task(void *pvParameters)
                 }
                 else if (selected_param == 2)
                 {
+                    // [ -> LIVE MON ]: прямий перехід на екран живого моніторингу
+                    current_state = UI_STATE_GRAPH;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    buzzer_play(BUZZER_EVENT_CLICK);
+                }
+                else if (selected_param == 3)
+                {
                     // Дозволено перемикання хімії лише коли канал у STATE_IDLE або STATE_FINISHED
                     if (cur_m.state == STATE_IDLE || cur_m.state == STATE_FINISHED)
                     {
@@ -920,7 +932,7 @@ static void ui_task(void *pvParameters)
                         buzzer_play(BUZZER_EVENT_CLICK);
                     }
                 }
-                else if (selected_param == 3)
+                else if (selected_param == 4)
                 {
                     // TESTS & SAFE DIAG
                     current_state = UI_STATE_TEST_DIAG;
@@ -929,7 +941,7 @@ static void ui_task(void *pvParameters)
                     is_editing = false;
                     buzzer_play(BUZZER_EVENT_CLICK);
                 }
-                else if (selected_param == 4)
+                else if (selected_param == 5)
                 {
                     // BACK TO CH LIST
                     current_state = UI_STATE_CH_LIST;
@@ -1053,7 +1065,7 @@ static void ui_task(void *pvParameters)
                     load_control_set_fan_manual_override(selected_ch, false);
 
                     current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 3; // Повертаємо курсор на [ TESTS & SAFE ]
+                    selected_param = 4; // Повертаємо курсор на [ TESTS & SAFE ]
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
                     buzzer_play(BUZZER_EVENT_CLICK);
