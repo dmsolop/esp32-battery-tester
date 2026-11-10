@@ -5,6 +5,7 @@
 #include "load_control.h"
 #include "adc_driver.h"
 #include "temp_service.h"
+#include "buzzer_service.h"
 #include "icons.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -26,10 +27,10 @@ typedef enum
 } ui_state_t;
 
 #define VISIBLE_ROWS 4
-#define CH_DETAIL_TOTAL_ITEMS 6
-#define SETTINGS_TOTAL_ITEMS 7
+#define CH_DETAIL_TOTAL_ITEMS 5
+#define SETTINGS_TOTAL_ITEMS 8
 #define LIVE_MONITOR_TOTAL_ITEMS 8
-#define TEST_DIAG_TOTAL_ITEMS 9
+#define TEST_DIAG_TOTAL_ITEMS 10
 #define SENSOR_BIND_TOTAL_ITEMS (MAX_SENSORS_PER_CHANNEL + 2)
 
 static const char *s_chem_names[] = {"Li-Ion", "NiMH  ", "LiFePO4"};
@@ -110,6 +111,8 @@ static const char *state_to_short_str(channel_state_t state)
         return "CHRG";
     case STATE_DISCHARGING:
         return "DISCH";
+    case STATE_DCIR_TEST:
+        return "DCIR";
     case STATE_FINISHED:
         return "DONE";
     case STATE_ERROR:
@@ -179,18 +182,18 @@ static void render_ch_detail(int rx, uint8_t ch, int selected_param, int scroll_
     bool is_active = (m.state == STATE_SELF_TEST ||
                       m.state == STATE_PRE_CHECK ||
                       m.state == STATE_DISCHARGING ||
+                      m.state == STATE_DCIR_TEST ||
                       m.state == STATE_CHARGING);
 
     char chem_str[24];
-    snprintf(chem_str, sizeof(chem_str), "Chem: %s", s_chem_names[m.settings.chem]);
+    snprintf(chem_str, sizeof(chem_str), "Chemistry: %s", s_chem_names[m.settings.chem]);
 
     const char *items[CH_DETAIL_TOTAL_ITEMS];
-    items[0] = chem_str;
-    items[1] = is_active ? "[ [] STOP  ]" : "[ -> START ]";
-    items[2] = "[ LIVE MONITOR ]";
-    items[3] = "[ PRO SETS ]";
-    items[4] = "[ TESTS & SAFE ]";
-    items[5] = "[ <- BACK  ]";
+    items[0] = is_active ? "[ [] STOP      ]" : "[ -> START     ]";
+    items[1] = "[ -> DCIR TEST ]";
+    items[2] = chem_str;
+    items[3] = "[ TESTS & SAFE ]";
+    items[4] = "[ <- BACK      ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -235,11 +238,13 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     char buf_t[24];
     char buf_cap[24];
     char buf_tim[24];
+    char buf_buzzer[24];
     snprintf(buf_i, sizeof(buf_i), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
     snprintf(buf_v, sizeof(buf_v), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
     snprintf(buf_t, sizeof(buf_t), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
     snprintf(buf_cap, sizeof(buf_cap), "CapLim: %4lu mAh", (unsigned long)m.settings.capacity_limit_mah);
     snprintf(buf_tim, sizeof(buf_tim), "TimeLim: %3lu min", (unsigned long)(m.settings.time_limit_s / 60));
+    snprintf(buf_buzzer, sizeof(buf_buzzer), "Buzzer:    %3u%%", (unsigned int)buzzer_get_volume());
 
     const char *items[SETTINGS_TOTAL_ITEMS];
     items[0] = buf_i;
@@ -247,8 +252,9 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     items[2] = buf_t;
     items[3] = buf_cap;
     items[4] = buf_tim;
-    items[5] = "[ Reset Defaults ]";
-    items[6] = "[ <- BACK ]";
+    items[5] = buf_buzzer;
+    items[6] = "[ Reset Defaults ]";
+    items[7] = "[ <- BACK ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -262,7 +268,7 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
 
         if (state == UI_STATE_SETTINGS && item_idx == selected_param)
         {
-            if (is_editing && selected_param <= 4)
+            if (is_editing && selected_param <= 5)
             {
                 display_engine_draw_string(rx + 0, y_pos, ">", 1);
                 display_engine_draw_string(rx + 112, y_pos, "<", 1);
@@ -418,6 +424,7 @@ static void render_live_monitor(int rx, uint8_t ch, int selected_param, int scro
     bool is_active = (m.state == STATE_SELF_TEST ||
                       m.state == STATE_PRE_CHECK ||
                       m.state == STATE_DISCHARGING ||
+                      m.state == STATE_DCIR_TEST ||
                       m.state == STATE_CHARGING);
 
     const char *row7 = is_active ? "[ [] STOP LOAD  ]" : "[ <- BACK       ]";
@@ -520,9 +527,10 @@ static void render_test_diag(int rx, uint8_t ch, int selected_param, int scroll_
     items[3] = buf_pwm;
     items[4] = buf_fan;
     items[5] = buf_sag;
-    items[6] = buf_faults;
-    items[7] = buf_1w;
-    items[8] = "[ <- BACK ]";
+    items[6] = "[ PRO SETS ]";
+    items[7] = buf_faults;
+    items[8] = buf_1w;
+    items[9] = "[ <- BACK ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -782,6 +790,18 @@ static void ui_task(void *pvParameters)
                     cur_m.settings.time_limit_s = (uint32_t)(val_min * 60);
                     system_state_set_metrics(selected_ch, &cur_m);
                 }
+                else if (selected_param == 5)
+                {
+                    // Гучність бузера: крок 20%, діапазон 0..100%
+                    int32_t cur_vol = (int32_t)buzzer_get_volume();
+                    int32_t val_vol = cur_vol + diff * 20;
+                    if (val_vol < 0)
+                        val_vol = 0;
+                    if (val_vol > 100)
+                        val_vol = 100;
+                    buzzer_set_volume((uint8_t)val_vol);
+                    buzzer_play(BUZZER_EVENT_CLICK);
+                }
             }
             else if (current_state == UI_STATE_TEST_DIAG && is_editing)
             {
@@ -857,86 +877,89 @@ static void ui_task(void *pvParameters)
                 current_state = UI_STATE_CH_DETAIL;
                 selected_param = 0;
                 scroll_offset = 0;
+                buzzer_play(BUZZER_EVENT_CLICK);
                 break;
 
             case UI_STATE_CH_DETAIL:
                 if (selected_param == 0)
+                {
+                    // Динамічна дія запуску/зупинки повного тесту
+                    bool is_active = (cur_m.state == STATE_SELF_TEST ||
+                                      cur_m.state == STATE_PRE_CHECK ||
+                                      cur_m.state == STATE_DISCHARGING ||
+                                      cur_m.state == STATE_DCIR_TEST ||
+                                      cur_m.state == STATE_CHARGING);
+                    if (is_active)
+                    {
+                        // Негайна зупинка розряду з апаратним обнуленням ШІМ
+                        load_control_stop(selected_ch);
+                        buzzer_play(BUZZER_EVENT_WARNING);
+                    }
+                    else
+                    {
+                        // Запуск розряду
+                        system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
+                        buzzer_play(BUZZER_EVENT_CONFIRM);
+                    }
+                }
+                else if (selected_param == 1)
+                {
+                    // [ -> DCIR TEST ]: запуск 10-секундного високоточного тесту DCIR
+                    load_control_start_dcir_test(selected_ch);
+                    current_state = UI_STATE_GRAPH;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                }
+                else if (selected_param == 2)
                 {
                     // Дозволено перемикання хімії лише коли канал у STATE_IDLE або STATE_FINISHED
                     if (cur_m.state == STATE_IDLE || cur_m.state == STATE_FINISHED)
                     {
                         battery_chem_t next_chem = (battery_chem_t)((cur_m.settings.chem + 1) % 3);
                         system_state_set_chemistry(selected_ch, next_chem);
+                        buzzer_play(BUZZER_EVENT_CLICK);
                     }
-                }
-                else if (selected_param == 1)
-                {
-                    // Динамічна дія запуску/зупинки
-                    bool is_active = (cur_m.state == STATE_SELF_TEST ||
-                                      cur_m.state == STATE_PRE_CHECK ||
-                                      cur_m.state == STATE_DISCHARGING ||
-                                      cur_m.state == STATE_CHARGING);
-                    if (is_active)
-                    {
-                        // Негайна зупинка розряду з апаратним обнуленням ШІМ
-                        load_control_stop(selected_ch);
-                    }
-                    else
-                    {
-                        // Запуск розряду
-                        system_state_set_channel_state(selected_ch, STATE_SELF_TEST);
-                    }
-                }
-                else if (selected_param == 2)
-                {
-                    // LIVE MONITOR
-                    current_state = UI_STATE_GRAPH;
-                    selected_param = 0;
-                    scroll_offset = 0;
                 }
                 else if (selected_param == 3)
-                {
-                    // PRO SETTINGS
-                    current_state = UI_STATE_SETTINGS;
-                    selected_param = 0;
-                    scroll_offset = 0;
-                    is_editing = false;
-                }
-                else if (selected_param == 4)
                 {
                     // TESTS & SAFE DIAG
                     current_state = UI_STATE_TEST_DIAG;
                     selected_param = 0;
                     scroll_offset = 0;
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
-                else if (selected_param == 5)
+                else if (selected_param == 4)
                 {
                     // BACK TO CH LIST
                     current_state = UI_STATE_CH_LIST;
                     selected_param = 0;
                     scroll_offset = 0;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 break;
 
             case UI_STATE_SETTINGS:
-                if (selected_param == 6)
+                if (selected_param == 7)
                 {
                     // BACK TO CH DETAIL
-                    current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 3; // Повертаємо курсор на пункт [ PRO SETS ]
-                    update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                    current_state = UI_STATE_TEST_DIAG;
+                    selected_param = 0;
+                    update_scroll_offset(selected_param, TEST_DIAG_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
-                else if (selected_param == 5)
+                else if (selected_param == 6)
                 {
                     // [ Reset Defaults ]: скидання до безпечних ROM-значень поточної хімії
                     system_state_set_chemistry(selected_ch, cur_m.settings.chem);
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
-                else if (selected_param >= 0 && selected_param <= 4)
+                else if (selected_param >= 0 && selected_param <= 5)
                 {
-                    // Перемикання режиму редагування на параметрах 0..4 (I, V, T, CapLim, TimeLim)
+                    // Перемикання режиму редагування на параметрах 0..5 (I, V, T, CapLim, TimeLim, Buzzer)
                     is_editing = !is_editing;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 break;
 
@@ -949,6 +972,7 @@ static void ui_task(void *pvParameters)
                     selected_param = 0;
                     scroll_offset = 0;
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
                 else if (selected_param == 1)
                 {
@@ -958,32 +982,44 @@ static void ui_task(void *pvParameters)
                     selected_param = 0;
                     scroll_offset = 0;
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
                 else if (selected_param == 2)
                 {
-                    // [ Zero Calib REL ]: тарування нуля / компенсація зміщення ОП і 2-провідних кабелів
-                    uint32_t zero_current_ua = 0;
-                    int32_t raw_pid_ua = 0;
-                    adc_driver_read_current(selected_ch, &zero_current_ua, &raw_pid_ua);
-                    adc_driver_set_zero_offset(selected_ch, 0, raw_pid_ua);
-                    ESP_LOGI(TAG, "CH%d: Zero Tare Calib executed. Offset = %+ld uA", selected_ch, (long)raw_pid_ua);
+                    // [ Zero Calib REL ]: тарування нуля через неблокуючий виклик
+                    load_control_request_zero_calib(selected_ch);
                 }
                 else if (selected_param == 3)
                 {
                     // RawPWM: перемикання режиму інтерактивного редагування значення ШІМ навантаження
                     is_editing = !is_editing;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 4)
                 {
                     // FanPWM: перемикання режиму інтерактивного редагування ШІМ кулера
                     is_editing = !is_editing;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 5)
                 {
-                    // [ DCIR Test ]: одиночний імпульсний замір DCIR (100 мс @ 100 мА) з поверненням в IDLE
-                    load_control_trigger_dcir_pulse(selected_ch);
+                    // [ DCIR Test ]: запуск 10-секундного високоточного тесту DCIR з переходом на Live Monitor
+                    load_control_start_dcir_test(selected_ch);
+                    current_state = UI_STATE_GRAPH;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
                 }
                 else if (selected_param == 6)
+                {
+                    // [ PRO SETS ]: Перехід до розширених налаштувань
+                    current_state = UI_STATE_SETTINGS;
+                    selected_param = 0;
+                    scroll_offset = 0;
+                    is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CLICK);
+                }
+                else if (selected_param == 7)
                 {
                     // [ Clear Faults ]: ручне квітування / скидання аварійного стану каналу з меню тестів
                     cur_m.error_flags = 0;
@@ -992,17 +1028,19 @@ static void ui_task(void *pvParameters)
                         cur_m.state = STATE_IDLE;
                     }
                     system_state_set_metrics(selected_ch, &cur_m);
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                     ESP_LOGI(TAG, "CH%d: Faults cleared manually from TEST/DIAG menu.", selected_ch);
                 }
-                else if (selected_param == 7)
+                else if (selected_param == 8)
                 {
                     // [ 1W Sensors & Roles ]: Перехід до екрана детальної прив'язки датчиків
                     current_state = UI_STATE_SENSOR_BIND;
                     selected_param = 0;
                     scroll_offset = 0;
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
-                else if (selected_param == 8)
+                else if (selected_param == 9)
                 {
                     // BACK TO CH DETAIL
                     // Якщо був виставлений ручний тестовий ШІМ, безпечно скидаємо його при виході
@@ -1015,9 +1053,10 @@ static void ui_task(void *pvParameters)
                     load_control_set_fan_manual_override(selected_ch, false);
 
                     current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 4; // Повертаємо курсор на [ TESTS & SAFE ]
+                    selected_param = 3; // Повертаємо курсор на [ TESTS & SAFE ]
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
                     is_editing = false;
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 break;
 
@@ -1041,19 +1080,22 @@ static void ui_task(void *pvParameters)
                             next_role = SENSOR_ROLE_HEATSINK;
                         }
                         temp_service_bind_sensor_role(selected_ch, selected_param, next_role);
+                        buzzer_play(BUZZER_EVENT_CONFIRM);
                     }
                 }
                 else if (selected_param == MAX_SENSORS_PER_CHANNEL)
                 {
                     // [ Rescan 1-Wire ]: повторне сканування шини для виявлення щойно підключених датчиків
                     temp_service_rescan(selected_ch);
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
                 else if (selected_param == MAX_SENSORS_PER_CHANNEL + 1)
                 {
                     // [ <- BACK ]: повернення в меню TESTS & SAFE
                     current_state = UI_STATE_TEST_DIAG;
-                    selected_param = 7; // повертаємо курсор на пункт 1W
+                    selected_param = 8; // повертаємо курсор на пункт 1W
                     update_scroll_offset(selected_param, TEST_DIAG_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 break;
 
@@ -1066,24 +1108,28 @@ static void ui_task(void *pvParameters)
                     bool is_active = (cur_m.state == STATE_SELF_TEST ||
                                       cur_m.state == STATE_PRE_CHECK ||
                                       cur_m.state == STATE_DISCHARGING ||
+                                      cur_m.state == STATE_DCIR_TEST ||
                                       cur_m.state == STATE_CHARGING);
                     if (is_active)
                     {
                         load_control_stop(selected_ch);
+                        buzzer_play(BUZZER_EVENT_WARNING);
                     }
                     else
                     {
                         current_state = UI_STATE_CH_DETAIL;
-                        selected_param = 2; // Курсор на [ LIVE MONITOR ]
+                        selected_param = 0;
                         update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                        buzzer_play(BUZZER_EVENT_CLICK);
                     }
                 }
                 else
                 {
                     // Клік по будь-якому іншому рядку: штатно виходимо в CH DETAIL БЕЗ переривання розряду
                     current_state = UI_STATE_CH_DETAIL;
-                    selected_param = 2; // Курсор на [ LIVE MONITOR ]
+                    selected_param = 0;
                     update_scroll_offset(selected_param, CH_DETAIL_TOTAL_ITEMS, &scroll_offset, VISIBLE_ROWS);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 break;
             }

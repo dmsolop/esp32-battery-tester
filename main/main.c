@@ -12,6 +12,7 @@
 #include "telemetry.h"
 #include "adc_driver.h"
 #include "temp_service.h"
+#include "buzzer_service.h"
 #include "cli.h"
 #include "nvs_flash.h"
 #include "nvs.h"
@@ -56,6 +57,9 @@ void app_main(void)
         ESP_LOGE(TAG, "Failed to initialize system state!");
         return; // Зупиняємо виконання, якщо критичний компонент не стартував
     }
+
+    // Ініціалізація звукового сервісу (бузера)
+    buzzer_service_init();
 
     // Ініціалізація апаратної частини 1-Wire
     hardware_sensor_setup();

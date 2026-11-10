@@ -28,8 +28,11 @@ void load_control_start_diag_precheck(uint8_t channel);
 // Запуск одиночного діагностичного HW Self-Test (перевірка термодатчиків, нуля та 100 мА імпульсу з поверненням в STATE_IDLE)
 void load_control_start_diag_self_test(uint8_t channel);
 
-// Запуск одиночного вимірювання DCIR (імпульс 100 мА на 100 мс, розрахунок dcir_mohm та миттєве повернення в STATE_IDLE)
-void load_control_trigger_dcir_pulse(uint8_t channel);
+// Неблокуючий запит на калібрування нуля струму (Zero Calibration)
+void load_control_request_zero_calib(uint8_t channel);
+
+// Неблокуючий запуск 10-секундного багатоімпульсного тесту DCIR (10 циклів 100 мА -> 1000 мА)
+void load_control_start_dcir_test(uint8_t channel);
 
 // Керування ШІМ охолоджувального кулера (duty_percent: 0..100%).
 // duty_percent > 0: вмикає ручне перевизначення (manual override).

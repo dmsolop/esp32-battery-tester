@@ -8,6 +8,7 @@
 #include "pid_service.h"
 #include "integration_service.h"
 #include "analyzer_service.h"
+#include "buzzer_service.h"
 #include "sdkconfig.h"
 
 #ifndef CONFIG_MAX_CHANNELS
@@ -19,8 +20,24 @@ static TaskHandle_t s_pid_tasks[CONFIG_MAX_CHANNELS] = {NULL};
 static volatile bool s_manual_override[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_diag_self_test_only[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_diag_precheck_only[CONFIG_MAX_CHANNELS] = {false};
+static volatile bool s_req_zero_calib[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_fan_manual_override[CONFIG_MAX_CHANNELS] = {false};
 static volatile uint8_t s_fan_duty_pct[CONFIG_MAX_CHANNELS] = {0};
+
+// DCIR Multi-pulse state tracking
+typedef struct
+{
+    uint8_t cycle;         // 0..9 (10 cycles)
+    uint8_t tick_in_cycle; // 0..19 (20 ticks of 50ms = 1000ms)
+    uint64_t v1_sum_uv;
+    uint64_t i1_sum_ua;
+    uint64_t v2_sum_uv;
+    uint64_t i2_sum_ua;
+    uint32_t samples[10];
+    uint8_t sample_count;
+} dcir_test_fsm_t;
+
+static dcir_test_fsm_t s_dcir_fsm[CONFIG_MAX_CHANNELS];
 
 // Жорстке відображення логічних каналів на фізичні безпечні піни
 static const int pwm_pins[CONFIG_MAX_CHANNELS] = {
@@ -57,6 +74,7 @@ void load_control_stop(uint8_t channel)
     s_manual_override[channel] = false;
     s_diag_self_test_only[channel] = false;
     s_diag_precheck_only[channel] = false;
+    s_req_zero_calib[channel] = false;
     hw_set_load_pwm(channel, 0);
     system_state_set_channel_state(channel, STATE_IDLE);
     ESP_LOGI(TAG, "CH%d: Stopped immediately by load_control_stop.", channel);
@@ -71,6 +89,7 @@ void load_control_start_diag_precheck(uint8_t channel)
     s_manual_override[channel] = false;
     s_diag_self_test_only[channel] = false;
     s_diag_precheck_only[channel] = true;
+    s_req_zero_calib[channel] = false;
     hw_set_load_pwm(channel, 0);
 
     channel_metrics_t m;
@@ -90,6 +109,7 @@ void load_control_start_diag_self_test(uint8_t channel)
     s_manual_override[channel] = false;
     s_diag_precheck_only[channel] = false;
     s_diag_self_test_only[channel] = true;
+    s_req_zero_calib[channel] = false;
     hw_set_load_pwm(channel, 0);
 
     channel_metrics_t m;
@@ -100,57 +120,38 @@ void load_control_start_diag_self_test(uint8_t channel)
     ESP_LOGI(TAG, "CH%d: Diag HW Self-Test started.", channel);
 }
 
-void load_control_trigger_dcir_pulse(uint8_t channel)
+void load_control_request_zero_calib(uint8_t channel)
 {
     if (channel >= CONFIG_MAX_CHANNELS)
     {
         return;
     }
+    s_req_zero_calib[channel] = true;
+    ESP_LOGI(TAG, "CH%d: Zero offset calibration requested.", channel);
+}
 
-    ESP_LOGI(TAG, "CH%d: Triggering interactive single DCIR pulse...", channel);
+void load_control_start_dcir_test(uint8_t channel)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+    s_manual_override[channel] = false;
+    s_diag_precheck_only[channel] = false;
+    s_diag_self_test_only[channel] = false;
+    s_req_zero_calib[channel] = false;
 
-    // 1. Зчитуємо базову напругу V1 при вимкненому навантаженні
-    hw_set_load_pwm(channel, 0);
-    vTaskDelay(pdMS_TO_TICKS(20));
-
-    uint32_t v1_uv = 0;
-    adc_driver_read_voltage(channel, &v1_uv);
-
-    // 2. Подаємо тестовий імпульс струму ~100 мА
-    // Для R_shunt = 0.27 Ом (макет) та LPF з дільником 10:1 (Vref = Vpwm * 0.1):
-    // 100 мА * 0.27 Ом = 27 мВ -> Vpwm = 270 мВ -> duty ~ 335 відліків
-    hw_set_load_pwm(channel, 350);
-
-    // Очікуємо 100 мс (час релаксації та стабілізації струму)
-    vTaskDelay(pdMS_TO_TICKS(100));
-
-    uint32_t v2_uv = 0;
-    uint32_t i2_ua = 0;
-    int32_t raw_pid_ua = 0;
-    adc_driver_read_voltage(channel, &v2_uv);
-    adc_driver_read_current(channel, &i2_ua, &raw_pid_ua);
-
-    // 3. Миттєво знімаємо навантаження
-    hw_set_load_pwm(channel, 0);
+    memset(&s_dcir_fsm[channel], 0, sizeof(dcir_test_fsm_t));
 
     channel_metrics_t m;
     system_state_get_metrics(channel, &m);
-
-    // При активному навантаженні напруга просідає: v1_uv > v2_uv, dI = i2_ua
-    if (v1_uv > v2_uv && i2_ua >= 10000)
-    {
-        uint32_t delta_v_uv = v1_uv - v2_uv;
-        uint32_t dcir_mohm = (delta_v_uv * 1000) / i2_ua;
-        m.internal_res_mohm = dcir_mohm;
-        ESP_LOGI(TAG, "CH%d: Single DCIR calculated: %lu mOhm (dV=%lu uV, dI=%lu uA)",
-                 channel, dcir_mohm, delta_v_uv, i2_ua);
-    }
-    else
-    {
-        ESP_LOGW(TAG, "CH%d: Single DCIR failed: V1=%lu, V2=%lu, I2=%lu", channel, v1_uv, v2_uv, i2_ua);
-    }
-
+    m.internal_res_mohm = 0;
+    m.state = STATE_DCIR_TEST;
+    m.state_start_time_us = esp_timer_get_time();
     system_state_set_metrics(channel, &m);
+
+    buzzer_play(BUZZER_EVENT_CONFIRM);
+    ESP_LOGI(TAG, "CH%d: 10-pulse DCIR test started.", channel);
 }
 
 void load_control_set_raw_pwm(uint8_t channel, uint16_t duty)
@@ -295,6 +296,31 @@ static void pid_control_task(void *pvParameters)
         switch (metrics.state)
         {
         case STATE_IDLE:
+            if (s_req_zero_calib[channel])
+            {
+                s_req_zero_calib[channel] = false;
+                hw_set_load_pwm(channel, 0);
+                vTaskDelay(pdMS_TO_TICKS(20));
+
+                uint32_t zero_current_ua = 0;
+                int32_t raw_pid_ua = 0;
+                adc_driver_read_current(channel, &zero_current_ua, &raw_pid_ua);
+                adc_driver_set_zero_offset(channel, 0, raw_pid_ua);
+                buzzer_play(BUZZER_EVENT_CONFIRM);
+                ESP_LOGI(TAG, "CH%d: Zero offset calibrated asynchronously: %ld uA", channel, raw_pid_ua);
+            }
+            s_diag_self_test_only[channel] = false;
+            s_diag_precheck_only[channel] = false;
+            if (!s_manual_override[channel])
+            {
+                hw_set_load_pwm(channel, 0);
+            }
+            dcir_service_reset(channel);
+            pid_service_reset(&channel_pid);
+            integration_service_reset(&metrics);
+            analyzer_service_reset(channel); // Скидаємо буфери
+            break;
+
         case STATE_FINISHED:
         case STATE_CHARGING: // Тимчасова заглушка для проходження компіляції
         case STATE_ERROR:
@@ -309,6 +335,182 @@ static void pid_control_task(void *pvParameters)
             integration_service_reset(&metrics);
             analyzer_service_reset(channel); // Скидаємо буфери
             break;
+
+        case STATE_DCIR_TEST:
+        {
+            s_manual_override[channel] = false;
+            dcir_test_fsm_t *fsm = &s_dcir_fsm[channel];
+
+            adc_driver_read_voltage(channel, &metrics.voltage_uv);
+            adc_driver_read_current(channel, &metrics.current_ua, &metrics.pid_current_ua);
+
+            // Аварійна зупинка: обрив або падіння напруги нижче 500 мВ (500 000 мкВ)
+            if (metrics.voltage_uv < 500000)
+            {
+                hw_set_load_pwm(channel, 0);
+                pid_service_reset(&channel_pid);
+                metrics.state = STATE_ERROR;
+                metrics.error_flags |= ERR_OPEN_CIRCUIT;
+                buzzer_play(BUZZER_EVENT_ERROR);
+                ESP_LOGE(TAG, "CH%d: DCIR Test ABORTED! Open Circuit (V=%lu uV < 500mV)",
+                         channel, metrics.voltage_uv);
+                system_state_set_metrics(channel, &metrics);
+                break;
+            }
+
+            float dt_sec = (float)dt_us / 1000000.0f;
+            uint32_t active_target_ua = 0;
+
+            // Цикл k: 20 тактів по 50 мс = 1000 мс
+            // Такти 0..9: Low Plateau (100 мА)
+            if (fsm->tick_in_cycle < 10)
+            {
+                active_target_ua = 100000; // 100 мА
+                if (fsm->tick_in_cycle == 0)
+                {
+                    fsm->v1_sum_uv = 0;
+                    fsm->i1_sum_ua = 0;
+                }
+                // Накопичення на тактах 7, 8, 9 (350..500 мс)
+                if (fsm->tick_in_cycle >= 7)
+                {
+                    fsm->v1_sum_uv += metrics.voltage_uv;
+                    fsm->i1_sum_ua += metrics.current_ua;
+                }
+            }
+            // Такти 10..19: High Plateau (1000 мА)
+            else
+            {
+                active_target_ua = 1000000; // 1000 мА
+                if (fsm->tick_in_cycle == 10)
+                {
+                    fsm->v2_sum_uv = 0;
+                    fsm->i2_sum_ua = 0;
+                }
+                // Накопичення на тактах 17, 18, 19 (850..1000 мс)
+                if (fsm->tick_in_cycle >= 17)
+                {
+                    fsm->v2_sum_uv += metrics.voltage_uv;
+                    fsm->i2_sum_ua += metrics.current_ua;
+                }
+            }
+
+            // Розрахунок ШІМ через ПІД
+            if (metrics.settings.pro_pid_override)
+            {
+                pid_service_init(&channel_pid, metrics.settings.kp, metrics.settings.ki, metrics.settings.kd, 0.0f, (float)PWM_MAX_DUTY);
+            }
+            uint32_t calc_duty = (uint32_t)pid_service_compute(&channel_pid, (float)active_target_ua, (float)metrics.pid_current_ua, dt_sec);
+            hw_set_load_pwm(channel, calc_duty);
+
+            // Кінець поточного циклу k (такт 19)
+            if (fsm->tick_in_cycle == 19)
+            {
+                uint32_t v1_avg = (uint32_t)(fsm->v1_sum_uv / 3);
+                uint32_t i1_avg = (uint32_t)(fsm->i1_sum_ua / 3);
+                uint32_t v2_avg = (uint32_t)(fsm->v2_sum_uv / 3);
+                uint32_t i2_avg = (uint32_t)(fsm->i2_sum_ua / 3);
+
+                if (fsm->cycle == 0)
+                {
+                    metrics.ocv_uv = v1_avg;
+                }
+
+                if (v1_avg > v2_avg && i2_avg > i1_avg && (i2_avg - i1_avg) >= 200000)
+                {
+                    uint64_t delta_v = (uint64_t)(v1_avg - v2_avg);
+                    uint64_t delta_i = (uint64_t)(i2_avg - i1_avg);
+                    uint32_t r_k_mohm = (uint32_t)(((delta_v * 1000ULL) + (delta_i / 2ULL)) / delta_i);
+
+                    if (fsm->cycle < 10)
+                    {
+                        fsm->samples[fsm->sample_count++] = r_k_mohm;
+                    }
+
+                    // Проміжне середнє для відображення в реальному часі на Live Monitor
+                    uint32_t running_sum = 0;
+                    for (uint8_t s = 0; s < fsm->sample_count; s++)
+                    {
+                        running_sum += fsm->samples[s];
+                    }
+                    metrics.internal_res_mohm = running_sum / fsm->sample_count;
+                    ESP_LOGI(TAG, "CH%d: DCIR Pulse %u/10: R=%lu mOhm (V1=%lu, V2=%lu, dI=%lu uA)",
+                             channel, fsm->cycle + 1, r_k_mohm, v1_avg, v2_avg, (uint32_t)delta_i);
+                }
+                else
+                {
+                    ESP_LOGW(TAG, "CH%d: DCIR Pulse %u/10 invalid step: V1=%lu, V2=%lu, I1=%lu, I2=%lu",
+                             channel, fsm->cycle + 1, v1_avg, v2_avg, i1_avg, i2_avg);
+                }
+
+                // Перевірка завершення 10-го циклу (cycle = 9)
+                if (fsm->cycle >= 9)
+                {
+                    hw_set_load_pwm(channel, 0);
+                    pid_service_reset(&channel_pid);
+
+                    if (fsm->sample_count >= 3)
+                    {
+                        // Застосування Trimmed Mean: відкидаємо min та max
+                        uint32_t min_r = fsm->samples[0];
+                        uint32_t max_r = fsm->samples[0];
+                        uint64_t sum_r = 0;
+
+                        for (uint8_t s = 0; s < fsm->sample_count; s++)
+                        {
+                            if (fsm->samples[s] < min_r)
+                                min_r = fsm->samples[s];
+                            if (fsm->samples[s] > max_r)
+                                max_r = fsm->samples[s];
+                            sum_r += fsm->samples[s];
+                        }
+
+                        uint32_t final_dcir_mohm = (uint32_t)((sum_r - min_r - max_r) / (fsm->sample_count - 2));
+                        metrics.internal_res_mohm = final_dcir_mohm;
+
+                        // Оцінка SOH
+                        if (final_dcir_mohm < 100)
+                        {
+                            metrics.soh = SOH_GOOD;
+                        }
+                        else if (final_dcir_mohm <= 250)
+                        {
+                            metrics.soh = SOH_DEGRADED;
+                        }
+                        else
+                        {
+                            metrics.soh = SOH_DEAD;
+                        }
+
+                        ESP_LOGI(TAG, "CH%d: 10-Pulse DCIR Complete! Final R=%lu mOhm (Trimmed Mean), SOH=%d",
+                                 channel, final_dcir_mohm, metrics.soh);
+                        metrics.state = STATE_FINISHED;
+                        buzzer_play(BUZZER_EVENT_TEST_DONE);
+                    }
+                    else
+                    {
+                        ESP_LOGE(TAG, "CH%d: DCIR test failed (not enough valid samples: %u)",
+                                 channel, fsm->sample_count);
+                        metrics.state = STATE_ERROR;
+                        metrics.error_flags |= ERR_VOLTAGE_SAG;
+                        buzzer_play(BUZZER_EVENT_ERROR);
+                    }
+
+                    system_state_set_metrics(channel, &metrics);
+                    break;
+                }
+
+                fsm->cycle++;
+                fsm->tick_in_cycle = 0;
+            }
+            else
+            {
+                fsm->tick_in_cycle++;
+            }
+
+            system_state_set_metrics(channel, &metrics);
+            break;
+        }
         case STATE_SELF_TEST:
             s_manual_override[channel] = false;
             // Крок 1. Валідація термодатчиків (Thermal Sanity)
@@ -377,6 +579,7 @@ static void pid_control_task(void *pvParameters)
                 s_diag_self_test_only[channel] = false;
                 metrics.state = STATE_ERROR;
                 metrics.error_flags |= ERR_OPEN_CIRCUIT;
+                buzzer_play(BUZZER_EVENT_ERROR);
                 ESP_LOGE(TAG, "CH%d: Power Path Check FAILED (Open Circuit: I=%lu uA < 10mA).", channel, ping_current_ua);
             }
             else
@@ -385,6 +588,7 @@ static void pid_control_task(void *pvParameters)
                 {
                     s_diag_self_test_only[channel] = false;
                     metrics.state = STATE_IDLE;
+                    buzzer_play(BUZZER_EVENT_TEST_DONE);
                     ESP_LOGI(TAG, "CH%d: Diag Self-Test PASSED (Ping I=%lu uA). Returning to IDLE.", channel, ping_current_ua);
                 }
                 else
@@ -413,12 +617,14 @@ static void pid_control_task(void *pvParameters)
                 if (metrics.ocv_uv >= (CONFIG_MIN_CELL_VOLTAGE_MV * 1000))
                 {
                     metrics.state = STATE_IDLE;
+                    buzzer_play(BUZZER_EVENT_TEST_DONE);
                     ESP_LOGI(TAG, "CH%d: Diag Pre-Check OCV: %.3f V. Returning to IDLE safely.",
                              channel, metrics.ocv_uv / 1000000.0f);
                 }
                 else
                 {
                     metrics.state = STATE_ERROR;
+                    buzzer_play(BUZZER_EVENT_ERROR);
                     ESP_LOGE(TAG, "CH%d: Diag Pre-Check OCV too low (%.3f V).",
                              channel, metrics.ocv_uv / 1000000.0f);
                 }
@@ -466,12 +672,14 @@ static void pid_control_task(void *pvParameters)
             {
                 hw_set_load_pwm(channel, 0);
                 metrics.state = STATE_FINISHED;
+                buzzer_play(BUZZER_EVENT_TEST_DONE);
                 ESP_LOGI(TAG, "CH%d: Test FINISHED (Condition met).", channel);
             }
             else if (dis_verdict == ANALYZER_ERROR)
             {
                 hw_set_load_pwm(channel, 0);
                 metrics.state = STATE_ERROR;
+                buzzer_play(BUZZER_EVENT_ERROR);
                 ESP_LOGE(TAG, "CH%d: ANALYZER ERROR. Mask: 0x%02lX", channel, metrics.error_flags);
             }
             else
@@ -495,6 +703,7 @@ static void pid_control_task(void *pvParameters)
                 {
                     hw_set_load_pwm(channel, 0);
                     metrics.state = STATE_FINISHED;
+                    buzzer_play(BUZZER_EVENT_TEST_DONE);
                     ESP_LOGI(TAG, "CH%d: Cutoff voltage reached.", channel);
                 }
             }

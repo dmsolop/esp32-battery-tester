@@ -24,6 +24,7 @@ typedef enum
     STATE_PRE_CHECK,
     STATE_CHARGING,
     STATE_DISCHARGING,
+    STATE_DCIR_TEST,
     STATE_FINISHED,
     STATE_ERROR
 } channel_state_t;

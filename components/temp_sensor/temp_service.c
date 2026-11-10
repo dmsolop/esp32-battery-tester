@@ -4,6 +4,8 @@
 #include "system_state.h"
 #include "esp_timer.h"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include <stddef.h>
 
 static const char *TAG = "TEMP_SVC";
@@ -11,9 +13,15 @@ static gpio_num_t s_onewire_pins[4];
 
 static int64_t s_last_conversion_time = 0;
 static bool s_is_converting = false;
+static SemaphoreHandle_t s_ow_mutex = NULL;
 
 void temp_service_init(const gpio_num_t pins[4])
 {
+    if (s_ow_mutex == NULL)
+    {
+        s_ow_mutex = xSemaphoreCreateRecursiveMutex();
+    }
+
     for (int i = 0; i < 4; i++)
     {
         s_onewire_pins[i] = pins[i];
@@ -21,13 +29,22 @@ void temp_service_init(const gpio_num_t pins[4])
     }
     s_is_converting = false;
     s_last_conversion_time = 0;
-    ESP_LOGI(TAG, "Initialized 4 independent OneWire buses");
+    ESP_LOGI(TAG, "Initialized 4 independent OneWire buses with recursive mutex");
 }
 
 void temp_service_auto_assign(uint8_t channel, temp_sensor_data_t *sensors)
 {
     if (channel >= 4 || sensors == NULL)
         return;
+
+    if (s_ow_mutex != NULL)
+    {
+        if (xSemaphoreTakeRecursive(s_ow_mutex, pdMS_TO_TICKS(500)) != pdTRUE)
+        {
+            ESP_LOGW(TAG, "Failed to take 1-Wire mutex for auto_assign ch%d", channel);
+            return;
+        }
+    }
 
     uint8_t rom[8];
     gpio_num_t pin = s_onewire_pins[channel];
@@ -153,6 +170,11 @@ void temp_service_auto_assign(uint8_t channel, temp_sensor_data_t *sensors)
     }
 
     ESP_LOGI(TAG, "CH%d: Auto-assign completed. Total bound: %d (HS: %d, CELL: %d)", channel, sensor_idx, hs_count, cell_count);
+
+    if (s_ow_mutex != NULL)
+    {
+        xSemaphoreGiveRecursive(s_ow_mutex);
+    }
 }
 
 esp_err_t temp_service_bind_sensor_role(uint8_t channel, uint8_t sensor_idx, sensor_role_t new_role)
@@ -162,15 +184,28 @@ esp_err_t temp_service_bind_sensor_role(uint8_t channel, uint8_t sensor_idx, sen
         return ESP_ERR_INVALID_ARG;
     }
 
+    if (s_ow_mutex != NULL)
+    {
+        if (xSemaphoreTakeRecursive(s_ow_mutex, pdMS_TO_TICKS(500)) != pdTRUE)
+        {
+            ESP_LOGW(TAG, "Failed to take 1-Wire mutex for bind_sensor_role");
+            return ESP_ERR_TIMEOUT;
+        }
+    }
+
     channel_metrics_t metrics;
     esp_err_t err = system_state_get_metrics(channel, &metrics);
     if (err != ESP_OK)
     {
+        if (s_ow_mutex != NULL)
+            xSemaphoreGiveRecursive(s_ow_mutex);
         return err;
     }
 
     if (!metrics.temp_sensors[sensor_idx].is_bound)
     {
+        if (s_ow_mutex != NULL)
+            xSemaphoreGiveRecursive(s_ow_mutex);
         return ESP_ERR_NOT_FOUND;
     }
 
@@ -217,6 +252,11 @@ esp_err_t temp_service_bind_sensor_role(uint8_t channel, uint8_t sensor_idx, sen
     system_state_update_sensor_limits(channel);
 
     ESP_LOGI(TAG, "CH%d Sensor[%d] role changed to %d and written to EEPROM", channel, sensor_idx, new_role);
+
+    if (s_ow_mutex != NULL)
+    {
+        xSemaphoreGiveRecursive(s_ow_mutex);
+    }
     return ESP_OK;
 }
 
@@ -227,10 +267,21 @@ esp_err_t temp_service_rescan(uint8_t channel)
         return ESP_ERR_INVALID_ARG;
     }
 
+    if (s_ow_mutex != NULL)
+    {
+        if (xSemaphoreTakeRecursive(s_ow_mutex, pdMS_TO_TICKS(500)) != pdTRUE)
+        {
+            ESP_LOGW(TAG, "Failed to take 1-Wire mutex for rescan");
+            return ESP_ERR_TIMEOUT;
+        }
+    }
+
     channel_metrics_t metrics;
     esp_err_t err = system_state_get_metrics(channel, &metrics);
     if (err != ESP_OK)
     {
+        if (s_ow_mutex != NULL)
+            xSemaphoreGiveRecursive(s_ow_mutex);
         return err;
     }
 
@@ -239,6 +290,11 @@ esp_err_t temp_service_rescan(uint8_t channel)
     system_state_update_sensor_limits(channel);
 
     ESP_LOGI(TAG, "CH%d 1-Wire manual rescan complete", channel);
+
+    if (s_ow_mutex != NULL)
+    {
+        xSemaphoreGiveRecursive(s_ow_mutex);
+    }
     return ESP_OK;
 }
 
@@ -246,6 +302,15 @@ bool temp_service_trigger_conversion(void)
 {
     if (s_is_converting)
         return false;
+
+    if (s_ow_mutex != NULL)
+    {
+        if (xSemaphoreTakeRecursive(s_ow_mutex, pdMS_TO_TICKS(500)) != pdTRUE)
+        {
+            ESP_LOGW(TAG, "Failed to take 1-Wire mutex for trigger_conversion");
+            return false;
+        }
+    }
 
     // Запускаємо конвертацію паралельно на всіх 4 шинах
     for (int i = 0; i < 4; i++)
@@ -258,6 +323,11 @@ bool temp_service_trigger_conversion(void)
     }
     s_last_conversion_time = esp_timer_get_time();
     s_is_converting = true;
+
+    if (s_ow_mutex != NULL)
+    {
+        xSemaphoreGiveRecursive(s_ow_mutex);
+    }
     return true;
 }
 
@@ -278,6 +348,16 @@ void temp_service_read_sensors(uint8_t channel, temp_sensor_data_t *sensors)
 {
     if (channel >= 4 || sensors == NULL)
         return;
+
+    if (s_ow_mutex != NULL)
+    {
+        if (xSemaphoreTakeRecursive(s_ow_mutex, pdMS_TO_TICKS(500)) != pdTRUE)
+        {
+            ESP_LOGW(TAG, "Failed to take 1-Wire mutex for read_sensors");
+            return;
+        }
+    }
+
     gpio_num_t pin = s_onewire_pins[channel];
 
     for (uint8_t i = 0; i < MAX_SENSORS_PER_CHANNEL; i++)
@@ -294,5 +374,10 @@ void temp_service_read_sensors(uint8_t channel, temp_sensor_data_t *sensors)
                 ESP_LOGE(TAG, "CH%d CRC error on sensor role %d", channel, sensors[i].role);
             }
         }
+    }
+
+    if (s_ow_mutex != NULL)
+    {
+        xSemaphoreGiveRecursive(s_ow_mutex);
     }
 }

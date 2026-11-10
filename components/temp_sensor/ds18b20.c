@@ -52,25 +52,36 @@ static uint8_t ds18b20_crc8(const uint8_t *data, uint8_t len)
 
 bool ds18b20_read_temperature(gpio_num_t pin, const uint8_t *rom, int32_t *temp_mc)
 {
-    if (!onewire_match_rom(pin, rom))
-    {
-        return false;
-    }
-
-    // Команда на зчитування оперативної пам'яті (Scratchpad) датчика
-    onewire_write_byte(pin, DS18B20_CMD_READ_SCRATCH); // 0xBE
-
-    // Зчитуємо всі 9 байтів
     uint8_t scratchpad[9];
-    for (int i = 0; i < 9; i++)
+    bool read_ok = false;
+
+    for (int attempt = 0; attempt < 3; attempt++)
     {
-        scratchpad[i] = onewire_read_byte(pin);
+        if (!onewire_match_rom(pin, rom))
+        {
+            continue;
+        }
+
+        // Команда на зчитування оперативної пам'яті (Scratchpad) датчика
+        onewire_write_byte(pin, DS18B20_CMD_READ_SCRATCH); // 0xBE
+
+        // Зчитуємо всі 9 байтів
+        for (int i = 0; i < 9; i++)
+        {
+            scratchpad[i] = onewire_read_byte(pin);
+        }
+
+        // Перевірка контрольної суми (перші 8 байтів мають дати CRC, що лежить у 9-му)
+        if (ds18b20_crc8(scratchpad, 8) == scratchpad[8])
+        {
+            read_ok = true;
+            break;
+        }
     }
 
-    // Перевірка контрольної суми (перші 8 байтів мають дати CRC, що лежить у 9-му)
-    if (ds18b20_crc8(scratchpad, 8) != scratchpad[8])
+    if (!read_ok)
     {
-        ESP_LOGE("DS18B20", "CRC Error for ROM: %02X%02X...", rom[0], rom[1]);
+        ESP_LOGW("DS18B20", "CRC Error! Failed 3 read attempts for ROM: %02X%02X...", rom[0], rom[1]);
         return false;
     }
 

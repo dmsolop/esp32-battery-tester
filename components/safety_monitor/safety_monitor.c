@@ -8,6 +8,7 @@
 #include "adc_driver.h"
 #include "sdkconfig.h"
 #include "temp_service.h"
+#include "buzzer_service.h"
 
 // Жорсткі ліміти безпеки
 #define MAX_CURRENT_UA 5000000  // 5.0 A
@@ -58,7 +59,7 @@ static void safety_task(void *pvParameters)
         {
             if (system_state_get_channel_state(i, &current_state) == ESP_OK)
             {
-                if (current_state == STATE_DISCHARGING || current_state == STATE_CHARGING)
+                if (current_state == STATE_DISCHARGING || current_state == STATE_CHARGING || current_state == STATE_DCIR_TEST)
                 {
                     if (system_state_get_metrics(i, &metrics) == ESP_OK)
                     {
@@ -87,6 +88,8 @@ static void safety_task(void *pvParameters)
                             metrics.error_flags = errors;
                             metrics.state = STATE_ERROR;
                             system_state_set_metrics(i, &metrics);
+
+                            buzzer_play(BUZZER_EVENT_ERROR);
 
                             TaskHandle_t pid_task = load_control_get_task_handle(i);
                             if (pid_task != NULL)

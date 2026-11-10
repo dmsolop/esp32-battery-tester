@@ -1,6 +1,10 @@
 #include "onewire.h"
 #include "esp_timer.h"
 #include "esp_rom_sys.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/portmacro.h"
+
+static portMUX_TYPE s_ow_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
 static uint8_t s_ROM_NO[8];
 static uint8_t s_LastDiscrepancy;
@@ -15,17 +19,21 @@ void onewire_init(gpio_num_t pin)
 
 bool onewire_reset(gpio_num_t pin)
 {
+    int presence;
+    portENTER_CRITICAL(&s_ow_spinlock);
     gpio_set_level(pin, 0);
     esp_rom_delay_us(480);
     gpio_set_level(pin, 1);
     esp_rom_delay_us(70);
-    int presence = gpio_get_level(pin);
+    presence = gpio_get_level(pin);
+    portEXIT_CRITICAL(&s_ow_spinlock);
     esp_rom_delay_us(410);
     return (presence == 0);
 }
 
 void onewire_write_bit(gpio_num_t pin, uint8_t bit)
 {
+    portENTER_CRITICAL(&s_ow_spinlock);
     gpio_set_level(pin, 0);
     if (bit)
     {
@@ -39,17 +47,20 @@ void onewire_write_bit(gpio_num_t pin, uint8_t bit)
         gpio_set_level(pin, 1);
         esp_rom_delay_us(5);
     }
+    portEXIT_CRITICAL(&s_ow_spinlock);
 }
 
 uint8_t onewire_read_bit(gpio_num_t pin)
 {
     uint8_t bit = 0;
+    portENTER_CRITICAL(&s_ow_spinlock);
     gpio_set_level(pin, 0);
     esp_rom_delay_us(2);
     gpio_set_level(pin, 1);
     esp_rom_delay_us(10);
     bit = gpio_get_level(pin);
     esp_rom_delay_us(50);
+    portEXIT_CRITICAL(&s_ow_spinlock);
     return bit;
 }
 
