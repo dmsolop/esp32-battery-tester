@@ -27,8 +27,11 @@ static volatile uint8_t s_fan_duty_pct[CONFIG_MAX_CHANNELS] = {0};
 // DCIR Multi-pulse state tracking
 typedef struct
 {
-    uint8_t cycle;         // 0..9 (10 cycles)
-    uint8_t tick_in_cycle; // 0..19 (20 ticks of 50ms = 1000ms)
+    uint8_t auto_zero_tick;  // 0..4 (0..1: релаксація 100 мс, 2..4: усереднення 3 відліків)
+    bool auto_zero_done;     // Прапорець завершення автонуля
+    int64_t zero_sum_pid_ua; // Сума для усереднення офсету
+    uint8_t cycle;           // 0..9 (10 cycles)
+    uint8_t tick_in_cycle;   // 0..19 (20 ticks of 50ms = 1000ms)
     uint64_t v1_sum_uv;
     uint64_t i1_sum_ua;
     uint64_t v2_sum_uv;
@@ -235,10 +238,26 @@ static void pid_control_task(void *pvParameters)
     }
 
     int64_t last_time_us = esp_timer_get_time();
+    int64_t next_wake_time_us = last_time_us;
 
     while (1)
     {
-        uint32_t notification = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50));
+        int64_t iter_start_us = esp_timer_get_time();
+        int64_t elapsed_us = iter_start_us - next_wake_time_us;
+        uint32_t wait_ms = 50;
+        if (elapsed_us >= 0 && elapsed_us < 50000)
+        {
+            wait_ms = (uint32_t)((50000 - elapsed_us) / 1000);
+            if (wait_ms == 0)
+                wait_ms = 1;
+        }
+        else
+        {
+            wait_ms = 1;
+        }
+
+        uint32_t notification = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(wait_ms));
+        next_wake_time_us = esp_timer_get_time();
 
         system_state_get_metrics(channel, &metrics);
 
@@ -354,6 +373,35 @@ static void pid_control_task(void *pvParameters)
                 buzzer_play(BUZZER_EVENT_ERROR);
                 ESP_LOGE(TAG, "CH%d: DCIR Test ABORTED! Open Circuit (V=%lu uV < 500mV)",
                          channel, metrics.voltage_uv);
+                system_state_set_metrics(channel, &metrics);
+                break;
+            }
+
+            // Автоматична стартова фаза Auto-Zero Calibration нуля струму ОУ LM358 перед першим імпульсом
+            if (!fsm->auto_zero_done)
+            {
+                hw_set_load_pwm(channel, 0);
+                // Такти 0..1 (100 мс): релаксація ФНЧ та розряд ємностей при нульовому ШІМ
+                if (fsm->auto_zero_tick < 2)
+                {
+                    fsm->auto_zero_tick++;
+                    system_state_set_metrics(channel, &metrics);
+                    break;
+                }
+                // Такти 2..4: 3-кратне накопичення струму спокою raw_pid_ua для усереднення
+                fsm->zero_sum_pid_ua += metrics.pid_current_ua;
+                fsm->auto_zero_tick++;
+
+                if (fsm->auto_zero_tick >= 5) // Завершено 3 виміри (такти 2, 3, 4)
+                {
+                    int32_t zero_off_avg = (int32_t)(fsm->zero_sum_pid_ua / 3);
+                    adc_driver_set_zero_offset(channel, 0, zero_off_avg);
+                    fsm->auto_zero_done = true;
+                    fsm->cycle = 0;
+                    fsm->tick_in_cycle = 0;
+                    ESP_LOGI(TAG, "CH%d: DCIR Auto-Zero Calibration Complete: %ld uA. Starting 10-Pulse Test.",
+                             channel, (long)zero_off_avg);
+                }
                 system_state_set_metrics(channel, &metrics);
                 break;
             }
@@ -538,17 +586,24 @@ static void pid_control_task(void *pvParameters)
                 break;
             }
 
-            // Крок 2. Зсув нуля (Zero-Offset)
+            // Крок 2. Зсув нуля (Zero-Offset) з 3-кратним усередненням
             hw_set_load_pwm(channel, 0);
-            vTaskDelay(pdMS_TO_TICKS(20)); // Очікування розряду паразитних ємностей
+            vTaskDelay(pdMS_TO_TICKS(40)); // Очікування розряду паразитних ємностей та релаксації ФНЧ
 
-            uint32_t zero_current_ua = 0;
-            int32_t raw_pid_ua = 0;
-            adc_driver_read_current(channel, &zero_current_ua, &raw_pid_ua);
+            int64_t zero_sum_pid = 0;
+            for (int s = 0; s < 3; s++)
+            {
+                uint32_t sample_u = 0;
+                int32_t sample_pid = 0;
+                adc_driver_read_current(channel, &sample_u, &sample_pid);
+                zero_sum_pid += sample_pid;
+                vTaskDelay(pdMS_TO_TICKS(10));
+            }
+            int32_t raw_pid_ua_avg = (int32_t)(zero_sum_pid / 3);
 
             // Компенсуємо дрейф нуля ОП
-            adc_driver_set_zero_offset(channel, 0, raw_pid_ua);
-            ESP_LOGI(TAG, "CH%d: Zero offset calibrated: %ld uA", channel, raw_pid_ua);
+            adc_driver_set_zero_offset(channel, 0, raw_pid_ua_avg);
+            ESP_LOGI(TAG, "CH%d: Zero offset calibrated (3-sample avg): %ld uA", channel, (long)raw_pid_ua_avg);
 
             // Крок 3. Перевірка силового ланцюга (Power Path Check)
             // Даємо тестовий ШІМ (~10% від 4095: duty=400 створює V_ref ~32 мВ після дільника 10:1;
@@ -561,17 +616,18 @@ static void pid_control_task(void *pvParameters)
             // 3) Хімічна та індуктивна релаксація силового контуру.
             // Використовуємо циклічне опитування з таймаутом 200 мс (затримка кроку 20 мс) до появи ненульового струму.
             uint32_t ping_current_ua = 0;
+            int32_t ping_raw_pid_ua = 0;
             for (int poll = 0; poll < 10; poll++)
             {
                 vTaskDelay(pdMS_TO_TICKS(20)); // Сумарно до 200 мс очікування встановлення
-                adc_driver_read_current(channel, &ping_current_ua, &raw_pid_ua);
+                adc_driver_read_current(channel, &ping_current_ua, &ping_raw_pid_ua);
                 if (ping_current_ua >= 10000) // Поріг детекції струму: 10 мА (захист від шуму ОП при очікуваних >100 мА)
                 {
                     break;
                 }
             }
 
-            ESP_LOGW(TAG, "DEBUG: Ping current = %lu uA (raw = %ld)", ping_current_ua, raw_pid_ua);
+            ESP_LOGW(TAG, "DEBUG: Ping current = %lu uA (raw = %ld)", ping_current_ua, (long)ping_raw_pid_ua);
             hw_set_load_pwm(channel, 0); // Миттєво закриваємо транзистор
 
             if (ping_current_ua < 10000)

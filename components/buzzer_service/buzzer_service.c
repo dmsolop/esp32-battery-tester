@@ -32,6 +32,10 @@ static void buzzer_hw_stop(void)
     {
         mcpwm_comparator_set_compare_value(s_comparator, 0);
     }
+    if (s_generator)
+    {
+        mcpwm_generator_set_force_level(s_generator, 0, true);
+    }
 }
 
 static void buzzer_hw_play_tone(uint32_t freq_hz)
@@ -40,6 +44,11 @@ static void buzzer_hw_play_tone(uint32_t freq_hz)
     {
         buzzer_hw_stop();
         return;
+    }
+
+    if (s_generator)
+    {
+        mcpwm_generator_set_force_level(s_generator, -1, true);
     }
 
     uint32_t period_ticks = BUZZER_TIMER_RES_HZ / freq_hz;
@@ -212,8 +221,9 @@ esp_err_t buzzer_service_init(void)
     mcpwm_generator_set_action_on_compare_event(s_generator,
                                                 MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, s_comparator, MCPWM_GEN_ACTION_LOW));
 
-    // Початково рівень 0
+    // Початково рівень 0 та примусове утримання в LOW
     mcpwm_comparator_set_compare_value(s_comparator, 0);
+    mcpwm_generator_set_force_level(s_generator, 0, true);
 
     err = mcpwm_timer_enable(s_timer);
     if (err != ESP_OK)

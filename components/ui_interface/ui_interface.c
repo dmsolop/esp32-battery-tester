@@ -28,7 +28,7 @@ typedef enum
 
 #define VISIBLE_ROWS 4
 #define CH_DETAIL_TOTAL_ITEMS 6
-#define SETTINGS_TOTAL_ITEMS 8
+#define SETTINGS_TOTAL_ITEMS 9
 #define LIVE_MONITOR_TOTAL_ITEMS 8
 #define TEST_DIAG_TOTAL_ITEMS 10
 #define SENSOR_BIND_TOTAL_ITEMS (MAX_SENSORS_PER_CHANNEL + 2)
@@ -240,12 +240,15 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     char buf_cap[24];
     char buf_tim[24];
     char buf_buzzer[24];
+    char buf_calib_v[24];
+    int32_t v_off_mv = adc_driver_get_zero_offset_voltage_mv(ch);
     snprintf(buf_i, sizeof(buf_i), "I: %4lu mA", (unsigned long)m.settings.target_current_ma);
     snprintf(buf_v, sizeof(buf_v), "V: %4lu mV", (unsigned long)m.settings.cutoff_voltage_mv);
     snprintf(buf_t, sizeof(buf_t), "T:  %3ld C ", (long)(m.settings.thermal_limit_mc / 1000));
     snprintf(buf_cap, sizeof(buf_cap), "CapLim: %4lu mAh", (unsigned long)m.settings.capacity_limit_mah);
     snprintf(buf_tim, sizeof(buf_tim), "TimeLim: %3lu min", (unsigned long)(m.settings.time_limit_s / 60));
     snprintf(buf_buzzer, sizeof(buf_buzzer), "Buzzer:    %3u%%", (unsigned int)buzzer_get_volume());
+    snprintf(buf_calib_v, sizeof(buf_calib_v), "Calib V: %+4ld mV", (long)v_off_mv);
 
     const char *items[SETTINGS_TOTAL_ITEMS];
     items[0] = buf_i;
@@ -254,8 +257,9 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
     items[3] = buf_cap;
     items[4] = buf_tim;
     items[5] = buf_buzzer;
-    items[6] = "[ Reset Defaults ]";
-    items[7] = "[ <- BACK ]";
+    items[6] = buf_calib_v;
+    items[7] = "[ Reset Defaults ]";
+    items[8] = "[ <- BACK ]";
 
     int base_y[] = {16, 28, 40, 52};
 
@@ -269,7 +273,7 @@ static void render_settings(int rx, uint8_t ch, int selected_param, int scroll_o
 
         if (state == UI_STATE_SETTINGS && item_idx == selected_param)
         {
-            if (is_editing && selected_param <= 5)
+            if (is_editing && selected_param <= 6)
             {
                 display_engine_draw_string(rx + 0, y_pos, ">", 1);
                 display_engine_draw_string(rx + 112, y_pos, "<", 1);
@@ -803,6 +807,18 @@ static void ui_task(void *pvParameters)
                     buzzer_set_volume((uint8_t)val_vol);
                     buzzer_play(BUZZER_EVENT_CLICK);
                 }
+                else if (selected_param == 6)
+                {
+                    // Calib Offset V: крок 1 мВ, діапазон -500..+500 мВ
+                    int32_t cur_v_off = adc_driver_get_zero_offset_voltage_mv(selected_ch);
+                    int32_t new_v_off = cur_v_off + diff * 1;
+                    if (new_v_off < -500)
+                        new_v_off = -500;
+                    if (new_v_off > 500)
+                        new_v_off = 500;
+                    adc_driver_set_voltage_offset_mv(selected_ch, new_v_off);
+                    buzzer_play(BUZZER_EVENT_CLICK);
+                }
             }
             else if (current_state == UI_STATE_TEST_DIAG && is_editing)
             {
@@ -952,7 +968,7 @@ static void ui_task(void *pvParameters)
                 break;
 
             case UI_STATE_SETTINGS:
-                if (selected_param == 7)
+                if (selected_param == 8)
                 {
                     // BACK TO CH DETAIL
                     current_state = UI_STATE_TEST_DIAG;
@@ -961,15 +977,15 @@ static void ui_task(void *pvParameters)
                     is_editing = false;
                     buzzer_play(BUZZER_EVENT_CLICK);
                 }
-                else if (selected_param == 6)
+                else if (selected_param == 7)
                 {
                     // [ Reset Defaults ]: скидання до безпечних ROM-значень поточної хімії
                     system_state_set_chemistry(selected_ch, cur_m.settings.chem);
                     buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
-                else if (selected_param >= 0 && selected_param <= 5)
+                else if (selected_param >= 0 && selected_param <= 6)
                 {
-                    // Перемикання режиму редагування на параметрах 0..5 (I, V, T, CapLim, TimeLim, Buzzer)
+                    // Перемикання режиму редагування на параметрах 0..6 (I, V, T, CapLim, TimeLim, Buzzer, Calib V)
                     is_editing = !is_editing;
                     buzzer_play(BUZZER_EVENT_CLICK);
                 }

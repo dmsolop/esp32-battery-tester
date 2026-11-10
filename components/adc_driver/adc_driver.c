@@ -7,6 +7,8 @@
 #include "freertos/semphr.h"
 #include "sdkconfig.h"  // Макроси Kconfig
 #include "pwm_driver.h" // Для апаратного байпасу ШІМ
+#include "nvs_flash.h"
+#include "nvs.h"
 
 #define I2C_MASTER_FREQ_HZ 100000
 #define I2C_MASTER_PORT_NUM -1
@@ -35,6 +37,8 @@ typedef struct
     int32_t current_offset_q2_ua;
     bool dual_branch_enabled;
 } adc_calib_t;
+
+static adc_calib_t s_calib[4] = {0};
 
 static uint32_t s_mock_voltage[4] = {4100000, 4110000, 4120000, 4130000};
 static int32_t s_mock_current[4] = {1450000, 1500000, 1550000, 1600000};
@@ -132,10 +136,36 @@ esp_err_t adc_driver_init(void)
 
     ESP_LOGI(TAG, "I2C bus initialized (SDA:%d, SCL:%d). ALERT int configured on pin %d",
              CONFIG_I2C_SDA_PIN, CONFIG_I2C_SCL_PIN, CONFIG_ADC_ALERT_PIN);
+
+    // Автоматичне відновлення калибровок з NVS
+    nvs_handle_t nvs_handle;
+    if (nvs_open("storage", NVS_READONLY, &nvs_handle) == ESP_OK)
+    {
+        for (int ch = 0; ch < 4; ch++)
+        {
+            char key_v[16], key_i[16];
+            snprintf(key_v, sizeof(key_v), "ch%d_v_off_mv", ch);
+            snprintf(key_i, sizeof(key_i), "ch%d_zero_i", ch);
+
+            int32_t v_off_mv = 0;
+            int32_t i_off_ua = 0;
+            if (nvs_get_i32(nvs_handle, key_v, &v_off_mv) == ESP_OK)
+            {
+                s_calib[ch].voltage_offset_uv = v_off_mv * 1000;
+            }
+            if (nvs_get_i32(nvs_handle, key_i, &i_off_ua) == ESP_OK)
+            {
+                s_calib[ch].current_offset_q1_ua = i_off_ua;
+                s_calib[ch].current_offset_q2_ua = 0;
+            }
+            ESP_LOGI(TAG, "CH%d: Loaded NVS calib: V_off=%ld mV, I_off=%ld uA",
+                     ch, (long)(s_calib[ch].voltage_offset_uv / 1000), (long)s_calib[ch].current_offset_q1_ua);
+        }
+        nvs_close(nvs_handle);
+    }
+
     return ESP_OK;
 }
-
-static adc_calib_t s_calib[4] = {0};
 
 void adc_driver_set_dual_branch_mode(uint8_t channel, bool enable_dual)
 {
@@ -154,6 +184,47 @@ void adc_driver_set_zero_offset(uint8_t channel, int32_t v_off_uv, int32_t i_off
         // Для сумісності з поточним макетом: якщо режим одноплечовий, калібруємо Q1 і скидаємо Q2
         s_calib[channel].current_offset_q1_ua = i_off_ua;
         s_calib[channel].current_offset_q2_ua = 0;
+
+        // Збереження в NVS
+        nvs_handle_t nvs_handle;
+        if (nvs_open("storage", NVS_READWRITE, &nvs_handle) == ESP_OK)
+        {
+            char key_v[16], key_i[16];
+            snprintf(key_v, sizeof(key_v), "ch%d_v_off_mv", channel);
+            snprintf(key_i, sizeof(key_i), "ch%d_zero_i", channel);
+
+            nvs_set_i32(nvs_handle, key_v, v_off_uv / 1000);
+            nvs_set_i32(nvs_handle, key_i, i_off_ua);
+            nvs_commit(nvs_handle);
+            nvs_close(nvs_handle);
+        }
+    }
+}
+
+int32_t adc_driver_get_zero_offset_voltage_mv(uint8_t channel)
+{
+    if (channel < 4)
+    {
+        return s_calib[channel].voltage_offset_uv / 1000;
+    }
+    return 0;
+}
+
+void adc_driver_set_voltage_offset_mv(uint8_t channel, int32_t v_off_mv)
+{
+    if (channel < 4)
+    {
+        s_calib[channel].voltage_offset_uv = v_off_mv * 1000;
+
+        nvs_handle_t nvs_handle;
+        if (nvs_open("storage", NVS_READWRITE, &nvs_handle) == ESP_OK)
+        {
+            char key_v[16];
+            snprintf(key_v, sizeof(key_v), "ch%d_v_off_mv", channel);
+            nvs_set_i32(nvs_handle, key_v, v_off_mv);
+            nvs_commit(nvs_handle);
+            nvs_close(nvs_handle);
+        }
     }
 }
 

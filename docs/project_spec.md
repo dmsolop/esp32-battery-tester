@@ -45,3 +45,44 @@ The system is governed by a strict FSM. PWM generation is ONLY allowed in `STATE
 - **NiMH/NiCd Termination:** Employs $-\Delta V$ drop detection (5-10mV) and dynamic $dT/dt$ thermal derivative analysis (>1°C/min) to prevent overcharging[cite: 4].
 - **Voltage Sag Detection:** Calculates initial voltage drop in the first millisecond of discharge to reject degraded or fake cells (high internal resistance)[cite: 4].
 - **1-Wire Auto-Routing:** The system dynamically assigns limits based on EEPROM roles (`0x01` = Heatsink hard limit 85°C, `0x02` = Cell dynamic limit)[cite: 4].
+
+## 7. Metrological Principles & Competitive Advantages (User Manual & Whitepaper)
+
+### 7.1 Physics of 4-Wire Kelvin Sensing in DC/Pulse Measurements (Why Probe Tare is Obsolete)
+In classical 2-wire battery analyzers, the measured cell voltage $V_{measured}$ suffers from parasitic resistive drops across current-carrying cables, banana jacks, and crocodile clips:
+$$V_{measured} = V_{cell} - I_{load} \cdot (2 R_{wire} + 2 R_{contact})$$
+At high currents (e.g., $1\text{ A}$ to $30\text{ A}$), even low wire resistances ($2 \times 50\text{ m}\Omega = 100\text{ m}\Omega$) induce huge measurement errors ($\Delta V = 100\text{ mV}$ to $3000\text{ mV}$), which falsely triggers cutoff thresholds or corrupts DCIR calculations.
+
+Our instrument employs a **true 4-wire Kelvin connection topology**:
+1. **Force Pair ($F+, F-$):** Dedicated heavy-gauge copper leads carry the entire discharge current ($I_{load} \le 30\text{ A}$) to the MOSFET power stage and precision manganese-copper shunt ($5\text{ m}\Omega$).
+2. **Sense Pair ($S+, S-$):** Independent, shielded sense lines connect directly to the battery terminal lugs and route to the ADS1115 differential instrumentation ADC inputs ($AIN2 - AIN3$) via a high-impedance voltage divider ($205\text{ k}\Omega / 10\text{ k}\Omega$, total input impedance $R_{in} \approx 215\text{ k}\Omega$).
+3. **Kirchhoff's Current Law ($KCL$) Verification:** The leakage current $I_{sense}$ entering the measurement circuit is minuscule:
+   $$I_{sense} = \frac{V_{cell}}{R_{in}} = \frac{4.2\text{ V}}{215\text{ k}\Omega} \approx 19.5\text{ }\mu\text{A}$$
+   The parasitic voltage drop across the sense leads ($R_{sense} \approx 50\text{ m}\Omega$) is mathematically negligible:
+   $$\Delta V_{error} = I_{sense} \cdot R_{sense} = 19.5\text{ }\mu\text{A} \cdot 0.05\text{ }\Omega \approx 0.976\text{ }\mu\text{V} < 1\text{ LSB}$$
+   (Where $1\text{ LSB} = 125\text{ }\mu\text{V} \times 21.5 \approx 2.68\text{ mV}$).
+4. **Complete Elimination of Wire Calibration:** In differential two-tier DCIR pulse evaluation ($I_1 \to I_2$):
+   $$R_{DCIR} = \frac{V_1(I_1) - V_2(I_2)}{I_2 - I_1} = \frac{(V_{cell1} - I_{sense1} R_{sense}) - (V_{cell2} - I_{sense2} R_{sense})}{I_2 - I_1} \equiv \frac{\Delta V_{cell}}{\Delta I}$$
+   Because the high-current path drop $\Delta V_{wire} = \Delta I_{load} \cdot R_{wire}$ never enters the sense loop, wire resistance cancels out completely. Manual probe zeroing (`Probe Tare` / `Nulling`) is **physically unnecessary** and thus set to $R_{wire} = 0\text{ m}\Omega$.
+
+### 7.2 Superiority of Two-Step Pulse DCIR (IEC 61960: $100\text{ mA} \to 1000\text{ mA}$) over Consumer 1 kHz ACIR Milliohmmeters
+Consumer battery impedance testers (e.g., YR1035+, RC3563) inject a high-frequency AC current ($1\text{ kHz}$ sine wave). While convenient for sorting brand new cells on a factory line, $1\text{ kHz}$ AC measurement is fundamentally misleading for evaluating real battery health under active load:
+
+1. **Equivalent Circuit Physics (Randles Cell):**
+   A chemical power cell consists of:
+   - Bulk ohmic resistance $R_{ohm}$ (foils, electrolyte, tabs, welds);
+   - Double-layer capacitance $C_{dl}$ (typically massive: $0.1\text{ F}$ to $>10\text{ F}$ across porous electrode interfaces);
+   - Charge-transfer resistance $R_{ct}$ (Faradaic kinetics of intercalation/de-intercalation of ions through SEI layer);
+   - Warburg impedance $Z_W$ (solid-state ion diffusion at low frequencies $<0.1\text{ Hz}$).
+2. **AC Short-Circuit Effect of $1\text{ kHz}$:**
+   The capacitive reactance of the electrochemical double layer at $1000\text{ Hz}$ is:
+   $$X_{C_{dl}} = \frac{1}{2 \pi f C_{dl}} = \frac{1}{2 \pi \cdot 1000 \cdot 1.0\text{ F}} \approx 0.16\text{ m}\Omega \to 0$$
+   Because $X_{C_{dl}} \approx 0$, the $1\text{ kHz}$ excitation signal bypasses $R_{ct}$ entirely and measures **only** the high-frequency ohmic electrolyte resistance:
+   $$R_{ACIR}(1\text{ kHz}) \approx R_{ohm}$$
+   Consequently, an aged, heavily cycled, or degraded battery with high charge-transfer resistance (crystallization, thickened SEI layer, active lithium loss) can show an "excellent" low $1\text{ kHz}$ ACIR reading, yet completely sag and shut down under a real DC load!
+3. **The Analyzer's IEC 61960 Advantage ($R_{DCIR} = R_{ohm} + R_{ct}$):**
+   Our modular analyzer implements standard-compliant two-tier pulsed DCIR ($100\text{ mA} \to 1000\text{ mA}$ with $450\text{ ms}$ steady-state plateau and 3-point tail averaging, as well as 10-cycle multi-pulse trimmed mean). 
+   - A $450\text{ ms}$ pulse allows initial capacitive charging to settle while capturing Faradaic charge-transfer overpotentials:
+     $$R_{DCIR} = R_{ohm} + R_{ct}$$
+   - **Dynamic Degradation Profiling $R_{DCIR}(SoC)$:** Unlike static benchtop testers, our instrument logs up to 64 DCIR points throughout the actual discharge cycle ($100\% \to 0\%\text{ SoC}$), mapping the true battery internal resistance curve and predicting real thermal/voltage limits under actual operating loads.
+
