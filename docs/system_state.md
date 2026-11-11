@@ -117,6 +117,16 @@
   - Enhanced `STATE_SELF_TEST` step 2 with 3-sample averaging of zero current offset.
 - [x] **[Ticket-DCIR-DYN-POOL]** In [`components/load_control/dcir_service.h`](components/load_control/dcir_service.h) and [`components/load_control/dcir_service.c`](components/load_control/dcir_service.c): expanded dynamic discharge DCIR pulse duration from 100 ms to 450 ms (9 ticks of 50 ms) with 3-sample moving baseline averaging and 3-sample tail averaging (ticks 6..8). Implemented DCIR degradation history ring buffer `dcir_log_point_t` (up to 64 points per channel, timestamp, capacity, voltage, dcir_mohm) accessible via `dcir_service_get_history()`.
 - [x] **[Ticket-ADC-NVS-CALIB]** In [`components/adc_driver/adc_driver.c`](components/adc_driver/adc_driver.c) and [`components/ui_interface/ui_interface.c`](components/ui_interface/ui_interface.c): added persistent NVS storage for ADC channel offsets (`ch%d_v_off_mv` and `ch%d_zero_i`), with automatic restoration on boot. Added interactive `Calib V: %+4ld mV` (item 6) in `[ PRO SETS ]` with 1 mV steps and NVS persistence.
+- [x] **[Ticket-FAN-PWM-TIMER-30HZ]** Allocated dedicated `LEDC_TIMER_1` (`FAN_PWM_TIMER`) exclusively for 4 fan channels (`LEDC_CHANNEL_4..7`) at 30 Hz low-frequency PWM in [`components/load_control/pwm_driver.c`](components/load_control/pwm_driver.c) and [`components/load_control/include/pwm_driver.h`](components/load_control/include/pwm_driver.h):
+  - Retained `LEDC_TIMER_0` (`PWM_TIMER`, 19531 Hz, 12-bit) exclusively for 4 power load channels (`LEDC_CHANNEL_0..3`).
+  - Configured `LEDC_TIMER_1` with `#define FAN_PWM_FREQ_HZ 30` and `LEDC_TIMER_12_BIT` (duty 0..4095).
+  - ESP32-S3 LEDC divider verification: for APB clock (80 MHz) and 12-bit resolution ($4096$), divider is $80\,000\,000 / (30 \times 4096) \approx 651.04$, which safely fits within the 10-bit integer divider range ($651 \le 1023$).
+  - Full consistency preserved: `load_control_fan_pwm_set(ch, duty)` and emergency stop `pwm_driver_emergency_stop_isr()` (100% = 4095) work with the identical 12-bit duty scale.
+  - Hardware physical connection note for 3-pin BLDC fans Sanyo Denki (San Ace 109X, Intel pinout):
+    - Yellow wire $\to$ `+12V` rail.
+    - Black wire $\to$ Drain of Low-Side N-MOSFET switch.
+    - Green wire $\to$ Tachometer/Hall open-collector output (leave unconnected to PWM).
+    - Flyback/freewheeling diode (`1N5819` Schottky or `1N4007`) connected in reverse parallel across fan leads (Cathode to `+12V`, Anode to MOSFET Drain).
 - [x] **[Ticket-DOCS-THEORY-KELVIN-DCIR]** Integrated full metrological proof and whitepaper sections into [`docs/project_spec.md`](docs/project_spec.md) and [`docs/system_state.md`](docs/system_state.md): 4-wire Kelvin DC/pulse error elimination proof via Kirchhoff's Current Law and Randles cell physics demonstrating superiority of IEC 61960 pulse DCIR ($R_{ohm} + R_{ct}$) over 1 kHz ACIR testers that short out $C_{dl}$.
 
 ### 👑 Master System Orchestrator (Status: Pending)

@@ -10,6 +10,7 @@
 - **Precision Sensing (4-Wire Kelvin):** Current is measured across a single 5 mOhm (R005) 2512 SMD Manganese-Copper alloy precision shunt per MOSFET leg (3W rating, 1.125W dissipation at 15A)[cite: 4]. Kelvin connections are routed directly from the inner pads on the PCB copper[cite: 4].
 - **ADC Scaling:** ADS1115 PGA dynamically scales to maintain 16-bit resolution across the 1V–60V range[cite: 4].
 - **Hardware Bypass (Safety):** The `ADC_ALERT_PIN` triggers a hardware interrupt (GPIO 47) to instantly zero the PWM duty cycle via LEDC registers during over-current or over-voltage events[cite: 4].
+- **Thermal Management & Fan Control:** Dedicated LEDC timers: `LEDC_TIMER_0` (19531 Hz, 12-bit) dedicated to 4 power load channels (`LEDC_CHANNEL_0..3`), and `LEDC_TIMER_1` (30 Hz, 12-bit) dedicated to 4 cooling fan channels (`LEDC_CHANNEL_4..7`) for 3-wire BLDC fans (Sanyo Denki San Ace 109X) switched via Low-Side N-MOSFETs with freewheeling clamp diodes.
 
 ## 2. Software Architecture & RTOS (FreeRTOS)
 Strict Task Prioritization prevents network or UI latency from affecting control loops[cite: 4]:

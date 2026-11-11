@@ -6,6 +6,9 @@
 // Максимальне значення ШІМ для 12-бітної роздільної здатності (2^12 - 1)
 #define PWM_MAX_DUTY 4095
 
+// Частота низькочастотної ШІМ для 3-провідних BLDC кулерів (Sanyo Denki San Ace)
+#define FAN_PWM_FREQ_HZ 30
+
 esp_err_t load_control_pwm_init(uint8_t channel, int gpio_num);
 esp_err_t load_control_pwm_set(uint8_t channel, uint32_t duty);
 
