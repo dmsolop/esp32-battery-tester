@@ -127,6 +127,15 @@
     - Black wire $\to$ Drain of Low-Side N-MOSFET switch.
     - Green wire $\to$ Tachometer/Hall open-collector output (leave unconnected to PWM).
     - Flyback/freewheeling diode (`1N5819` Schottky or `1N4007`) connected in reverse parallel across fan leads (Cathode to `+12V`, Anode to MOSFET Drain).
+- [x] **[Ticket-FAN-KICKSTART-MAP]** Enhanced cooling fan control and hardware driver:
+  - In [`components/load_control/pwm_driver.c`](components/load_control/pwm_driver.c), configured `load_control_fan_pwm_set()` and `pwm_driver_emergency_stop_isr()` to pass `4096` (`1 << LEDC_TIMER_12_BIT`) to LEDC hardware registers when `duty >= PWM_MAX_DUTY` (`4095`), delivering continuous 100.00% DC HIGH (3.3V) without end-of-period notches.
+  - Added `#define FAN_MIN_RUN_DUTY 1150` (~28% of 4095) in [`components/load_control/include/pwm_driver.h`](components/load_control/include/pwm_driver.h). Implemented linear mapping of non-zero speeds (1..100%) to `[FAN_MIN_RUN_DUTY .. PWM_MAX_DUTY]`, guaranteeing that low manual and automatic fan settings never stall the BLDC rotor against cogging torque.
+  - Implemented 500 ms 100% Kick-Start force pulse in [`components/load_control/load_control.c`](components/load_control/load_control.c) via `apply_fan_target_duty()` and `s_fan_kickstart_until_us` tracking when transitioning from stopped state (`s_fan_target_duty == 0`) to active rotation, functioning uniformly for both background thermal PID tasks and interactive manual UI adjustment.
+  - Added automatic reset of `s_fan_manual_override` in [`components/ui_interface/ui_interface.c`](components/ui_interface/ui_interface.c) upon acknowledging `STATE_ERROR` via `[ CLICK TO RESET ]`.
+- [x] **[Ticket-UI-FULL-AUDIO]** Implemented 100% acoustic feedback across UI interactions in [`components/ui_interface/ui_interface.c`](components/ui_interface/ui_interface.c):
+  - Added `buzzer_play(BUZZER_EVENT_CLICK)` on every rotary encoder step (`diff != 0`) across all menu views (`CH_LIST`, `CH_DETAIL`, `SETTINGS`, `GRAPH`, `TEST_DIAG`, `SENSOR_BIND`) and interactive parameter edits (`I`, `V`, `T`, `CapLim`, `TimeLim`, `Calib V`, `RawPWM`, `FanPWM`).
+  - Added `buzzer_play(BUZZER_EVENT_CONFIRM)` on error acknowledgement `[ CLICK TO RESET ]` and asynchronous zero calibration `[ Zero Calib REL ]`.
+  - Added `buzzer_play(BUZZER_EVENT_WARNING)` on unauthorized attempts to modify battery chemistry during active discharge and on clicking empty/unbound sensor slots `[EMPTY]` in `UI_STATE_SENSOR_BIND`.
 - [x] **[Ticket-DOCS-THEORY-KELVIN-DCIR]** Integrated full metrological proof and whitepaper sections into [`docs/project_spec.md`](docs/project_spec.md) and [`docs/system_state.md`](docs/system_state.md): 4-wire Kelvin DC/pulse error elimination proof via Kirchhoff's Current Law and Randles cell physics demonstrating superiority of IEC 61960 pulse DCIR ($R_{ohm} + R_{ct}$) over 1 kHz ACIR testers that short out $C_{dl}$.
 
 ### 👑 Master System Orchestrator (Status: Pending)

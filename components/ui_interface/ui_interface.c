@@ -723,6 +723,11 @@ static void ui_task(void *pvParameters)
             cur_m.error_flags = 0;
             system_state_set_metrics(selected_ch, &cur_m);
 
+            // Повертаємо кулер у режим автоматичного терморегулювання
+            load_control_set_fan_manual_override(selected_ch, false);
+
+            buzzer_play(BUZZER_EVENT_CONFIRM);
+
             // Скидаємо UI на базовий вигляд каналу
             current_state = UI_STATE_CH_DETAIL;
             selected_param = 0;
@@ -747,6 +752,7 @@ static void ui_task(void *pvParameters)
                         val = 3000;
                     cur_m.settings.target_current_ma = (uint32_t)val;
                     system_state_set_metrics(selected_ch, &cur_m);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 1)
                 {
@@ -758,6 +764,7 @@ static void ui_task(void *pvParameters)
                         val = 4500;
                     cur_m.settings.cutoff_voltage_mv = (uint32_t)val;
                     system_state_set_metrics(selected_ch, &cur_m);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 2)
                 {
@@ -771,6 +778,7 @@ static void ui_task(void *pvParameters)
                     cur_m.settings.thermal_limit_mc = val * 1000;
                     system_state_set_metrics(selected_ch, &cur_m);
                     system_state_update_sensor_limits(selected_ch);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 3)
                 {
@@ -782,6 +790,7 @@ static void ui_task(void *pvParameters)
                         val = 20000;
                     cur_m.settings.capacity_limit_mah = (uint32_t)val;
                     system_state_set_metrics(selected_ch, &cur_m);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 4)
                 {
@@ -794,6 +803,7 @@ static void ui_task(void *pvParameters)
                         val_min = 1440;
                     cur_m.settings.time_limit_s = (uint32_t)(val_min * 60);
                     system_state_set_metrics(selected_ch, &cur_m);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 5)
                 {
@@ -833,6 +843,7 @@ static void ui_task(void *pvParameters)
                         val = 4095;
                     raw_pwm_val = (uint16_t)val;
                     load_control_set_raw_pwm(selected_ch, raw_pwm_val);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
                 else if (selected_param == 4)
                 {
@@ -844,10 +855,12 @@ static void ui_task(void *pvParameters)
                     if (val_fan > 100)
                         val_fan = 100;
                     load_control_set_fan_pwm(selected_ch, (uint8_t)val_fan);
+                    buzzer_play(BUZZER_EVENT_CLICK);
                 }
             }
             else
             {
+                buzzer_play(BUZZER_EVENT_CLICK);
                 switch (current_state)
                 {
                 case UI_STATE_CH_LIST:
@@ -947,6 +960,11 @@ static void ui_task(void *pvParameters)
                         system_state_set_chemistry(selected_ch, next_chem);
                         buzzer_play(BUZZER_EVENT_CLICK);
                     }
+                    else
+                    {
+                        // Спроба змінити хімію під час активного процесу суворо заборонена
+                        buzzer_play(BUZZER_EVENT_WARNING);
+                    }
                 }
                 else if (selected_param == 4)
                 {
@@ -1016,6 +1034,7 @@ static void ui_task(void *pvParameters)
                 {
                     // [ Zero Calib REL ]: тарування нуля через неблокуючий виклик
                     load_control_request_zero_calib(selected_ch);
+                    buzzer_play(BUZZER_EVENT_CONFIRM);
                 }
                 else if (selected_param == 3)
                 {
@@ -1109,6 +1128,11 @@ static void ui_task(void *pvParameters)
                         }
                         temp_service_bind_sensor_role(selected_ch, selected_param, next_role);
                         buzzer_play(BUZZER_EVENT_CONFIRM);
+                    }
+                    else
+                    {
+                        // Клік на пустий незадіяний слот датчика
+                        buzzer_play(BUZZER_EVENT_WARNING);
                     }
                 }
                 else if (selected_param == MAX_SENSORS_PER_CHANNEL)

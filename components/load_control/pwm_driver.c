@@ -96,9 +96,11 @@ esp_err_t load_control_fan_pwm_set(uint8_t channel, uint32_t duty)
         return ESP_ERR_INVALID_ARG;
     }
 
-    if (duty > PWM_MAX_DUTY)
+    // Для 12-бітного таймера LEDC: при 100% передаємо 4096 (1 << LEDC_TIMER_12_BIT),
+    // щоб апаратний ШІМ видавав постійний рівень HIGH (3.3V) без мікропровалу в кінці періоду.
+    if (duty >= PWM_MAX_DUTY)
     {
-        duty = PWM_MAX_DUTY;
+        duty = (1 << PWM_RESOLUTION); // 4096
     }
 
     ledc_channel_t fan_channel = (ledc_channel_t)(LEDC_CHANNEL_4 + channel);
@@ -115,10 +117,10 @@ void IRAM_ATTR pwm_driver_emergency_stop_isr(void)
         LEDC.channel_group[PWM_MODE].channel[i].duty.duty = 0;
         LEDC.channel_group[PWM_MODE].channel[i].conf1.duty_start = 1; // Тригер оновлення регістра
     }
-    // Кулери при екстреній аварії вмикаємо на 100% (4095) для посиленого охолодження аварійного транзистора
+    // Кулери при екстреній аварії вмикаємо на чисті 100% (4096) для посиленого охолодження аварійного транзистора
     for (int i = 4; i < 8; i++)
     {
-        LEDC.channel_group[PWM_MODE].channel[i].duty.duty = (PWM_MAX_DUTY << 4);
+        LEDC.channel_group[PWM_MODE].channel[i].duty.duty = ((1 << PWM_RESOLUTION) << 4);
         LEDC.channel_group[PWM_MODE].channel[i].conf1.duty_start = 1;
     }
 }

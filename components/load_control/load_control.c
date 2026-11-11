@@ -23,6 +23,8 @@ static volatile bool s_diag_precheck_only[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_req_zero_calib[CONFIG_MAX_CHANNELS] = {false};
 static volatile bool s_fan_manual_override[CONFIG_MAX_CHANNELS] = {false};
 static volatile uint8_t s_fan_duty_pct[CONFIG_MAX_CHANNELS] = {0};
+static volatile uint32_t s_fan_target_duty[CONFIG_MAX_CHANNELS] = {0};
+static volatile int64_t s_fan_kickstart_until_us[CONFIG_MAX_CHANNELS] = {0};
 
 // DCIR Multi-pulse state tracking
 typedef struct
@@ -176,6 +178,42 @@ void load_control_set_raw_pwm(uint8_t channel, uint16_t duty)
     }
 }
 
+static void apply_fan_target_duty(uint8_t channel, uint32_t target_duty)
+{
+    if (channel >= CONFIG_MAX_CHANNELS)
+    {
+        return;
+    }
+
+    int64_t now_us = esp_timer_get_time();
+
+    // Якщо кулер переходить з вимкненого стану (s_fan_target_duty == 0) у стан увімкнення (> 0)
+    // активуємо Kick-Start: 100% потужності на 500 мс (500000 мкс)
+    if (s_fan_target_duty[channel] == 0 && target_duty > 0)
+    {
+        s_fan_kickstart_until_us[channel] = now_us + 500000;
+        load_control_fan_pwm_set(channel, PWM_MAX_DUTY);
+    }
+    else if (target_duty == 0)
+    {
+        // Негайне вимкнення кулера
+        s_fan_kickstart_until_us[channel] = 0;
+        load_control_fan_pwm_set(channel, 0);
+    }
+    else if (now_us >= s_fan_kickstart_until_us[channel])
+    {
+        // Період Kick-Start минув або кулер уже працював - подаємо цільовий duty
+        load_control_fan_pwm_set(channel, target_duty);
+    }
+    else
+    {
+        // Все ще триває Kick-Start
+        load_control_fan_pwm_set(channel, PWM_MAX_DUTY);
+    }
+
+    s_fan_target_duty[channel] = target_duty;
+}
+
 void load_control_set_fan_pwm(uint8_t channel, uint8_t duty_percent)
 {
     if (channel >= CONFIG_MAX_CHANNELS)
@@ -191,9 +229,16 @@ void load_control_set_fan_pwm(uint8_t channel, uint8_t duty_percent)
     s_fan_duty_pct[channel] = duty_percent;
     s_fan_manual_override[channel] = true;
 
-    // Масштабування 0..100% у 0..4095
-    uint32_t raw_duty = ((uint32_t)duty_percent * PWM_MAX_DUTY) / 100;
-    load_control_fan_pwm_set(channel, raw_duty);
+    // Масштабування робочого діапазону (Minimum Running Duty Mapping):
+    // При 0% -> 0. При 1..100% -> лінійно у [FAN_MIN_RUN_DUTY .. PWM_MAX_DUTY]
+    uint32_t target_duty = 0;
+    if (duty_percent > 0)
+    {
+        target_duty = FAN_MIN_RUN_DUTY +
+                      (uint32_t)(((uint64_t)(duty_percent - 1) * (PWM_MAX_DUTY - FAN_MIN_RUN_DUTY)) / 99);
+    }
+
+    apply_fan_target_duty(channel, target_duty);
 }
 
 uint8_t load_control_get_fan_pwm(uint8_t channel)
@@ -308,8 +353,28 @@ static void pid_control_task(void *pvParameters)
             }
 
             s_fan_duty_pct[channel] = target_fan_pct;
-            uint32_t raw_fan_duty = ((uint32_t)target_fan_pct * PWM_MAX_DUTY) / 100;
-            load_control_fan_pwm_set(channel, raw_fan_duty);
+
+            uint32_t target_fan_duty = 0;
+            if (target_fan_pct > 0)
+            {
+                target_fan_duty = FAN_MIN_RUN_DUTY +
+                                  (uint32_t)(((uint64_t)(target_fan_pct - 1) * (PWM_MAX_DUTY - FAN_MIN_RUN_DUTY)) / 99);
+            }
+            apply_fan_target_duty(channel, target_fan_duty);
+        }
+        else
+        {
+            // У ручному режимі перевіряємо стан Kick-Start:
+            // якщо час Kick-Start минув, переводимо ШІМ з 100% на s_fan_target_duty
+            if (s_fan_kickstart_until_us[channel] > 0)
+            {
+                int64_t now_us = esp_timer_get_time();
+                if (now_us >= s_fan_kickstart_until_us[channel])
+                {
+                    s_fan_kickstart_until_us[channel] = 0;
+                    load_control_fan_pwm_set(channel, s_fan_target_duty[channel]);
+                }
+            }
         }
 
         switch (metrics.state)
