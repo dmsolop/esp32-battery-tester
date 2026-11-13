@@ -945,12 +945,10 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Simulation_SPICE:NMOS"
-			(pin_numbers
-				(hide yes)
-			)
+		(symbol "Transistor_FET:Q_NMOS_GSD"
 			(pin_names
 				(offset 0)
+				(hide yes)
 			)
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -958,7 +956,7 @@
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
 			(property "Reference" "Q"
-				(at 5.08 1.27 0)
+				(at 5.08 1.905 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -968,8 +966,8 @@
 					(justify left)
 				)
 			)
-			(property "Value" "NMOS"
-				(at 5.08 -1.27 0)
+			(property "Value" "Q_NMOS_GSD"
+				(at 5.08 0 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -990,18 +988,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs"
-				(at 0 -12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "N-MOSFET transistor, drain/source/gate"
+			(property "Datasheet" ""
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1012,40 +999,7 @@
 					)
 				)
 			)
-			(property "Sim.Device" "NMOS"
-				(at 0 -17.145 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Type" "VDMOS"
-				(at 0 -19.05 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Pins" "1=D 2=G 3=S"
-				(at 0 -15.24 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "transistor NMOS N-MOS N-MOSFET simulation"
+			(property "Description" "N-MOSFET transistor, gate/source/drain"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1056,7 +1010,18 @@
 					)
 				)
 			)
-			(symbol "NMOS_0_1"
+			(property "ki_keywords" "transistor NMOS N-MOS N-MOSFET"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Q_NMOS_GSD_0_1"
 				(polyline
 					(pts
 						(xy 0.254 1.905) (xy 0.254 -1.905)
@@ -1200,7 +1165,7 @@
 				)
 				(polyline
 					(pts
-						(xy 2.794 0.508) (xy 2.921 0.381) (xy 3.683 0.381) (xy 3.81 0.254)
+						(xy 2.921 0.381) (xy 3.683 0.381)
 					)
 					(stroke
 						(width 0)
@@ -1223,11 +1188,11 @@
 					)
 				)
 			)
-			(symbol "NMOS_1_1"
-				(pin passive line
-					(at 2.54 5.08 270)
+			(symbol "Q_NMOS_GSD_1_1"
+				(pin input line
+					(at -5.08 0 0)
 					(length 2.54)
-					(name "D"
+					(name "G"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1242,10 +1207,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -5.08 0 0)
+				(pin passive line
+					(at 2.54 -5.08 90)
 					(length 2.54)
-					(name "G"
+					(name "S"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1261,9 +1226,9 @@
 					)
 				)
 				(pin passive line
-					(at 2.54 -5.08 90)
+					(at 2.54 5.08 270)
 					(length 2.54)
-					(name "S"
+					(name "D"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1700,13 +1665,13 @@
 		(uuid "7f3c3089-35e2-4ca4-9d62-0bcce5152585")
 	)
 	(junction
-		(at 104.14 69.85)
+		(at 104.14 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "8f522b8a-280d-4b27-a6bf-c7bef11a26f0")
 	)
 	(junction
-		(at 91.44 59.69)
+		(at 77.47 59.69)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "90ffacbb-ea24-44c9-955e-0801bbe55342")
@@ -1751,7 +1716,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 69.85) (xy 104.14 69.85)
+			(xy 77.47 72.39) (xy 104.14 72.39)
 		)
 		(stroke
 			(width 0)
@@ -1768,6 +1733,16 @@
 			(type default)
 		)
 		(uuid "092708e2-c07c-4a37-9cc6-92bebf74e0bf")
+	)
+	(wire
+		(pts
+			(xy 104.14 64.77) (xy 104.14 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12365c59-d9cb-43b8-9a1c-533b78bf9221")
 	)
 	(wire
 		(pts
@@ -1791,7 +1766,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 59.69) (xy 91.44 62.23)
+			(xy 77.47 59.69) (xy 77.47 64.77)
 		)
 		(stroke
 			(width 0)
@@ -1808,16 +1783,6 @@
 			(type default)
 		)
 		(uuid "294ab360-38f8-406f-8054-751888270517")
-	)
-	(wire
-		(pts
-			(xy 104.14 69.85) (xy 104.14 80.01)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "31c724b8-b86f-4796-a5b9-39592bc85322")
 	)
 	(wire
 		(pts
@@ -1891,7 +1856,7 @@
 	)
 	(wire
 		(pts
-			(xy 73.66 59.69) (xy 96.52 59.69)
+			(xy 73.66 59.69) (xy 85.09 59.69)
 		)
 		(stroke
 			(width 0)
@@ -1961,16 +1926,6 @@
 	)
 	(wire
 		(pts
-			(xy 104.14 64.77) (xy 104.14 69.85)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a0103b59-5119-43c0-a1c8-4870443cace6")
-	)
-	(wire
-		(pts
 			(xy 146.05 102.87) (xy 146.05 109.22)
 		)
 		(stroke
@@ -2018,6 +1973,16 @@
 			(type default)
 		)
 		(uuid "d383bfd5-0e0f-45b9-8a26-84515d251487")
+	)
+	(wire
+		(pts
+			(xy 92.71 59.69) (xy 96.52 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e2e8a7b0-34a4-471c-a35b-38df0f6ecd7b")
 	)
 	(wire
 		(pts
@@ -2784,8 +2749,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Simulation_SPICE:NMOS")
-		(at 101.6 59.69 0)
+		(lib_id "Device:R")
+		(at 88.9 59.69 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2794,31 +2759,29 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "6496a006-8995-4e83-a994-6b20fd3314eb")
-		(property "Reference" "Q_FAN1"
-			(at 107.95 58.4199 0)
+		(uuid "65e40d2b-1c7e-4b35-bd55-769ca1e58fe8")
+		(property "Reference" "R20"
+			(at 88.9 53.34 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Value" "IRLML2502"
-			(at 107.95 60.9599 0)
+		(property "Value" "100R"
+			(at 88.9 55.88 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
-			(at 106.68 57.15 0)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 88.9 61.468 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2829,7 +2792,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 101.6 72.39 0)
+			(at 88.9 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2839,41 +2802,8 @@
 				)
 			)
 		)
-		(property "Description" "Transistor_FET:Q_NMOS_GSD"
-			(at 101.6 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Device" "Q_NMOS_GSD "
-			(at 101.6 76.835 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Type" ""
-			(at 101.6 78.74 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Pins" "1=G 2=S 3=D"
-			(at 101.6 74.93 0)
+		(property "Description" "R_Gate_Fun"
+			(at 88.9 59.69 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2884,18 +2814,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "b95e4625-5b20-4581-97e7-5ac98620fbba")
-		)
-		(pin "3"
-			(uuid "6d9ae5f9-d8fa-415c-8ef3-e733cfbdcc0c")
+			(uuid "50765283-4d0f-43bd-a4a8-4a1c61a23347")
 		)
 		(pin "2"
-			(uuid "de2c00bb-4600-4abe-85e8-9e43fcafc74b")
+			(uuid "f9da3e5f-97fd-44b8-b830-6569cba7be71")
 		)
 		(instances
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/029a3992-bba1-4c16-af18-4c60d303ee1c"
-					(reference "Q_FAN1")
+					(reference "R20")
 					(unit 1)
 				)
 			)
@@ -3067,7 +2994,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 91.44 66.04 0)
+		(at 77.47 68.58 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3078,7 +3005,7 @@
 		(fields_autoplaced yes)
 		(uuid "aacd36e7-4bed-405c-a5c3-fe884b814836")
 		(property "Reference" "R17"
-			(at 93.98 64.7699 0)
+			(at 80.01 67.3099 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3089,7 +3016,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 93.98 67.3099 0)
+			(at 80.01 69.8499 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3100,7 +3027,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 89.662 66.04 90)
+			(at 75.692 68.58 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3111,7 +3038,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 91.44 66.04 0)
+			(at 77.47 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3122,7 +3049,7 @@
 			)
 		)
 		(property "Description" "R_FAN"
-			(at 91.44 66.04 0)
+			(at 77.47 68.58 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3333,6 +3260,91 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/029a3992-bba1-4c16-af18-4c60d303ee1c"
 					(reference "U4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Transistor_FET:Q_NMOS_GSD")
+		(at 101.6 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fc02e5a7-7037-498a-b969-fdf35015a31d")
+		(property "Reference" "Q_FAN1"
+			(at 107.95 58.4199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "IRLML2502"
+			(at 107.95 60.9599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23_Handsoldering"
+			(at 106.68 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.alldatasheet.com/datasheet-pdf/view/82450/IRF/IRLML2502.html"
+			(at 101.6 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "IRLML2502, N-MOSFET transistor, gate/source/drain"
+			(at 101.6 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "e261b3d0-3723-4ffd-94cd-8cfec9c649d7")
+		)
+		(pin "3"
+			(uuid "45c9aa53-ad97-41ef-bed3-4d0424795572")
+		)
+		(pin "1"
+			(uuid "6dcf3d0d-df6d-4fd5-ac09-8655af5f816e")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/029a3992-bba1-4c16-af18-4c60d303ee1c"
+					(reference "Q_FAN1")
 					(unit 1)
 				)
 			)
