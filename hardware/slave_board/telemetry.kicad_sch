@@ -1209,6 +1209,16 @@
 	)
 	(wire
 		(pts
+			(xy 80.01 76.2) (xy 83.82 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "03815125-f276-4a47-98a3-97e16e7d668f")
+	)
+	(wire
+		(pts
 			(xy 201.93 139.7) (xy 201.93 135.89)
 		)
 		(stroke
@@ -1359,6 +1369,16 @@
 	)
 	(wire
 		(pts
+			(xy 92.71 81.28) (xy 92.71 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64246614-ff04-416e-be6a-3dc07013be18")
+	)
+	(wire
+		(pts
 			(xy 137.16 62.23) (xy 139.7 62.23)
 		)
 		(stroke
@@ -1469,16 +1489,6 @@
 	)
 	(wire
 		(pts
-			(xy 86.36 76.2) (xy 92.71 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bca9ca4a-850a-4858-aa2a-3711e05f928e")
-	)
-	(wire
-		(pts
 			(xy 173.99 134.62) (xy 173.99 137.16)
 		)
 		(stroke
@@ -1509,16 +1519,6 @@
 	)
 	(wire
 		(pts
-			(xy 92.71 76.2) (xy 92.71 81.28)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c951100f-ddec-4886-8ee0-60918299fdcc")
-	)
-	(wire
-		(pts
 			(xy 186.69 137.16) (xy 190.5 137.16)
 		)
 		(stroke
@@ -1536,6 +1536,16 @@
 			(type default)
 		)
 		(uuid "d4968269-2abc-4b98-9532-62285882127a")
+	)
+	(wire
+		(pts
+			(xy 92.71 76.2) (xy 91.44 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1098dec-8521-4e35-92b4-a82ed85ae52d")
 	)
 	(wire
 		(pts
@@ -1801,7 +1811,7 @@
 	)
 	(global_label "LOAD_SENSE_+"
 		(shape input)
-		(at 86.36 76.2 180)
+		(at 80.01 76.2 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1811,7 +1821,7 @@
 		)
 		(uuid "f7336b7f-b23d-49b7-be32-b95620d2904a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 69.1025 76.2 0)
+			(at 62.7525 76.2 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1820,6 +1830,88 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 92.71 85.09 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "16255287-bab7-47a9-aa6d-1b7c3a1e1abe")
+		(property "Reference" "R19"
+			(at 95.25 83.8199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "120k"
+			(at 95.25 86.3599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 90.932 85.09 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 92.71 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "SMD Resistor 120kOhm, 0.1%, 25ppm/C"
+			(at 92.71 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "bd1c7eb7-aba3-4ccc-9a66-d6899b75b722")
+		)
+		(pin "1"
+			(uuid "36d6047f-5c49-4d5f-8c01-36b3010a382f")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/66d25d5f-b49c-4f1e-a839-fa51026b9740"
+					(reference "R19")
+					(unit 1)
+				)
 			)
 		)
 	)
@@ -2141,88 +2233,6 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 92.71 85.09 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6fbae585-e911-49b0-8386-6d6714e562ff")
-		(property "Reference" "R15"
-			(at 95.25 83.8199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "190k"
-			(at 95.25 86.3599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
-			(at 90.932 85.09 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 92.71 85.09 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 190kOhm, 0.1%, 25ppm/C"
-			(at 92.71 85.09 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "43f6249d-9569-4d59-be7f-6f8464ef2220")
-		)
-		(pin "1"
-			(uuid "d97a58dc-4337-4e41-ba26-a841ca7f1bdd")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/66d25d5f-b49c-4f1e-a839-fa51026b9740"
-					(reference "R15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
 		(at 92.71 102.87 0)
 		(mirror x)
 		(unit 1)
@@ -2457,6 +2467,86 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/66d25d5f-b49c-4f1e-a839-fa51026b9740"
 					(reference "C7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 87.63 76.2 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "dce088b5-c199-4f55-ae35-24a1be40bcd0")
+		(property "Reference" "R15"
+			(at 87.63 69.85 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "120k"
+			(at 87.63 72.39 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
+			(at 87.63 77.978 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 87.63 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "SMD Resistor 120kOhm, 0.1%, 25ppm/C"
+			(at 87.63 76.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "4cae0ef4-60ae-4764-a973-7f73e456adf3")
+		)
+		(pin "1"
+			(uuid "2ef284d7-9d0c-48df-80ed-849f0ad11219")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/66d25d5f-b49c-4f1e-a839-fa51026b9740"
+					(reference "R15")
 					(unit 1)
 				)
 			)
