@@ -144,14 +144,25 @@
 - [ ] Prepare software architecture to handle global `ADC_ALERT` interrupt on pin `IO47`.
 - [ ] Verify logic separating I2C buses (`I2C_UI` and `I2C_PWR`) at the firmware level.
 
-### 🛠 KiCad Hardware Engineer (Status: Pending - Unblocked for schematic tasks)
+### 🛠 KiCad Hardware Engineer (Status: In Progress - Preparing Schematic Freeze for PCB Routing)
 - [ ] **[Ticket-HW-BUZZER-PULLDOWN]** In `main_board` / `battery_analyzer_hw.kicad_sch`: verify and add a dedicated external pull-down resistor (e.g. $10\text{ k}\Omega$) on GPIO 42 buzzer line to guarantee zero gate voltage during early bootloader/ROM execution before firmware GPIO configuration takes effect.
-- [ ] **[Ticket-HW-1]** In `hardware/slave_board/power_stage.kicad_sch`, replace shunt arrays `R5..R7` and `R8..R10` (3x 33 mOhm) with single `0.005` shunts (`2512 R005`, 5 mOhm, 3W) as `R5` and `R8`, deleting `R6, R7, R9, R10`.
-- [ ] **[Ticket-HW-2]** In `hardware/slave_board/power_stage.kicad_sch`, update PWM LPF to Variant B2 (`C1 = 100nF`, `C2 = 100nF`, add divider resistor to GND parallel to `C1`).
+- [x] **[Ticket-HW-1]** In `hardware/slave_board/power_stage.kicad_sch`, replace shunt arrays `R5..R7` and `R8..R10` (3x 33 mOhm) with single `0.005` shunts (`2512 R005`, 5 mOhm, 3W) as `R5` and `R8`, deleting `R6, R7, R9, R10`.
+- [x] **[Ticket-HW-2]** In `hardware/slave_board/power_stage.kicad_sch`, update PWM LPF to Variant B2 (`C1 = 100nF`, `C2 = 100nF`, `R1 = 10k`, `R2 = 10k`, add divider resistor `R_div = 1.0k` to GND parallel to `C1`).
+- [ ] **[Ticket-HW-KELVIN-DIVIDER-240K]** In `hardware/slave_board/telemetry.kicad_sch`: update voltage divider to $240\text{ k}\Omega / 10\text{ k}\Omega$ ($K_{div} = 25.000$). Implement upper arm as two $120\text{ k}\Omega$ ($0.1\%$, 1206/0805) resistors in series to share voltage/power and provide exact integer scaling ($1\text{ LSB} = 3.125\text{ mV}$), with lower arm using precision $10\text{ k}\Omega$ ($0.1\%$, 0805, ERA6ARB from inventory stock).
+- [ ] **[Ticket-HW-NETTIE-FOOTPRINT]** In `hardware/slave_board/power_stage.kicad_sch`: replace invalid Bluetooth footprint `RF_Module:ST_SPBTLE` on `NT1` (`NetTie_2`) with dedicated copper-short footprint `NetTie:NetTie-2_SMD_Pad0.5mm`.
+- [ ] **[Ticket-HW-ENCODER-HEADER]** In `hardware/battery_analyzer_hw/ui_controls.kicad_sch`: replace onboard encoder footprint with 5-pin 2.54mm header `Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical` for external KY-040 front panel module. Retain filtering capacitors `C8..C10` ($10\text{ nF}$) on master board directly at MCU inputs.
+- [ ] **[Ticket-HW-GROUND-LOOP-PPTC]** In `hardware/slave_board/slave_board.kicad_sch`: add protection against accidental power ground return via Ethernet cabling when parallel battery negative leads disconnect under load. Insert `1812 PPTC 100mA 60V` in series with RJ45 GND pin 2 / shield line.
+- [ ] **[Ticket-HW-FUSE-F1-HOLDER]** In `hardware/slave_board/slave_board.kicad_sch`: replace SMD fuse footprint with through-hole automotive mini blade fuse clip `Fuse:Fuseholder_Mini_Blade_Keystone_3568` (20A..30A) or designate inline cable holder on XT60 harness (rejecting high-resistance 1.85A PTCs like RF2635).
 - [ ] **[Ticket-HW-NOISE-GROUNDING]** In `slave_board` and `battery_analyzer_hw` layout/schematics: separate 1-Wire signal lines (`1W_CH0..3`) and reference grounds completely from high-current discharge copper pours and switching nodes. Add mandatory local ceramic decoupling capacitors `100 nF` directly adjacent to each 1-Wire temperature sensor connector/jack to eliminate noise spikes and Dallas CRC8 errors during high-current load pulses.
 - [ ] Continue routing 140W power modules (4-wire Kelvin sensing) **ONLY AFTER** successful test by Lab Engineer.
 - [ ] Ensure `GND_PWR` and `FAN_GND` polygon topology does not create ground loops.
 - [ ] Verify application of European notation and HandSolder rules configuration.
+
+### 📋 Firmware Backlog (Scheduled Post-PCB Layout)
+- [ ] **[Backlog-FW-POWER-LIMIT-SOA]** Implement dynamic power clamp $I_{target} \le \min(I_{max}, 140\text{W} / V_{bat})$ in `load_control.c` and `safety_monitor.c`. Fix 32-bit integer multiplication overflow before `uint64_t` cast in `integration_service.c:24`.
+- [ ] **[Backlog-FW-DIVIDER-K25]** Update ADC scaling math in `components/adc_driver/adc_driver.c` for $K_{div} = 25$ (`raw_voltage_uv = (uint64_t)raw_adc * 3125ULL`).
+- [ ] **[Backlog-FW-GANGED-MODE]** Implement multi-module parallel coordination: synchronous start/stop, total current division across $N$ modules, combined IEC 61960 pulse DCIR, and all-channel emergency latching (`Group Trip`) upon fault.
+- [ ] **[Backlog-FW-I2C-PIPELINING]** Convert ADS1115 I2C conversion to non-blocking pipelined cycle to ensure 4-channel dual-branch telemetry fits safely within 50 ms FreeRTOS control slice.
 
 ---
 *Note for agents: Upon completion of your tasks, you are required to update this file, change execution status, and add new tasks or identified issues to the log.*
