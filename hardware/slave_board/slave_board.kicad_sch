@@ -2209,7 +2209,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_RJ:RJ45_Amphenol_RJHSE5380"
 			(at 67.31 107.315 90)
 			(hide yes)
 			(show_name no)

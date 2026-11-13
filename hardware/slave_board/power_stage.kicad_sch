@@ -740,6 +740,171 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Polyfuse"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "F"
+				(at -2.54 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Polyfuse"
+				(at 2.54 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 1.27 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resettable fuse, polymeric positive temperature coefficient"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "resettable fuse PTC PPTC polyfuse polyswitch"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "*polyfuse* *PTC*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Polyfuse_0_1"
+				(polyline
+					(pts
+						(xy -1.524 2.54) (xy -1.524 1.524) (xy 1.524 -1.524) (xy 1.524 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -0.762 2.54)
+					(end 0.762 -2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Polyfuse_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:R"
 			(pin_numbers
 				(hide yes)
@@ -1621,18 +1786,6 @@
 		(uuid "3012a775-6621-44c6-9b60-78473ce6bd38")
 	)
 	(junction
-		(at 113.03 97.79)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "304778b2-a1b8-4e6b-b6f1-8964a1835ba2")
-	)
-	(junction
-		(at 113.03 114.3)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3661cc93-749f-4f24-95c6-c04e1cc288e0")
-	)
-	(junction
 		(at 113.03 129.54)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1675,12 +1828,6 @@
 		(uuid "58d28721-df07-4add-9971-7e08215a0da5")
 	)
 	(junction
-		(at 113.03 90.17)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "60ff672e-78a6-4761-9c96-72d21499ef9a")
-	)
-	(junction
 		(at 100.33 129.54)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1717,12 +1864,6 @@
 		(uuid "71ca38bb-73c0-4612-b765-9715ad055f8a")
 	)
 	(junction
-		(at 113.03 106.68)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7ed38e32-456c-4384-b0f2-b19e8fced4db")
-	)
-	(junction
 		(at 113.03 85.09)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1747,6 +1888,12 @@
 		(uuid "ba36f75f-60b4-4e09-96d9-e9cea0665eac")
 	)
 	(junction
+		(at 58.42 29.21)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c0f634f5-2a0b-4bd4-bc4a-55c7a80ccf06")
+	)
+	(junction
 		(at 168.91 76.2)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1757,6 +1904,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "d4b3b7c0-527f-4835-a019-26f2d3534cf5")
+	)
+	(junction
+		(at 58.42 43.18)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d4f1009c-091f-485c-9b42-29209dc99f35")
 	)
 	(junction
 		(at 233.68 100.33)
@@ -1822,7 +1975,7 @@
 	)
 	(wire
 		(pts
-			(xy 198.12 132.08) (xy 217.17 132.08)
+			(xy 194.31 132.08) (xy 201.93 132.08)
 		)
 		(stroke
 			(width 0)
@@ -1892,7 +2045,7 @@
 	)
 	(wire
 		(pts
-			(xy 53.34 29.21) (xy 57.15 29.21)
+			(xy 43.18 29.21) (xy 46.99 29.21)
 		)
 		(stroke
 			(width 0)
@@ -1962,26 +2115,6 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 114.3) (xy 123.19 114.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5253370a-bbc6-41d4-b37e-d1e92bc50ba9")
-	)
-	(wire
-		(pts
-			(xy 113.03 106.68) (xy 123.19 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "52725691-8e4f-4c83-916d-2098ebf86574")
-	)
-	(wire
-		(pts
 			(xy 73.66 85.09) (xy 113.03 85.09)
 		)
 		(stroke
@@ -2032,6 +2165,16 @@
 	)
 	(wire
 		(pts
+			(xy 58.42 39.37) (xy 58.42 43.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7436c827-b8f0-4f9a-a7c1-129273f3909a")
+	)
+	(wire
+		(pts
 			(xy 81.28 76.2) (xy 55.88 76.2)
 		)
 		(stroke
@@ -2052,6 +2195,16 @@
 	)
 	(wire
 		(pts
+			(xy 209.55 132.08) (xy 217.17 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "77446f1d-a551-4774-93d5-39d4743192ab")
+	)
+	(wire
+		(pts
 			(xy 168.91 151.13) (xy 113.03 151.13)
 		)
 		(stroke
@@ -2059,16 +2212,6 @@
 			(type default)
 		)
 		(uuid "7ad0d5be-1587-418b-b36e-21e3f48b0651")
-	)
-	(wire
-		(pts
-			(xy 102.87 106.68) (xy 113.03 106.68)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7cc884f2-2354-4bdd-b3e8-1a00cf76849c")
 	)
 	(wire
 		(pts
@@ -2112,7 +2255,7 @@
 	)
 	(wire
 		(pts
-			(xy 180.34 132.08) (xy 193.04 132.08)
+			(xy 180.34 132.08) (xy 189.23 132.08)
 		)
 		(stroke
 			(width 0)
@@ -2139,16 +2282,6 @@
 			(type default)
 		)
 		(uuid "8faa97ba-55a6-45ef-8c10-5bd3301159bc")
-	)
-	(wire
-		(pts
-			(xy 102.87 114.3) (xy 113.03 114.3)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "90cfd1bd-3926-44ef-b4d2-cb0c353ab456")
 	)
 	(wire
 		(pts
@@ -2192,16 +2325,6 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 97.79) (xy 123.19 97.79)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9995f746-5eaa-4195-9a98-d9c5bd8da81f")
-	)
-	(wire
-		(pts
 			(xy 168.91 129.54) (xy 168.91 151.13)
 		)
 		(stroke
@@ -2212,13 +2335,23 @@
 	)
 	(wire
 		(pts
-			(xy 102.87 97.79) (xy 113.03 97.79)
+			(xy 58.42 43.18) (xy 67.31 43.18)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "9db62d4a-6902-4b4c-80ff-a681a4603c23")
+		(uuid "9cd85539-d9e0-4d56-8f99-2be31d40e1dc")
+	)
+	(wire
+		(pts
+			(xy 58.42 29.21) (xy 67.31 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9dfff23f-f577-4657-bfac-63933d22de49")
 	)
 	(wire
 		(pts
@@ -2282,7 +2415,7 @@
 	)
 	(wire
 		(pts
-			(xy 64.77 29.21) (xy 67.31 29.21)
+			(xy 54.61 29.21) (xy 58.42 29.21)
 		)
 		(stroke
 			(width 0)
@@ -2312,7 +2445,7 @@
 	)
 	(wire
 		(pts
-			(xy 48.26 43.18) (xy 67.31 43.18)
+			(xy 48.26 43.18) (xy 58.42 43.18)
 		)
 		(stroke
 			(width 0)
@@ -2372,26 +2505,6 @@
 	)
 	(wire
 		(pts
-			(xy 102.87 90.17) (xy 113.03 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bd73938f-2655-4347-968f-932fcd81a26f")
-	)
-	(wire
-		(pts
-			(xy 113.03 90.17) (xy 123.19 90.17)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c353fd34-db62-4577-a5af-2e132709f43a")
-	)
-	(wire
-		(pts
 			(xy 113.03 151.13) (xy 113.03 142.24)
 		)
 		(stroke
@@ -2429,6 +2542,16 @@
 			(type default)
 		)
 		(uuid "d543294b-73d1-41af-a0c0-3c243b0978e8")
+	)
+	(wire
+		(pts
+			(xy 58.42 29.21) (xy 58.42 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d83e6213-7e0f-46bb-a348-3af81bcf5d50")
 	)
 	(wire
 		(pts
@@ -2676,7 +2799,7 @@
 	)
 	(global_label "PWM_IN"
 		(shape input)
-		(at 53.34 29.21 180)
+		(at 43.18 29.21 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -2686,7 +2809,7 @@
 		)
 		(uuid "b61cdf8b-a37f-4d73-9b50-6e3e7df44517")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 43.2791 29.21 0)
+			(at 33.1191 29.21 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2776,6 +2899,87 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
 					(reference "D3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 73.66 29.21 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0e655b2b-0a92-416e-a68d-ce62cacfad3f")
+		(property "Reference" "R2"
+			(at 73.66 22.86 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 73.66 25.4 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 73.66 30.988 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 73.66 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "SMD Resistor 10kOhm, 1%, 0805"
+			(at 73.66 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "1"
+			(uuid "e79dda73-b171-4c17-ab0c-6972f5918b9e")
+		)
+		(pin "2"
+			(uuid "72e7eaa1-2afb-4bdf-9e64-dfb4db6ee71d")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
+					(reference "R2")
 					(unit 1)
 				)
 			)
@@ -2955,88 +3159,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 82.55 35.56 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1d1b093d-f7c2-4a8d-b754-c7c7b9e4ac55")
-		(property "Reference" "C2"
-			(at 86.36 34.2899 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1uF"
-			(at 86.36 36.8299 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
-			(at 83.5152 39.37 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 82.55 35.56 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805"
-			(at 82.55 35.56 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "02abfd35-afd5-4b88-8ab5-fb55feeb3a84")
-		)
-		(pin "2"
-			(uuid "a461026a-13e3-4ee1-99ba-330d3778dacd")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "C2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 91.44 129.54 90)
 		(unit 1)
@@ -3117,8 +3239,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 113.03 110.49 180)
+		(lib_id "Device:Polyfuse")
+		(at 205.74 132.08 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3127,31 +3249,112 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "3fc1ee34-d23a-4bb8-bb5a-1122daecfb97")
-		(property "Reference" "R9"
-			(at 115.57 109.2199 0)
+		(uuid "34eac0ec-1229-45ac-9da1-fe4dc4a882d5")
+		(property "Reference" "F3"
+			(at 205.74 125.73 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
-		(property "Value" "0.033"
-			(at 115.57 111.7599 0)
+		(property "Value" "200mA_60V"
+			(at 205.74 128.27 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
-			(at 114.808 110.49 90)
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
+			(at 210.82 130.81 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Datasheet" ""
+			(at 205.74 132.08 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60"
+			(at 205.74 132.08 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "28eef6e9-7a68-4b36-91ac-fce61ebb426d")
+		)
+		(pin "2"
+			(uuid "6e953978-cc25-492d-a50c-5368b105a87a")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
+					(reference "F3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 82.55 35.56 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "42765823-723f-4e47-ad5e-d24a7a39c79c")
+		(property "Reference" "C2"
+			(at 86.36 34.2899 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 86.36 36.8299 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
+			(at 83.5152 39.37 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3162,7 +3365,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 113.03 110.49 0)
+			(at 82.55 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3172,8 +3375,8 @@
 				)
 			)
 		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
-			(at 113.03 110.49 0)
+		(property "Description" "Ceramic Capacitor SMD 100nF 50V, X7R, 0805"
+			(at 82.55 35.56 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3182,17 +3385,17 @@
 					(size 1.27 1.27)
 				)
 			)
-		)
-		(pin "2"
-			(uuid "0dfff61d-1263-4fe8-b887-3647fb2cbf08")
 		)
 		(pin "1"
-			(uuid "33a1aa69-b056-42a3-a3a3-08b5d226ab74")
+			(uuid "86169835-ffec-4cb9-bcde-b7df56fc9cbe")
+		)
+		(pin "2"
+			(uuid "902441e6-647c-4e37-8b31-2cc5ea207706")
 		)
 		(instances
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R9")
+					(reference "C2")
 					(unit 1)
 				)
 			)
@@ -3221,7 +3424,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1uF"
+		(property "Value" "100nF"
 			(at 71.12 36.8299 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3254,7 +3457,7 @@
 				)
 			)
 		)
-		(property "Description" "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805"
+		(property "Description" "Ceramic Capacitor SMD 100nF 50V, X7R, 0805"
 			(at 67.31 35.56 0)
 			(hide yes)
 			(show_name no)
@@ -3275,168 +3478,6 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
 					(reference "C1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 73.66 29.21 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "50219456-73c9-4031-b993-7c62f4ae39fb")
-		(property "Reference" "R2"
-			(at 73.66 22.86 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "4.7k"
-			(at 73.66 25.4 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 73.66 30.988 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 73.66 29.21 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 4.7kOhm, 1%, 0805"
-			(at 73.66 29.21 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "2049ddf1-1694-4ef6-88fc-f23d8f8a78b7")
-		)
-		(pin "2"
-			(uuid "e040af5e-2fae-471b-9356-f132fe1a894c")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 102.87 110.49 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "54bcd331-2794-4880-aa4c-0e5812ef57bc")
-		(property "Reference" "R8"
-			(at 105.41 109.2199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "0.033"
-			(at 105.41 111.7599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
-			(at 104.648 110.49 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 102.87 110.49 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
-			(at 102.87 110.49 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "0b1cdcf9-f9a7-4c30-a5ba-525ea2be22a0")
-		)
-		(pin "1"
-			(uuid "08ab5a7e-cd06-4e50-9927-5d99b4ee8d16")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -3515,88 +3556,6 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
 					(reference "#PWR09")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 123.19 110.49 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "7444140e-95a2-461e-b822-969e8ba58390")
-		(property "Reference" "R10"
-			(at 125.73 109.2199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "0.033"
-			(at 125.73 111.7599 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
-			(at 124.968 110.49 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 123.19 110.49 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
-			(at 123.19 110.49 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "d0109ec0-0442-4823-b5bd-e9c9588112e0")
-		)
-		(pin "1"
-			(uuid "5dffffe1-5ea3-4baf-a5fb-3b455d24e77c")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -3772,7 +3731,7 @@
 	)
 	(symbol
 		(lib_id "Device:NetTie_2")
-		(at 195.58 132.08 0)
+		(at 191.77 132.08 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -3783,7 +3742,7 @@
 		(fields_autoplaced yes)
 		(uuid "88965a30-1a3b-4844-89b0-4193f7526dc7")
 		(property "Reference" "NT1"
-			(at 195.58 127 0)
+			(at 191.77 127 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3793,7 +3752,7 @@
 			)
 		)
 		(property "Value" "NetTie_2"
-			(at 195.58 129.54 0)
+			(at 191.77 129.54 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -3802,8 +3761,8 @@
 				)
 			)
 		)
-		(property "Footprint" "RF_Module:ST_SPBTLE"
-			(at 195.58 132.08 0)
+		(property "Footprint" "NetTie:NetTie-2_SMD_Pad2.0mm"
+			(at 191.77 132.08 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3814,7 +3773,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 195.58 132.08 0)
+			(at 191.77 132.08 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3825,7 +3784,7 @@
 			)
 		)
 		(property "Description" "Net tie, 2 pins"
-			(at 195.58 132.08 0)
+			(at 191.77 132.08 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3946,6 +3905,89 @@
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
 					(reference "U1")
 					(unit 3)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 58.42 35.56 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "96531c02-cb43-46af-a98b-46993035c88b")
+		(property "Reference" "R18"
+			(at 60.96 34.2899 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "1k"
+			(at 60.96 36.8299 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 60.198 35.56 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 58.42 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "SMD Resistor 1kOhm, 1%, 0805"
+			(at 58.42 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "1"
+			(uuid "4dc050ad-dd53-4c2e-9a00-0706c6f41649")
+		)
+		(pin "2"
+			(uuid "06c98f5f-513d-43aa-a6d1-5720dd41296a")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
+					(reference "R18")
+					(unit 1)
 				)
 			)
 		)
@@ -4108,88 +4150,6 @@
 			(project "slave_board"
 				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
 					(reference "C6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 123.19 93.98 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a3fdd6b3-ac81-45ed-899b-bb1a91662aac")
-		(property "Reference" "R7"
-			(at 125.73 92.7099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "0.033"
-			(at 125.73 95.2499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
-			(at 124.968 93.98 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 123.19 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
-			(at 123.19 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "5e480d52-1caa-4b44-98aa-0b149b71dbdd")
-		)
-		(pin "1"
-			(uuid "23d6c006-5cc3-4098-b19e-6fba6fb578b9")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -4436,7 +4396,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 60.96 29.21 90)
+		(at 113.03 110.49 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4445,29 +4405,31 @@
 		(in_pos_files yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "bf8376e4-ca29-4973-bd77-0fac6f2b4eb9")
-		(property "Reference" "R1"
-			(at 60.96 22.86 90)
+		(uuid "ab76219c-bb7f-4e63-9ef8-c1f8ffaeb937")
+		(property "Reference" "R9"
+			(at 115.57 109.2199 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
-		(property "Value" "4.7k"
-			(at 60.96 25.4 90)
+		(property "Value" "0R005"
+			(at 115.57 111.7599 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 60.96 30.988 90)
+		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
+			(at 114.808 110.49 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4478,7 +4440,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 60.96 29.21 0)
+			(at 113.03 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4488,8 +4450,88 @@
 				)
 			)
 		)
-		(property "Description" "SMD Resistor 4.7kOhm, 1%, 0805"
-			(at 60.96 29.21 0)
+		(property "Description" "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD"
+			(at 113.03 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "25b02919-a3a8-4009-872b-bb56e5595be9")
+		)
+		(pin "1"
+			(uuid "7d59892f-198e-4c2f-a50b-406ec40dafad")
+		)
+		(instances
+			(project "slave_board"
+				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
+					(reference "R9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 50.8 29.21 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bf8376e4-ca29-4973-bd77-0fac6f2b4eb9")
+		(property "Reference" "R1"
+			(at 50.8 22.86 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 50.8 25.4 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
+			(at 50.8 30.988 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 50.8 29.21 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "SMD Resistor 10kOhm, 1%, 0805"
+			(at 50.8 29.21 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4941,88 +4983,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 102.87 93.98 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d24767d9-c212-4f81-8c14-a79bc0390568")
-		(property "Reference" "R5"
-			(at 105.41 92.7099 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "0.033"
-			(at 105.41 95.2499 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder"
-			(at 104.648 93.98 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 102.87 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
-			(at 102.87 93.98 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "2"
-			(uuid "4024e505-b838-4ef7-9532-cabd66e0826b")
-		)
-		(pin "1"
-			(uuid "0ee93868-2de0-469f-8ea7-195116685c02")
-		)
-		(instances
-			(project "slave_board"
-				(path "/2c4fc43b-02b1-4ef7-8914-a684f462c899/c29529fc-b98a-4ee0-89dc-ccd71379b83b"
-					(reference "R5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Amplifier_Operational:LM358")
 		(at 69.85 137.16 0)
 		(mirror x)
@@ -5387,7 +5347,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "0.033"
+		(property "Value" "0R005"
 			(at 115.57 95.2499 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5420,7 +5380,7 @@
 				)
 			)
 		)
-		(property "Description" "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512"
+		(property "Description" "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD"
 			(at 113.03 93.98 0)
 			(hide yes)
 			(show_name no)

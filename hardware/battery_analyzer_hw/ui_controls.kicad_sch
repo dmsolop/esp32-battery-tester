@@ -1913,16 +1913,6 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 44.45) (xy 91.44 48.26)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "46fbb284-7371-43e7-b8d3-a3721ac1461e")
-	)
-	(wire
-		(pts
 			(xy 198.12 68.58) (xy 213.36 68.58)
 		)
 		(stroke
@@ -1973,7 +1963,7 @@
 	)
 	(wire
 		(pts
-			(xy 121.92 44.45) (xy 121.92 48.26)
+			(xy 121.92 44.45) (xy 121.92 67.31)
 		)
 		(stroke
 			(width 0)
@@ -2043,7 +2033,7 @@
 	)
 	(wire
 		(pts
-			(xy 91.44 68.58) (xy 91.44 55.88)
+			(xy 91.44 44.45) (xy 91.44 68.58)
 		)
 		(stroke
 			(width 0)
@@ -2103,16 +2093,6 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 73.66) (xy 85.09 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "84d809f3-3430-4388-bb12-baa015b8d795")
-	)
-	(wire
-		(pts
 			(xy 187.96 44.45) (xy 208.28 44.45)
 		)
 		(stroke
@@ -2150,16 +2130,6 @@
 			(type default)
 		)
 		(uuid "9477b1ea-cabc-449d-903a-6c3a29e4f175")
-	)
-	(wire
-		(pts
-			(xy 121.92 55.88) (xy 121.92 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9af80da0-7050-491d-a9cf-845306a7a8c1")
 	)
 	(wire
 		(pts
@@ -2353,7 +2323,7 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 48.26) (xy 85.09 44.45)
+			(xy 85.09 44.45) (xy 85.09 73.66)
 		)
 		(stroke
 			(width 0)
@@ -2702,88 +2672,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 91.44 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1935069c-bc61-47e5-9f75-3c960f56b9aa")
-		(property "Reference" "R10"
-			(at 93.98 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 93.98 53.3399 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 89.662 52.07 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 91.44 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 10kOhm, 1%"
-			(at 91.44 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "12b8c106-1a2f-49d4-b044-516e07117178")
-		)
-		(pin "2"
-			(uuid "eb20c11b-8a49-4d97-8a42-806aa5c6709e")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d"
-					(reference "R10")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 102.87 93.98 0)
 		(unit 1)
@@ -2856,89 +2744,6 @@
 			(project "battery_analyzer_hw"
 				(path "/1337d129-c752-45b4-85a9-21e5a5723565/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d"
 					(reference "#PWR028")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 85.09 52.07 0)
-		(mirror y)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6630ec9a-2802-42be-86da-0335d9684c58")
-		(property "Reference" "R9"
-			(at 82.55 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 82.55 53.3399 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 86.868 52.07 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 85.09 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 10kOhm, 1%"
-			(at 85.09 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "653ddd37-ff24-4614-8221-070c8c25a1f5")
-		)
-		(pin "2"
-			(uuid "42104449-e21b-408e-9b41-b088f0abfebf")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d"
-					(reference "R9")
 					(unit 1)
 				)
 			)
@@ -3668,88 +3473,6 @@
 			(project "battery_analyzer_hw"
 				(path "/1337d129-c752-45b4-85a9-21e5a5723565/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d"
 					(reference "#PWR027")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 121.92 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "db8aed2e-c5b1-4588-96d6-c360d11194ea")
-		(property "Reference" "R11"
-			(at 124.46 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10k"
-			(at 124.46 53.3399 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 120.142 52.07 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 121.92 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 10kOhm, 1%"
-			(at 121.92 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d4dc9a60-f041-47cf-b384-b5c6aece17ae")
-		)
-		(pin "2"
-			(uuid "561f2f0e-474e-4c0c-b4f4-2541d80876ec")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d"
-					(reference "R11")
 					(unit 1)
 				)
 			)
