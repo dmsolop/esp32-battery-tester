@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-11-12T16:29:04")
+		(date "2026-11-13T21:40:05")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -255,11 +255,11 @@
 		(comp
 			(ref "J1")
 			(value "RJ45_Shielded")
+			(footprint "Connector_RJ:RJ45_Amphenol_RJHSE5380")
 			(description "RJ connector, 8P8C (8 positions 8 connected), Shielded")
 			(fields
 				(field
-					(name "Footprint")
-				)
+					(name "Footprint") "Connector_RJ:RJ45_Amphenol_RJHSE5380")
 				(field
 					(name "Datasheet")
 				)
@@ -554,9 +554,9 @@
 		)
 		(comp
 			(ref "C1")
-			(value "1uF")
+			(value "100nF")
 			(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-			(description "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805")
+			(description "Ceramic Capacitor SMD 100nF 50V, X7R, 0805")
 			(fields
 				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -564,7 +564,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805")
+					(name "Description") "Ceramic Capacitor SMD 100nF 50V, X7R, 0805")
 			)
 			(libsource
 				(lib "Device")
@@ -608,9 +608,9 @@
 		)
 		(comp
 			(ref "C2")
-			(value "1uF")
+			(value "100nF")
 			(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-			(description "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805")
+			(description "Ceramic Capacitor SMD 100nF 50V, X7R, 0805")
 			(fields
 				(field
 					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -618,7 +618,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Ceramic Capacitor SMD 1uF, 50V, X7R, 0805")
+					(name "Description") "Ceramic Capacitor SMD 100nF 50V, X7R, 0805")
 			)
 			(libsource
 				(lib "Device")
@@ -645,7 +645,7 @@
 				(names "/Power_Stage/")
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
-			(tstamps "1d1b093d-f7c2-4a8d-b754-c7c7b9e4ac55")
+			(tstamps "42765823-723f-4e47-ad5e-d24a7a39c79c")
 			(units
 				(unit
 					(name "A")
@@ -1046,13 +1046,67 @@
 			)
 		)
 		(comp
+			(ref "F3")
+			(value "200mA_60V")
+			(footprint "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+			(description "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
+			(fields
+				(field
+					(name "Footprint") "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
+			)
+			(libsource
+				(lib "Device")
+				(part "Polyfuse")
+				(description "Resettable fuse, polymeric positive temperature coefficient")
+			)
+			(property
+				(name "Sheetname")
+				(value "Power_Stage")
+			)
+			(property
+				(name "Sheetfile")
+				(value "power_stage.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "resettable fuse PTC PPTC polyfuse polyswitch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*polyfuse* *PTC*")
+			)
+			(sheetpath
+				(names "/Power_Stage/")
+				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
+			)
+			(tstamps "34eac0ec-1229-45ac-9da1-fe4dc4a882d5")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "NT1")
 			(value "NetTie_2")
-			(footprint "RF_Module:ST_SPBTLE")
+			(footprint "NetTie:NetTie-2_SMD_Pad2.0mm")
 			(description "Net tie, 2 pins")
 			(fields
 				(field
-					(name "Footprint") "RF_Module:ST_SPBTLE")
+					(name "Footprint") "NetTie:NetTie-2_SMD_Pad2.0mm")
 				(field
 					(name "Datasheet")
 				)
@@ -1218,9 +1272,9 @@
 		)
 		(comp
 			(ref "R1")
-			(value "4.7k")
+			(value "10k")
 			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
-			(description "SMD Resistor 4.7kOhm, 1%, 0805")
+			(description "SMD Resistor 10kOhm, 1%, 0805")
 			(fields
 				(field
 					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -1228,7 +1282,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "SMD Resistor 4.7kOhm, 1%, 0805")
+					(name "Description") "SMD Resistor 10kOhm, 1%, 0805")
 			)
 			(libsource
 				(lib "Device")
@@ -1272,9 +1326,9 @@
 		)
 		(comp
 			(ref "R2")
-			(value "4.7k")
+			(value "10k")
 			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
-			(description "SMD Resistor 4.7kOhm, 1%, 0805")
+			(description "SMD Resistor 10kOhm, 1%, 0805")
 			(fields
 				(field
 					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -1282,7 +1336,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "SMD Resistor 4.7kOhm, 1%, 0805")
+					(name "Description") "SMD Resistor 10kOhm, 1%, 0805")
 			)
 			(libsource
 				(lib "Device")
@@ -1309,7 +1363,7 @@
 				(names "/Power_Stage/")
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
-			(tstamps "50219456-73c9-4031-b993-7c62f4ae39fb")
+			(tstamps "0e655b2b-0a92-416e-a68d-ce62cacfad3f")
 			(units
 				(unit
 					(name "A")
@@ -1433,64 +1487,10 @@
 			)
 		)
 		(comp
-			(ref "R5")
-			(value "0.033")
-			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "Power_Stage")
-			)
-			(property
-				(name "Sheetfile")
-				(value "power_stage.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Power_Stage/")
-				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
-			)
-			(tstamps "d24767d9-c212-4f81-8c14-a79bc0390568")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
 			(ref "R6")
-			(value "0.033")
+			(value "0R005")
 			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
+			(description "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD")
 			(fields
 				(field
 					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
@@ -1498,7 +1498,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
+					(name "Description") "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD")
 			)
 			(libsource
 				(lib "Device")
@@ -1541,118 +1541,10 @@
 			)
 		)
 		(comp
-			(ref "R7")
-			(value "0.033")
-			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "Power_Stage")
-			)
-			(property
-				(name "Sheetfile")
-				(value "power_stage.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Power_Stage/")
-				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
-			)
-			(tstamps "a3fdd6b3-ac81-45ed-899b-bb1a91662aac")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R8")
-			(value "0.033")
-			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "Power_Stage")
-			)
-			(property
-				(name "Sheetfile")
-				(value "power_stage.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Power_Stage/")
-				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
-			)
-			(tstamps "54bcd331-2794-4880-aa4c-0e5812ef57bc")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
 			(ref "R9")
-			(value "0.033")
+			(value "0R005")
 			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
+			(description "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD")
 			(fields
 				(field
 					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
@@ -1660,7 +1552,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
+					(name "Description") "Metal Alloy Current Sense Resistor, 5mOhm, 3W, 1%, 2512 SMD")
 			)
 			(libsource
 				(lib "Device")
@@ -1687,61 +1579,7 @@
 				(names "/Power_Stage/")
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
-			(tstamps "3fc1ee34-d23a-4bb8-bb5a-1122daecfb97")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R10")
-			(value "0.033")
-			(footprint "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-			(description "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Precision Current Sense Resistor SMD 33mOhm (0.033 Ohm), 1%, 2W, 2512")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "Power_Stage")
-			)
-			(property
-				(name "Sheetfile")
-				(value "power_stage.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/Power_Stage/")
-				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
-			)
-			(tstamps "7444140e-95a2-461e-b822-969e8ba58390")
+			(tstamps "ab76219c-bb7f-4e63-9ef8-c1f8ffaeb937")
 			(units
 				(unit
 					(name "A")
@@ -1958,6 +1796,60 @@
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
 			(tstamps "248bbaed-f222-48cb-bc3c-51ae4e8e97d3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R18")
+			(value "1k")
+			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+			(description "SMD Resistor 1kOhm, 1%, 0805")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "SMD Resistor 1kOhm, 1%, 0805")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "Power_Stage")
+			)
+			(property
+				(name "Sheetfile")
+				(value "power_stage.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/Power_Stage/")
+				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
+			)
+			(tstamps "96531c02-cb43-46af-a98b-46993035c88b")
 			(units
 				(unit
 					(name "A")
@@ -2477,9 +2369,63 @@
 			)
 		)
 		(comp
+			(ref "C10")
+			(value "100nF")
+			(description "Unpolarized ceramic capacitor 7")
+			(fields
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Unpolarized ceramic capacitor 7")
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Sheetname")
+				(value "cooling_thermal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "cooling_thermal.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/cooling_thermal/")
+				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
+			)
+			(tstamps "07f6035f-6ea5-4691-b9e0-e941f6423201")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "D2")
 			(value "1N4148W")
-			(footprint "Diode_SMD:D_SOD-323")
+			(footprint "Diode_SMD:Nexperia_CFP3_SOD-123W")
 			(description "Diode FAN")
 			(fields
 				(field
@@ -2487,7 +2433,7 @@
 				(field
 					(name "Sim.Pins") "1=K 2=A")
 				(field
-					(name "Footprint") "Diode_SMD:D_SOD-323")
+					(name "Footprint") "Diode_SMD:Nexperia_CFP3_SOD-123W")
 				(field
 					(name "Datasheet")
 				)
@@ -2527,7 +2473,73 @@
 				(names "/cooling_thermal/")
 				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
 			)
-			(tstamps "b32445ce-ca8d-4418-bbba-24052d5c99fb")
+			(tstamps "4df128f7-3c99-431a-a749-4995fcd079a6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D5")
+			(value "1N4148W")
+			(footprint "Diode_SMD:Nexperia_CFP3_SOD-123W")
+			(description "Diode FAN")
+			(fields
+				(field
+					(name "Sim.Device") "D")
+				(field
+					(name "Sim.Pins") "1=K 2=A")
+				(field
+					(name "Footprint") "Diode_SMD:Nexperia_CFP3_SOD-123W")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Diode FAN")
+			)
+			(libsource
+				(lib "Device")
+				(part "D")
+				(description "Diode")
+			)
+			(property
+				(name "Sim.Device")
+				(value "D")
+			)
+			(property
+				(name "Sim.Pins")
+				(value "1=K 2=A")
+			)
+			(property
+				(name "Sheetname")
+				(value "cooling_thermal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "cooling_thermal.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "diode")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO-???* *_Diode_* *SingleDiode* D_*")
+			)
+			(sheetpath
+				(names "/cooling_thermal/")
+				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
+			)
+			(tstamps "d758218d-06c4-4ca3-a681-e9b40163720d")
 			(units
 				(unit
 					(name "A")
@@ -2660,21 +2672,22 @@
 			(ref "Q_FAN1")
 			(value "IRLML2502")
 			(footprint "Package_TO_SOT_SMD:SOT-23")
-			(description "N-MOSFET transistor, drain/source/gate")
+			(description "Transistor_FET:Q_NMOS_GSD")
 			(fields
 				(field
-					(name "Sim.Device") "NMOS")
+					(name "Sim.Device") "Q_NMOS_GSD ")
 				(field
-					(name "Sim.Type") "VDMOS")
+					(name "Sim.Type")
+				)
 				(field
-					(name "Sim.Pins") "1=D 2=G 3=S")
+					(name "Sim.Pins") "1=G 2=S 3=D")
 				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "N-MOSFET transistor, drain/source/gate")
+					(name "Description") "Transistor_FET:Q_NMOS_GSD")
 			)
 			(libsource
 				(lib "Simulation_SPICE")
@@ -2683,15 +2696,15 @@
 			)
 			(property
 				(name "Sim.Device")
-				(value "NMOS")
+				(value "Q_NMOS_GSD ")
 			)
 			(property
 				(name "Sim.Type")
-				(value "VDMOS")
+				(value "")
 			)
 			(property
 				(name "Sim.Pins")
-				(value "1=D 2=G 3=S")
+				(value "1=G 2=S 3=D")
 			)
 			(property
 				(name "Sheetname")
@@ -3526,6 +3539,41 @@
 		)
 		(libpart
 			(lib "Device")
+			(part "Polyfuse")
+			(description "Resettable fuse, polymeric positive temperature coefficient")
+			(footprints
+				(fp "*polyfuse*")
+				(fp "*PTC*")
+			)
+			(fields
+				(field
+					(name "Reference") "F")
+				(field
+					(name "Value") "Polyfuse")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resettable fuse, polymeric positive temperature coefficient")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
 			(part "R")
 			(description "Resistor")
 			(footprints
@@ -3754,6 +3802,11 @@
 			(name "+3.3V")
 			(class "Default")
 			(node
+				(ref "C10")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
 				(ref "C7")
 				(pin "2")
 				(pintype "passive")
@@ -3800,6 +3853,12 @@
 			(class "Default")
 			(node
 				(ref "D2")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D5")
 				(pin "1")
 				(pinfunction "K_1")
 				(pintype "passive")
@@ -3861,6 +3920,12 @@
 			(class "Default")
 			(node
 				(ref "D2")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "D5")
 				(pin "2")
 				(pinfunction "A_2")
 				(pintype "passive")
@@ -3964,6 +4029,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "C10")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "C2")
 				(pin "2")
 				(pintype "passive")
@@ -4012,6 +4082,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "R18")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
 				(ref "U1")
 				(pin "4")
 				(pinfunction "V-_4")
@@ -4047,15 +4122,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J_PWR1")
+				(ref "F3")
 				(pin "2")
-				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
-				(ref "NT1")
+				(ref "J_PWR1")
 				(pin "2")
-				(pinfunction "2_2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -4065,33 +4139,13 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R10")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
 				(ref "R17")
 				(pin "2")
 				(pintype "passive")
 			)
 			(node
-				(ref "R5")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
 				(ref "R6")
 				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R7")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R8")
-				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -4171,17 +4225,7 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R5")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
 				(ref "R6")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R7")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -4209,11 +4253,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R10")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
 				(ref "R12")
 				(pin "1")
 				(pintype "passive")
@@ -4221,11 +4260,6 @@
 			(node
 				(ref "R14")
 				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R8")
-				(pin "1")
 				(pintype "passive")
 			)
 			(node
@@ -4332,6 +4366,11 @@
 			)
 			(node
 				(ref "R1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R18")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -4457,6 +4496,22 @@
 		)
 		(net
 			(code "24")
+			(name "Net-(F3-Pad1)")
+			(class "Default")
+			(node
+				(ref "F3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "NT1")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "25")
 			(name "Net-(J6-Pin_1)")
 			(class "Default")
 			(node
@@ -4491,7 +4546,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "Net-(J_PWR1-Pin_1)")
 			(class "Default")
 			(node
@@ -4507,7 +4562,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "Net-(U1A--)")
 			(class "Default")
 			(node
@@ -4528,7 +4583,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "Net-(U1B--)")
 			(class "Default")
 			(node
@@ -4549,7 +4604,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "Net-(U2-AIN2)")
 			(class "Default")
 			(node
@@ -4575,7 +4630,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "PWM_IN")
 			(class "Default")
 			(node
@@ -4590,7 +4645,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "unconnected-(J2-MountPin-PadMP)")
 			(class "Default")
 			(node
@@ -4601,7 +4656,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "unconnected-(J_FAN1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4612,7 +4667,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "unconnected-(J_FAN2-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4623,7 +4678,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "unconnected-(J_TEMP1-Pin_4-Pad4)")
 			(class "Default")
 			(node
