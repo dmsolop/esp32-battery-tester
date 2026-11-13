@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-13T12:35:48")
+		(date "2026-11-13T13:00:22")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -799,6 +799,60 @@
 			)
 		)
 		(comp
+			(ref "BZ1")
+			(value "KLS3-SMT-09")
+			(footprint "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
+			(description "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
+			(fields
+				(field
+					(name "Footprint") "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
+			)
+			(libsource
+				(lib "Device")
+				(part "Buzzer")
+				(description "Buzzer, polarized")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "quartz resonator ceramic")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Buzzer*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "f018cb6f-bb98-4057-b19a-4d6c628dde53")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "C5")
 			(value "100nF")
 			(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -1000,60 +1054,6 @@
 				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
 			)
 			(tstamps "7bc6a4e3-97fb-48a7-9771-9a04006ef6fa")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "KLS3-SMT-09")
-			(value "Buzzer")
-			(footprint "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
-			(description "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
-			(fields
-				(field
-					(name "Footprint") "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
-			)
-			(libsource
-				(lib "Device")
-				(part "Buzzer")
-				(description "Buzzer, polarized")
-			)
-			(property
-				(name "Sheetname")
-				(value "MCU_Core")
-			)
-			(property
-				(name "Sheetfile")
-				(value "mcu_core.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "quartz resonator ceramic")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "*Buzzer*")
-			)
-			(sheetpath
-				(names "/MCU_Core/")
-				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
-			)
-			(tstamps "f018cb6f-bb98-4057-b19a-4d6c628dde53")
 			(units
 				(unit
 					(name "A")
@@ -1323,60 +1323,6 @@
 				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
 			)
 			(tstamps "5033272d-84d7-48b0-968b-e32f3c34736f")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "R36")
-			(value "4.7k")
-			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
-			(description "SMD Resistor 4.7kOhm, 1%")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "SMD Resistor 4.7kOhm, 1%")
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "MCU_Core")
-			)
-			(property
-				(name "Sheetfile")
-				(value "mcu_core.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/MCU_Core/")
-				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
-			)
-			(tstamps "c09c3275-6988-49e7-a2e3-45e1823d4ed0")
 			(units
 				(unit
 					(name "A")
@@ -6514,6 +6460,12 @@
 			(name "+3.3V")
 			(class "Default")
 			(node
+				(ref "BZ1")
+				(pin "1")
+				(pinfunction "+_1")
+				(pintype "passive")
+			)
+			(node
 				(ref "C3")
 				(pin "1")
 				(pintype "passive")
@@ -6683,12 +6635,6 @@
 				(ref "J3")
 				(pin "2")
 				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "KLS3-SMT-09")
-				(pin "1")
-				(pinfunction "+_1")
 				(pintype "passive")
 			)
 			(node
@@ -6991,11 +6937,6 @@
 			(code "9")
 			(name "BUZZER_PIN")
 			(class "Default")
-			(node
-				(ref "R36")
-				(pin "1")
-				(pintype "passive")
-			)
 			(node
 				(ref "R37")
 				(pin "1")
@@ -7465,11 +7406,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R36")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
 				(ref "R38")
 				(pin "2")
 				(pintype "passive")
@@ -7723,6 +7659,28 @@
 		)
 		(net
 			(code "22")
+			(name "Net-(BZ1--)")
+			(class "Default")
+			(node
+				(ref "BZ1")
+				(pin "2")
+				(pinfunction "-_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "3")
+				(pinfunction "D_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R39")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "23")
 			(name "Net-(F1-Pad2)")
 			(class "Default")
 			(node
@@ -7756,7 +7714,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "Net-(F2-Pad1)")
 			(class "Default")
 			(node
@@ -7771,7 +7729,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "Net-(F3-Pad1)")
 			(class "Default")
 			(node
@@ -7786,7 +7744,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "Net-(F4-Pad1)")
 			(class "Default")
 			(node
@@ -7801,7 +7759,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "Net-(F5-Pad1)")
 			(class "Default")
 			(node
@@ -7816,7 +7774,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "Net-(J1-CC1)")
 			(class "Default")
 			(node
@@ -7832,7 +7790,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "Net-(J1-CC2)")
 			(class "Default")
 			(node
@@ -7848,7 +7806,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "Net-(J1-D+-PadA6)")
 			(class "Default")
 			(node
@@ -7871,7 +7829,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "Net-(J1-D--PadA7)")
 			(class "Default")
 			(node
@@ -7894,7 +7852,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "Net-(J4-Pad4)")
 			(class "Default")
 			(node
@@ -7909,7 +7867,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "Net-(J4-Pad5)")
 			(class "Default")
 			(node
@@ -7924,7 +7882,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "Net-(J4-Pad6)")
 			(class "Default")
 			(node
@@ -7939,7 +7897,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "Net-(J4-Pad7)")
 			(class "Default")
 			(node
@@ -7954,7 +7912,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "Net-(J5-Pad4)")
 			(class "Default")
 			(node
@@ -7969,7 +7927,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "Net-(J5-Pad5)")
 			(class "Default")
 			(node
@@ -7984,7 +7942,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "38")
 			(name "Net-(J5-Pad6)")
 			(class "Default")
 			(node
@@ -7999,7 +7957,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "39")
 			(name "Net-(J5-Pad7)")
 			(class "Default")
 			(node
@@ -8014,7 +7972,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "40")
 			(name "Net-(J6-Pad4)")
 			(class "Default")
 			(node
@@ -8029,7 +7987,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "41")
 			(name "Net-(J6-Pad5)")
 			(class "Default")
 			(node
@@ -8044,7 +8002,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "42")
 			(name "Net-(J6-Pad6)")
 			(class "Default")
 			(node
@@ -8059,7 +8017,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "43")
 			(name "Net-(J6-Pad7)")
 			(class "Default")
 			(node
@@ -8074,7 +8032,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "44")
 			(name "Net-(J7-Pad4)")
 			(class "Default")
 			(node
@@ -8089,7 +8047,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "45")
 			(name "Net-(J7-Pad5)")
 			(class "Default")
 			(node
@@ -8104,7 +8062,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "46")
 			(name "Net-(J7-Pad6)")
 			(class "Default")
 			(node
@@ -8119,7 +8077,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "47")
 			(name "Net-(J7-Pad7)")
 			(class "Default")
 			(node
@@ -8129,28 +8087,6 @@
 			)
 			(node
 				(ref "R35")
-				(pin "1")
-				(pintype "passive")
-			)
-		)
-		(net
-			(code "47")
-			(name "Net-(KLS3-SMT-09--)")
-			(class "Default")
-			(node
-				(ref "KLS3-SMT-09")
-				(pin "2")
-				(pinfunction "-_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "Q1")
-				(pin "3")
-				(pinfunction "D_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "R39")
 				(pin "1")
 				(pintype "passive")
 			)
