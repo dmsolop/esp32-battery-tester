@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-05T02:01:48")
+		(date "2026-11-13T12:35:48")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -961,6 +961,167 @@
 			)
 		)
 		(comp
+			(ref "C12")
+			(value "10n")
+			(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
+			(description "Unpolarized smd ceramic capacitor")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Unpolarized smd ceramic capacitor")
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "7bc6a4e3-97fb-48a7-9771-9a04006ef6fa")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "KLS3-SMT-09")
+			(value "Buzzer")
+			(footprint "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
+			(description "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
+			(fields
+				(field
+					(name "Footprint") "Buzzer_Beeper:Buzzer_Murata_PKMCS0909E")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Buzzer, polarized, 4000Hz, 3mA, 100Hz: 12000pF, 70 дБ, 1...25V")
+			)
+			(libsource
+				(lib "Device")
+				(part "Buzzer")
+				(description "Buzzer, polarized")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "quartz resonator ceramic")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*Buzzer*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "f018cb6f-bb98-4057-b19a-4d6c628dde53")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q1")
+			(value "IRLML2502")
+			(footprint "Package_TO_SOT_SMD:SOT-23_Handsoldering")
+			(datasheet "https://www.alldatasheet.com/datasheet-pdf/view/82450/IRF/IRLML2502.html")
+			(description "IRLML2502, N-MOSFET transistor, gate/source/drain")
+			(fields
+				(field
+					(name "Footprint") "Package_TO_SOT_SMD:SOT-23_Handsoldering")
+				(field
+					(name "Datasheet") "https://www.alldatasheet.com/datasheet-pdf/view/82450/IRF/IRLML2502.html")
+				(field
+					(name "Description") "IRLML2502, N-MOSFET transistor, gate/source/drain")
+			)
+			(libsource
+				(lib "Transistor_FET")
+				(part "Q_NMOS_GSD")
+				(description "N-MOSFET transistor, gate/source/drain")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "transistor NMOS N-MOS N-MOSFET")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "ad5b962a-6965-40ec-bd43-5fe979e4dede")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "R3")
 			(value "10k")
 			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -1216,6 +1377,168 @@
 				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
 			)
 			(tstamps "c09c3275-6988-49e7-a2e3-45e1823d4ed0")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R37")
+			(value "1k")
+			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+			(description "Resistor SMD 0805 1%")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor SMD 0805 1%")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "944d1c29-1f91-44b8-9ad6-a55c0fdeaba8")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R38")
+			(value "10k")
+			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+			(description "Resistor SMD 0805 1%")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor SMD 0805 1%")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "322f83b7-bdc6-453f-9922-be74c674e4cb")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R39")
+			(value "1k")
+			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+			(description "Resistor SMD 0805 1%")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor SMD 0805 1%")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "MCU_Core")
+			)
+			(property
+				(name "Sheetfile")
+				(value "mcu_core.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/MCU_Core/")
+				(tstamps "/6edaa145-c4f2-4620-bd8b-09cb7dccac10/")
+			)
+			(tstamps "e7b8c81d-f5a3-421f-806f-c68c58a37824")
 			(units
 				(unit
 					(name "A")
@@ -5441,6 +5764,40 @@
 		)
 		(libpart
 			(lib "Device")
+			(part "Buzzer")
+			(description "Buzzer, polarized")
+			(footprints
+				(fp "*Buzzer*")
+			)
+			(fields
+				(field
+					(name "Reference") "BZ")
+				(field
+					(name "Value") "Buzzer")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Buzzer, polarized")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "+")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "-")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
 			(part "C")
 			(description "Unpolarized capacitor")
 			(footprints
@@ -6080,6 +6437,42 @@
 				)
 			)
 		)
+		(libpart
+			(lib "Transistor_FET")
+			(part "Q_NMOS_GSD")
+			(description "N-MOSFET transistor, gate/source/drain")
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "Q_NMOS_GSD")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "N-MOSFET transistor, gate/source/drain")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "G")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "S")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "D")
+					(type "passive")
+				)
+			)
+		)
 	)
 	(libraries
 		(library
@@ -6109,6 +6502,10 @@
 		(library
 			(logical "Switch")
 			(uri "${KICAD10_SYMBOL_DIR}/Switch.kicad_sym")
+		)
+		(library
+			(logical "Transistor_FET")
+			(uri "${KICAD10_SYMBOL_DIR}/Transistor_FET.kicad_sym")
 		)
 	)
 	(nets
@@ -6289,6 +6686,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "KLS3-SMT-09")
+				(pin "1")
+				(pinfunction "+_1")
+				(pintype "passive")
+			)
+			(node
 				(ref "R10")
 				(pin "1")
 				(pintype "passive")
@@ -6341,6 +6744,11 @@
 			(node
 				(ref "R3")
 				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R39")
+				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -6589,6 +6997,16 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "R37")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R38")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
 				(ref "U3")
 				(pin "35")
 				(pinfunction "IO42_35")
@@ -6780,6 +7198,11 @@
 			)
 			(node
 				(ref "C11")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C12")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -7026,6 +7449,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "Q1")
+				(pin "2")
+				(pinfunction "S_2")
+				(pintype "passive")
+			)
+			(node
 				(ref "R1")
 				(pin "1")
 				(pintype "passive")
@@ -7037,6 +7466,11 @@
 			)
 			(node
 				(ref "R36")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R38")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -7701,6 +8135,49 @@
 		)
 		(net
 			(code "47")
+			(name "Net-(KLS3-SMT-09--)")
+			(class "Default")
+			(node
+				(ref "KLS3-SMT-09")
+				(pin "2")
+				(pinfunction "-_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "3")
+				(pinfunction "D_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R39")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "48")
+			(name "Net-(Q1-G)")
+			(class "Default")
+			(node
+				(ref "C12")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q1")
+				(pin "1")
+				(pinfunction "G_1")
+				(pintype "input")
+			)
+			(node
+				(ref "R37")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "49")
 			(name "Net-(U3-EN)")
 			(class "Default")
 			(node
@@ -7727,7 +8204,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "50")
 			(name "Net-(U3-IO0)")
 			(class "Default")
 			(node
@@ -7749,7 +8226,7 @@
 			)
 		)
 		(net
-			(code "49")
+			(code "51")
 			(name "Net-(U3-IO45)")
 			(class "Default")
 			(node
@@ -7765,7 +8242,7 @@
 			)
 		)
 		(net
-			(code "50")
+			(code "52")
 			(name "Net-(U3-IO46)")
 			(class "Default")
 			(node
@@ -7781,7 +8258,7 @@
 			)
 		)
 		(net
-			(code "51")
+			(code "53")
 			(name "PWM_CH0")
 			(class "Default")
 			(node
@@ -7797,7 +8274,7 @@
 			)
 		)
 		(net
-			(code "52")
+			(code "54")
 			(name "PWM_CH1")
 			(class "Default")
 			(node
@@ -7813,7 +8290,7 @@
 			)
 		)
 		(net
-			(code "53")
+			(code "55")
 			(name "PWM_CH2")
 			(class "Default")
 			(node
@@ -7829,7 +8306,7 @@
 			)
 		)
 		(net
-			(code "54")
+			(code "56")
 			(name "PWM_CH3")
 			(class "Default")
 			(node
@@ -7845,7 +8322,7 @@
 			)
 		)
 		(net
-			(code "55")
+			(code "57")
 			(name "USB_D+")
 			(class "Default")
 			(node
@@ -7862,7 +8339,7 @@
 			)
 		)
 		(net
-			(code "56")
+			(code "58")
 			(name "USB_D-")
 			(class "Default")
 			(node
@@ -7879,7 +8356,7 @@
 			)
 		)
 		(net
-			(code "57")
+			(code "59")
 			(name "unconnected-(J1-SBU1-PadA8)")
 			(class "Default")
 			(node
@@ -7890,7 +8367,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "60")
 			(name "unconnected-(J1-SBU2-PadB8)")
 			(class "Default")
 			(node
@@ -7901,7 +8378,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "61")
 			(name "unconnected-(U3-IO3-Pad15)")
 			(class "Default")
 			(node
@@ -7912,7 +8389,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "62")
 			(name "unconnected-(U3-IO35-Pad28)")
 			(class "Default")
 			(node
@@ -7923,7 +8400,7 @@
 			)
 		)
 		(net
-			(code "61")
+			(code "63")
 			(name "unconnected-(U3-IO36-Pad29)")
 			(class "Default")
 			(node
@@ -7934,7 +8411,7 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "64")
 			(name "unconnected-(U3-IO37-Pad30)")
 			(class "Default")
 			(node
@@ -7945,7 +8422,7 @@
 			)
 		)
 		(net
-			(code "63")
+			(code "65")
 			(name "unconnected-(U3-IO39-Pad32)")
 			(class "Default")
 			(node
@@ -7956,7 +8433,7 @@
 			)
 		)
 		(net
-			(code "64")
+			(code "66")
 			(name "unconnected-(U3-IO41-Pad34)")
 			(class "Default")
 			(node
@@ -7967,7 +8444,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "67")
 			(name "unconnected-(U3-IO48-Pad25)")
 			(class "Default")
 			(node
@@ -7978,7 +8455,7 @@
 			)
 		)
 		(net
-			(code "66")
+			(code "68")
 			(name "unconnected-(U3-RXD0-Pad36)")
 			(class "Default")
 			(node
@@ -7989,7 +8466,7 @@
 			)
 		)
 		(net
-			(code "67")
+			(code "69")
 			(name "unconnected-(U3-TXD0-Pad37)")
 			(class "Default")
 			(node
