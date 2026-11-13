@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-11-14T00:24:00")
+		(date "2026-11-14T00:43:52")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -2725,40 +2725,21 @@
 		(comp
 			(ref "Q_FAN1")
 			(value "IRLML2502")
-			(footprint "Package_TO_SOT_SMD:SOT-23")
-			(description "Transistor_FET:Q_NMOS_GSD")
+			(footprint "Package_TO_SOT_SMD:SOT-23_Handsoldering")
+			(datasheet "https://www.alldatasheet.com/datasheet-pdf/view/82450/IRF/IRLML2502.html")
+			(description "IRLML2502, N-MOSFET transistor, gate/source/drain")
 			(fields
 				(field
-					(name "Sim.Device") "Q_NMOS_GSD ")
+					(name "Footprint") "Package_TO_SOT_SMD:SOT-23_Handsoldering")
 				(field
-					(name "Sim.Type")
-				)
+					(name "Datasheet") "https://www.alldatasheet.com/datasheet-pdf/view/82450/IRF/IRLML2502.html")
 				(field
-					(name "Sim.Pins") "1=G 2=S 3=D")
-				(field
-					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Transistor_FET:Q_NMOS_GSD")
+					(name "Description") "IRLML2502, N-MOSFET transistor, gate/source/drain")
 			)
 			(libsource
-				(lib "Simulation_SPICE")
-				(part "NMOS")
-				(description "N-MOSFET transistor, drain/source/gate")
-			)
-			(property
-				(name "Sim.Device")
-				(value "Q_NMOS_GSD ")
-			)
-			(property
-				(name "Sim.Type")
-				(value "")
-			)
-			(property
-				(name "Sim.Pins")
-				(value "1=G 2=S 3=D")
+				(lib "Transistor_FET")
+				(part "Q_NMOS_GSD")
+				(description "N-MOSFET transistor, gate/source/drain")
 			)
 			(property
 				(name "Sheetname")
@@ -2770,25 +2751,25 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "transistor NMOS N-MOS N-MOSFET simulation")
+				(value "transistor NMOS N-MOS N-MOSFET")
 			)
 			(sheetpath
 				(names "/cooling_thermal/")
 				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
 			)
-			(tstamps "6496a006-8995-4e83-a994-6b20fd3314eb")
+			(tstamps "fc02e5a7-7037-498a-b969-fdf35015a31d")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "2")
-						)
-						(pin
 							(num "1")
 						)
 						(pin
 							(num "3")
+						)
+						(pin
+							(num "2")
 						)
 					)
 				)
@@ -2834,6 +2815,60 @@
 				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
 			)
 			(tstamps "aacd36e7-4bed-405c-a5c3-fe884b814836")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R20")
+			(value "100R")
+			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+			(description "R_Gate_Fun")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "R_Gate_Fun")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "cooling_thermal")
+			)
+			(property
+				(name "Sheetfile")
+				(value "cooling_thermal.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/cooling_thermal/")
+				(tstamps "/029a3992-bba1-4c16-af18-4c60d303ee1c/")
+			)
+			(tstamps "65e40d2b-1c7e-4b35-bd55-769ca1e58fe8")
 			(units
 				(unit
 					(name "A")
@@ -3732,48 +3767,6 @@
 			)
 		)
 		(libpart
-			(lib "Simulation_SPICE")
-			(part "NMOS")
-			(description "N-MOSFET transistor, drain/source/gate")
-			(docs "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs")
-			(fields
-				(field
-					(name "Reference") "Q")
-				(field
-					(name "Value") "NMOS")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet") "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs")
-				(field
-					(name "Description") "N-MOSFET transistor, drain/source/gate")
-				(field
-					(name "Sim.Device") "NMOS")
-				(field
-					(name "Sim.Type") "VDMOS")
-				(field
-					(name "Sim.Pins") "1=D 2=G 3=S")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "D")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "G")
-					(type "input")
-				)
-				(pin
-					(num "3")
-					(name "S")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
 			(lib "Transistor_FET")
 			(part "IRFP4468PbF")
 			(description "195A Id, 100V Vds, N-Channel Power MOSFET, TO-247")
@@ -3811,6 +3804,42 @@
 				)
 			)
 		)
+		(libpart
+			(lib "Transistor_FET")
+			(part "Q_NMOS_GSD")
+			(description "N-MOSFET transistor, gate/source/drain")
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "Q_NMOS_GSD")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "N-MOSFET transistor, gate/source/drain")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "G")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "S")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "D")
+					(type "passive")
+				)
+			)
+		)
 	)
 	(libraries
 		(library
@@ -3840,10 +3869,6 @@
 		(library
 			(logical "Sensor_Temperature")
 			(uri "${KICAD10_SYMBOL_DIR}/Sensor_Temperature.kicad_sym")
-		)
-		(library
-			(logical "Simulation_SPICE")
-			(uri "${KICAD10_SYMBOL_DIR}/Simulation_SPICE.kicad_sym")
 		)
 		(library
 			(logical "Transistor_FET")
@@ -3998,8 +4023,8 @@
 			)
 			(node
 				(ref "Q_FAN1")
-				(pin "1")
-				(pinfunction "D_1")
+				(pin "3")
+				(pinfunction "D_3")
 				(pintype "passive")
 			)
 		)
@@ -4062,13 +4087,12 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "Q_FAN1")
-				(pin "2")
-				(pinfunction "G_2")
-				(pintype "input")
+				(ref "R17")
+				(pin "1")
+				(pintype "passive")
 			)
 			(node
-				(ref "R17")
+				(ref "R20")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -4184,8 +4208,8 @@
 			)
 			(node
 				(ref "Q_FAN1")
-				(pin "3")
-				(pinfunction "S_3")
+				(pin "2")
+				(pinfunction "S_2")
 				(pintype "passive")
 			)
 			(node
@@ -4617,6 +4641,22 @@
 		)
 		(net
 			(code "27")
+			(name "Net-(Q_FAN1-G)")
+			(class "Default")
+			(node
+				(ref "Q_FAN1")
+				(pin "1")
+				(pinfunction "G_1")
+				(pintype "input")
+			)
+			(node
+				(ref "R20")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "28")
 			(name "Net-(R15-Pad2)")
 			(class "Default")
 			(node
@@ -4631,7 +4671,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "Net-(U1A--)")
 			(class "Default")
 			(node
@@ -4652,7 +4692,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "Net-(U1B--)")
 			(class "Default")
 			(node
@@ -4673,7 +4713,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "Net-(U2-AIN2)")
 			(class "Default")
 			(node
@@ -4699,7 +4739,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "PWM_IN")
 			(class "Default")
 			(node
@@ -4714,7 +4754,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "unconnected-(J2-MountPin-PadMP)")
 			(class "Default")
 			(node
@@ -4725,7 +4765,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "unconnected-(J_FAN1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4736,7 +4776,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "unconnected-(J_FAN2-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4747,7 +4787,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "unconnected-(J_TEMP1-Pin_4-Pad4)")
 			(class "Default")
 			(node
