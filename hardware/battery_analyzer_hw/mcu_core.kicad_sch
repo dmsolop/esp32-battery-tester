@@ -2400,12 +2400,6 @@
 		(uuid "02e5669b-8f6d-4ea5-887c-ddb81ce193c3")
 	)
 	(junction
-		(at 170.18 118.11)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "04d53255-ba23-4ada-ac7e-4c686abdf8d3")
-	)
-	(junction
 		(at 200.66 67.31)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2611,16 +2605,6 @@
 	)
 	(wire
 		(pts
-			(xy 130.81 118.11) (xy 170.18 118.11)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "35e2e689-7b31-4b5a-b3ba-bead001801d3")
-	)
-	(wire
-		(pts
 			(xy 130.81 113.03) (xy 139.7 113.03)
 		)
 		(stroke
@@ -2648,16 +2632,6 @@
 			(type default)
 		)
 		(uuid "3eabf422-0d1f-4b9f-b225-e016364d0606")
-	)
-	(wire
-		(pts
-			(xy 170.18 137.16) (xy 170.18 149.86)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "411925b3-d7d7-478e-a55c-0c2c353bf424")
 	)
 	(wire
 		(pts
@@ -2758,16 +2732,6 @@
 			(type default)
 		)
 		(uuid "55df7d78-43d1-48aa-8429-d534655237ab")
-	)
-	(wire
-		(pts
-			(xy 170.18 118.11) (xy 170.18 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "562cd87f-d103-476e-8e0b-77790ea4a4d6")
 	)
 	(wire
 		(pts
@@ -3121,7 +3085,7 @@
 	)
 	(wire
 		(pts
-			(xy 170.18 118.11) (xy 176.53 118.11)
+			(xy 130.81 118.11) (xy 139.7 118.11)
 		)
 		(stroke
 			(width 0)
@@ -3261,7 +3225,7 @@
 	)
 	(global_label "BUZZER_PIN"
 		(shape input)
-		(at 176.53 118.11 0)
+		(at 139.7 118.11 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -3271,7 +3235,7 @@
 		)
 		(uuid "13081bf0-ebf6-4306-adfd-573483082569")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 191.1266 118.11 0)
+			(at 154.2966 118.11 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4707,84 +4671,6 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 170.18 149.86 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "43a6be66-66b8-460a-aff4-62aa6ea1b858")
-		(property "Reference" "#PWR024"
-			(at 170.18 156.21 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 170.18 154.94 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 170.18 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 170.18 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 170.18 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e6ddb3ef-d8b5-40eb-b737-38699d0c41a0")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565/6edaa145-c4f2-4620-bd8b-09cb7dccac10"
-					(reference "#PWR024")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
 		(at 95.25 67.31 0)
 		(unit 1)
 		(body_style 1)
@@ -6138,88 +6024,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 170.18 133.35 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c09c3275-6988-49e7-a2e3-45e1823d4ed0")
-		(property "Reference" "R36"
-			(at 172.72 132.0799 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "4.7k"
-			(at 172.72 134.6199 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder"
-			(at 168.402 133.35 90)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 170.18 133.35 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "SMD Resistor 4.7kOhm, 1%"
-			(at 170.18 133.35 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "2e47804d-9fed-49e5-8cec-ac2c9eeba2bd")
-		)
-		(pin "2"
-			(uuid "15325546-da3e-4496-92d3-5e722e4076b8")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565/6edaa145-c4f2-4620-bd8b-09cb7dccac10"
-					(reference "R36")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 200.66 69.85 0)
 		(unit 1)
@@ -6469,7 +6273,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f018cb6f-bb98-4057-b19a-4d6c628dde53")
-		(property "Reference" "KLS3-SMT-09"
+		(property "Reference" "BZ1"
 			(at 247.65 33.0199 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6480,7 +6284,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "Buzzer"
+		(property "Value" "KLS3-SMT-09"
 			(at 247.65 35.5599 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6533,7 +6337,7 @@
 		(instances
 			(project "battery_analyzer_hw"
 				(path "/1337d129-c752-45b4-85a9-21e5a5723565/6edaa145-c4f2-4620-bd8b-09cb7dccac10"
-					(reference "KLS3-SMT-09")
+					(reference "BZ1")
 					(unit 1)
 				)
 			)
