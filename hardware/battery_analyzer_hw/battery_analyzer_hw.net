@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-13T21:40:38")
+		(date "2026-11-14T00:23:40")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -1809,7 +1809,7 @@
 				(names "/UI_Controls/")
 				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
 			)
-			(tstamps "8a5c7cad-23a1-4c3c-940c-dfab8201226f")
+			(tstamps "4b0cd164-0d40-40e5-a615-4c9d81f9a253")
 			(units
 				(unit
 					(name "A")
@@ -1863,7 +1863,7 @@
 				(names "/UI_Controls/")
 				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
 			)
-			(tstamps "6d5468f2-172a-476f-87b3-90ea8630d83b")
+			(tstamps "5eb61a6c-af1d-4940-9ffa-10538e84dd1c")
 			(units
 				(unit
 					(name "A")
@@ -1917,7 +1917,7 @@
 				(names "/UI_Controls/")
 				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
 			)
-			(tstamps "7d19bdcd-ffde-4eae-ba72-2b5812519aff")
+			(tstamps "feb6204b-4ce8-430a-9c5b-c02e76657085")
 			(units
 				(unit
 					(name "A")
@@ -2271,21 +2271,21 @@
 		(comp
 			(ref "SW3")
 			(value "RotaryEncoder_Switch")
-			(footprint "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm")
-			(description "Rotary encoder, with switch, 12x12mm")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical")
+			(description "Rotary encoder, with switch, 12x12mm - Generic connector, single row, 01x05, script generated")
 			(fields
 				(field
-					(name "Footprint") "Rotary_Encoder:RotaryEncoder_Alps_EC12E-Switch_Vertical_H20mm")
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Rotary encoder, with switch, 12x12mm")
+					(name "Description") "Rotary encoder, with switch, 12x12mm - Generic connector, single row, 01x05, script generated")
 			)
 			(libsource
-				(lib "Device")
-				(part "RotaryEncoder_Switch")
-				(description "Rotary encoder, dual channel, incremental quadrate outputs, with switch")
+				(lib "Connector")
+				(part "Conn_01x05_Pin")
+				(description "Generic connector, single row, 01x05, script generated")
 			)
 			(property
 				(name "Sheetname")
@@ -2297,35 +2297,35 @@
 			)
 			(property
 				(name "ki_keywords")
-				(value "rotary switch encoder switch push button")
+				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "RotaryEncoder*Switch*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/UI_Controls/")
 				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
 			)
-			(tstamps "026da758-786b-40f8-a515-9af9a357e637")
+			(tstamps "50c887a6-f887-4588-a602-1b75f798e3b2")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "A")
+							(num "1")
 						)
 						(pin
-							(num "C")
+							(num "2")
 						)
 						(pin
-							(num "B")
+							(num "3")
 						)
 						(pin
-							(num "S1")
+							(num "4")
 						)
 						(pin
-							(num "S2")
+							(num "5")
 						)
 					)
 				)
@@ -5361,6 +5361,55 @@
 		)
 		(libpart
 			(lib "Connector")
+			(part "Conn_01x05_Pin")
+			(description "Generic connector, single row, 01x05, script generated")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x05_Pin")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x05, script generated")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Pin_4")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "Pin_5")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector")
 			(part "RJ45_Shielded")
 			(description "RJ connector, 8P8C (8 positions 8 connected), Shielded")
 			(footprints
@@ -5747,55 +5796,6 @@
 				(pin
 					(num "2")
 					(name "")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Device")
-			(part "RotaryEncoder_Switch")
-			(description "Rotary encoder, dual channel, incremental quadrate outputs, with switch")
-			(footprints
-				(fp "RotaryEncoder*Switch*")
-			)
-			(fields
-				(field
-					(name "Reference") "SW")
-				(field
-					(name "Value") "RotaryEncoder_Switch")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Rotary encoder, dual channel, incremental quadrate outputs, with switch")
-			)
-			(pins
-				(pin
-					(num "A")
-					(name "A")
-					(type "passive")
-				)
-				(pin
-					(num "B")
-					(name "B")
-					(type "passive")
-				)
-				(pin
-					(num "C")
-					(name "C")
-					(type "passive")
-				)
-				(pin
-					(num "S1")
-					(name "S1")
-					(type "passive")
-				)
-				(pin
-					(num "S2")
-					(name "S2")
 					(type "passive")
 				)
 			)
@@ -6295,241 +6295,12 @@
 	(nets
 		(net
 			(code "1")
-			(name "+5V")
-			(class "Default")
-			(node
-				(ref "C1")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C2")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "F1")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "U1")
-				(pin "5")
-				(pinfunction "VBUS_5")
-				(pintype "passive")
-			)
-			(node
-				(ref "U2")
-				(pin "3")
-				(pinfunction "VI_3")
-				(pintype "power_in")
-			)
-		)
-		(net
-			(code "2")
-			(name "1W_CH0")
-			(class "Default")
-			(node
-				(ref "J4")
-				(pin "8")
-				(pintype "passive")
-			)
-			(node
-				(ref "R14")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "12")
-				(pinfunction "IO8_12")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "3")
-			(name "1W_CH1")
-			(class "Default")
-			(node
-				(ref "J5")
-				(pin "8")
-				(pintype "passive")
-			)
-			(node
-				(ref "R15")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "17")
-				(pinfunction "IO9_17")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "4")
-			(name "1W_CH2")
-			(class "Default")
-			(node
-				(ref "J6")
-				(pin "8")
-				(pintype "passive")
-			)
-			(node
-				(ref "R17")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "18")
-				(pinfunction "IO10_18")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "5")
-			(name "1W_CH3")
-			(class "Default")
-			(node
-				(ref "J7")
-				(pin "8")
-				(pintype "passive")
-			)
-			(node
-				(ref "R16")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "19")
-				(pinfunction "IO11_19")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "6")
-			(name "ADC_ALERT")
-			(class "Default")
-			(node
-				(ref "D12")
-				(pin "3")
-				(pinfunction "COM_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "D16")
-				(pin "3")
-				(pinfunction "COM_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "D20")
-				(pin "3")
-				(pinfunction "COM_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "D8")
-				(pin "3")
-				(pinfunction "COM_3")
-				(pintype "passive")
-			)
-			(node
-				(ref "R13")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R23")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R27")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R31")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "R35")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "24")
-				(pinfunction "IO47_24")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "7")
-			(name "BTN_TARE")
-			(class "Default")
-			(node
-				(ref "C11")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R12")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "SW4")
-				(pin "2")
-				(pinfunction "2_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "11")
-				(pinfunction "IO18_11")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "8")
-			(name "BUZZER_PIN")
-			(class "Default")
-			(node
-				(ref "R37")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "R38")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "35")
-				(pinfunction "IO42_35")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "9")
-			(name "ENC_A")
+			(name "+3.3V")
 			(class "Default")
 			(node
 				(ref "BZ1")
 				(pin "1")
 				(pinfunction "+_1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C10")
-				(pin "1")
 				(pintype "passive")
 			)
 			(node
@@ -6549,16 +6320,6 @@
 			)
 			(node
 				(ref "C6")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C8")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C9")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -6781,20 +6542,8 @@
 			)
 			(node
 				(ref "SW3")
-				(pin "A")
-				(pinfunction "A_A")
-				(pintype "passive")
-			)
-			(node
-				(ref "SW3")
-				(pin "B")
-				(pinfunction "B_B")
-				(pintype "passive")
-			)
-			(node
-				(ref "SW3")
-				(pin "S1")
-				(pinfunction "S1_S1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
@@ -6805,21 +6554,271 @@
 			)
 			(node
 				(ref "U3")
-				(pin "10")
-				(pinfunction "IO17_10")
-				(pintype "bidirectional")
-			)
-			(node
-				(ref "U3")
 				(pin "2")
 				(pinfunction "3V3_2")
 				(pintype "power_in")
+			)
+		)
+		(net
+			(code "2")
+			(name "+5V")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U1")
+				(pin "5")
+				(pinfunction "VBUS_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "U2")
+				(pin "3")
+				(pinfunction "VI_3")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "3")
+			(name "1W_CH0")
+			(class "Default")
+			(node
+				(ref "J4")
+				(pin "8")
+				(pintype "passive")
+			)
+			(node
+				(ref "R14")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "12")
+				(pinfunction "IO8_12")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "4")
+			(name "1W_CH1")
+			(class "Default")
+			(node
+				(ref "J5")
+				(pin "8")
+				(pintype "passive")
+			)
+			(node
+				(ref "R15")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "17")
+				(pinfunction "IO9_17")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "5")
+			(name "1W_CH2")
+			(class "Default")
+			(node
+				(ref "J6")
+				(pin "8")
+				(pintype "passive")
+			)
+			(node
+				(ref "R17")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "18")
+				(pinfunction "IO10_18")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "6")
+			(name "1W_CH3")
+			(class "Default")
+			(node
+				(ref "J7")
+				(pin "8")
+				(pintype "passive")
+			)
+			(node
+				(ref "R16")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "19")
+				(pinfunction "IO11_19")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "7")
+			(name "ADC_ALERT")
+			(class "Default")
+			(node
+				(ref "D12")
+				(pin "3")
+				(pinfunction "COM_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "D16")
+				(pin "3")
+				(pinfunction "COM_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "D20")
+				(pin "3")
+				(pinfunction "COM_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "D8")
+				(pin "3")
+				(pinfunction "COM_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R13")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R23")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R27")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R31")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R35")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "24")
+				(pinfunction "IO47_24")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "8")
+			(name "BTN_TARE")
+			(class "Default")
+			(node
+				(ref "C11")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R12")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "SW4")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "11")
+				(pinfunction "IO18_11")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "9")
+			(name "BUZZER_PIN")
+			(class "Default")
+			(node
+				(ref "R37")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R38")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "35")
+				(pinfunction "IO42_35")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "10")
+			(name "ENC_A")
+			(class "Default")
+			(node
+				(ref "C9")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "SW3")
+				(pin "5")
+				(pinfunction "Pin_5_5")
+				(pintype "passive")
 			)
 			(node
 				(ref "U3")
 				(pin "8")
 				(pinfunction "IO15_8")
 				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "11")
+			(name "ENC_B")
+			(class "Default")
+			(node
+				(ref "C10")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "SW3")
+				(pin "4")
+				(pinfunction "Pin_4_4")
+				(pintype "passive")
 			)
 			(node
 				(ref "U3")
@@ -6829,7 +6828,29 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "12")
+			(name "ENC_SW")
+			(class "Default")
+			(node
+				(ref "C8")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "SW3")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "10")
+				(pinfunction "IO17_10")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "13")
 			(name "FAN_CH0")
 			(class "Default")
 			(node
@@ -6851,7 +6872,7 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "14")
 			(name "FAN_CH1")
 			(class "Default")
 			(node
@@ -6873,7 +6894,7 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "15")
 			(name "FAN_CH2")
 			(class "Default")
 			(node
@@ -6895,7 +6916,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "16")
 			(name "FAN_CH3")
 			(class "Default")
 			(node
@@ -6917,7 +6938,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "17")
 			(name "GND")
 			(class "Default")
 			(node
@@ -7227,14 +7248,8 @@
 			)
 			(node
 				(ref "SW3")
-				(pin "C")
-				(pinfunction "C_C")
-				(pintype "passive")
-			)
-			(node
-				(ref "SW3")
-				(pin "S2")
-				(pinfunction "S2_S2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
 				(pintype "passive")
 			)
 			(node
@@ -7275,7 +7290,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "18")
 			(name "I2C_PWR_SCL")
 			(class "Default")
 			(node
@@ -7335,7 +7350,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "19")
 			(name "I2C_PWR_SDA")
 			(class "Default")
 			(node
@@ -7395,7 +7410,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "20")
 			(name "I2C_UI_SCL")
 			(class "Default")
 			(node
@@ -7423,7 +7438,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "21")
 			(name "I2C_UI_SDA")
 			(class "Default")
 			(node
@@ -7451,7 +7466,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "22")
 			(name "Net-(BZ1--)")
 			(class "Default")
 			(node
@@ -7473,7 +7488,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "23")
 			(name "Net-(F1-Pad2)")
 			(class "Default")
 			(node
@@ -7507,7 +7522,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "24")
 			(name "Net-(F2-Pad1)")
 			(class "Default")
 			(node
@@ -7522,7 +7537,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "25")
 			(name "Net-(F3-Pad1)")
 			(class "Default")
 			(node
@@ -7537,7 +7552,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "26")
 			(name "Net-(F4-Pad1)")
 			(class "Default")
 			(node
@@ -7552,7 +7567,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "27")
 			(name "Net-(F5-Pad1)")
 			(class "Default")
 			(node
@@ -7567,7 +7582,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "28")
 			(name "Net-(J1-CC1)")
 			(class "Default")
 			(node
@@ -7583,7 +7598,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "29")
 			(name "Net-(J1-CC2)")
 			(class "Default")
 			(node
@@ -7599,7 +7614,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "30")
 			(name "Net-(J1-D+-PadA6)")
 			(class "Default")
 			(node
@@ -7622,7 +7637,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "31")
 			(name "Net-(J1-D--PadA7)")
 			(class "Default")
 			(node
@@ -7645,7 +7660,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "32")
 			(name "Net-(J4-Pad4)")
 			(class "Default")
 			(node
@@ -7660,7 +7675,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "33")
 			(name "Net-(J4-Pad5)")
 			(class "Default")
 			(node
@@ -7675,7 +7690,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "34")
 			(name "Net-(J4-Pad6)")
 			(class "Default")
 			(node
@@ -7690,7 +7705,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "35")
 			(name "Net-(J4-Pad7)")
 			(class "Default")
 			(node
@@ -7705,7 +7720,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "36")
 			(name "Net-(J5-Pad4)")
 			(class "Default")
 			(node
@@ -7720,7 +7735,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "37")
 			(name "Net-(J5-Pad5)")
 			(class "Default")
 			(node
@@ -7735,7 +7750,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "38")
 			(name "Net-(J5-Pad6)")
 			(class "Default")
 			(node
@@ -7750,7 +7765,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "39")
 			(name "Net-(J5-Pad7)")
 			(class "Default")
 			(node
@@ -7765,7 +7780,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "40")
 			(name "Net-(J6-Pad4)")
 			(class "Default")
 			(node
@@ -7780,7 +7795,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "41")
 			(name "Net-(J6-Pad5)")
 			(class "Default")
 			(node
@@ -7795,7 +7810,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "42")
 			(name "Net-(J6-Pad6)")
 			(class "Default")
 			(node
@@ -7810,7 +7825,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "43")
 			(name "Net-(J6-Pad7)")
 			(class "Default")
 			(node
@@ -7825,7 +7840,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "44")
 			(name "Net-(J7-Pad4)")
 			(class "Default")
 			(node
@@ -7840,7 +7855,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "45")
 			(name "Net-(J7-Pad5)")
 			(class "Default")
 			(node
@@ -7855,7 +7870,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "46")
 			(name "Net-(J7-Pad6)")
 			(class "Default")
 			(node
@@ -7870,7 +7885,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "47")
 			(name "Net-(J7-Pad7)")
 			(class "Default")
 			(node
@@ -7885,7 +7900,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "48")
 			(name "Net-(Q1-G)")
 			(class "Default")
 			(node
@@ -7906,7 +7921,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "49")
 			(name "Net-(U3-EN)")
 			(class "Default")
 			(node
@@ -7933,7 +7948,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "50")
 			(name "Net-(U3-IO0)")
 			(class "Default")
 			(node
@@ -7955,7 +7970,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "51")
 			(name "Net-(U3-IO45)")
 			(class "Default")
 			(node
@@ -7971,7 +7986,7 @@
 			)
 		)
 		(net
-			(code "49")
+			(code "52")
 			(name "Net-(U3-IO46)")
 			(class "Default")
 			(node
@@ -7987,7 +8002,7 @@
 			)
 		)
 		(net
-			(code "50")
+			(code "53")
 			(name "PWM_CH0")
 			(class "Default")
 			(node
@@ -8003,7 +8018,7 @@
 			)
 		)
 		(net
-			(code "51")
+			(code "54")
 			(name "PWM_CH1")
 			(class "Default")
 			(node
@@ -8019,7 +8034,7 @@
 			)
 		)
 		(net
-			(code "52")
+			(code "55")
 			(name "PWM_CH2")
 			(class "Default")
 			(node
@@ -8035,7 +8050,7 @@
 			)
 		)
 		(net
-			(code "53")
+			(code "56")
 			(name "PWM_CH3")
 			(class "Default")
 			(node
@@ -8051,7 +8066,7 @@
 			)
 		)
 		(net
-			(code "54")
+			(code "57")
 			(name "USB_D+")
 			(class "Default")
 			(node
@@ -8068,7 +8083,7 @@
 			)
 		)
 		(net
-			(code "55")
+			(code "58")
 			(name "USB_D-")
 			(class "Default")
 			(node
@@ -8085,7 +8100,7 @@
 			)
 		)
 		(net
-			(code "56")
+			(code "59")
 			(name "unconnected-(J1-SBU1-PadA8)")
 			(class "Default")
 			(node
@@ -8096,7 +8111,7 @@
 			)
 		)
 		(net
-			(code "57")
+			(code "60")
 			(name "unconnected-(J1-SBU2-PadB8)")
 			(class "Default")
 			(node
@@ -8107,7 +8122,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "61")
 			(name "unconnected-(U3-IO3-Pad15)")
 			(class "Default")
 			(node
@@ -8118,7 +8133,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "62")
 			(name "unconnected-(U3-IO35-Pad28)")
 			(class "Default")
 			(node
@@ -8129,7 +8144,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "63")
 			(name "unconnected-(U3-IO36-Pad29)")
 			(class "Default")
 			(node
@@ -8140,7 +8155,7 @@
 			)
 		)
 		(net
-			(code "61")
+			(code "64")
 			(name "unconnected-(U3-IO37-Pad30)")
 			(class "Default")
 			(node
@@ -8151,7 +8166,7 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "65")
 			(name "unconnected-(U3-IO39-Pad32)")
 			(class "Default")
 			(node
@@ -8162,7 +8177,7 @@
 			)
 		)
 		(net
-			(code "63")
+			(code "66")
 			(name "unconnected-(U3-IO41-Pad34)")
 			(class "Default")
 			(node
@@ -8173,7 +8188,7 @@
 			)
 		)
 		(net
-			(code "64")
+			(code "67")
 			(name "unconnected-(U3-IO48-Pad25)")
 			(class "Default")
 			(node
@@ -8184,7 +8199,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "68")
 			(name "unconnected-(U3-RXD0-Pad36)")
 			(class "Default")
 			(node
@@ -8195,7 +8210,7 @@
 			)
 		)
 		(net
-			(code "66")
+			(code "69")
 			(name "unconnected-(U3-TXD0-Pad37)")
 			(class "Default")
 			(node

@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-11-13T21:40:05")
+		(date "2026-11-14T00:24:00")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -238,6 +238,60 @@
 				(tstamps "/")
 			)
 			(tstamps "c7d12666-d034-459b-8ed0-1fd470c0dfd1")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "F3")
+			(value "200mA_60V")
+			(footprint "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+			(description "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
+			(fields
+				(field
+					(name "Footprint") "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
+			)
+			(libsource
+				(lib "Device")
+				(part "Polyfuse")
+				(description "Resettable fuse, polymeric positive temperature coefficient")
+			)
+			(property
+				(name "Sheetname")
+				(value "slave_board")
+			)
+			(property
+				(name "Sheetfile")
+				(value "slave_board.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "resettable fuse PTC PPTC polyfuse polyswitch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*polyfuse* *PTC*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "bb4bba23-36c2-4708-9509-ab671d29c904")
 			(units
 				(unit
 					(name "A")
@@ -1031,60 +1085,6 @@
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
 			(tstamps "e15bd63b-71f7-418e-9261-fe9f92a2d8ba")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "F3")
-			(value "200mA_60V")
-			(footprint "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
-			(description "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
-			(fields
-				(field
-					(name "Footprint") "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "PTC Resettable Fuse SMD 200mA 15V+ Bourns MF-NSMF020/60")
-			)
-			(libsource
-				(lib "Device")
-				(part "Polyfuse")
-				(description "Resettable fuse, polymeric positive temperature coefficient")
-			)
-			(property
-				(name "Sheetname")
-				(value "Power_Stage")
-			)
-			(property
-				(name "Sheetfile")
-				(value "power_stage.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "resettable fuse PTC PPTC polyfuse polyswitch")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "*polyfuse* *PTC*")
-			)
-			(sheetpath
-				(names "/Power_Stage/")
-				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
-			)
-			(tstamps "34eac0ec-1229-45ac-9da1-fe4dc4a882d5")
 			(units
 				(unit
 					(name "A")
@@ -2184,9 +2184,9 @@
 		)
 		(comp
 			(ref "R15")
-			(value "190k")
+			(value "120k")
 			(footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
-			(description "SMD Resistor 190kOhm, 0.1%, 25ppm/C")
+			(description "SMD Resistor 120kOhm, 0.1%, 25ppm/C")
 			(fields
 				(field
 					(name "Footprint") "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
@@ -2194,7 +2194,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "SMD Resistor 190kOhm, 0.1%, 25ppm/C")
+					(name "Description") "SMD Resistor 120kOhm, 0.1%, 25ppm/C")
 			)
 			(libsource
 				(lib "Device")
@@ -2221,7 +2221,7 @@
 				(names "/Telemetry/")
 				(tstamps "/66d25d5f-b49c-4f1e-a839-fa51026b9740/")
 			)
-			(tstamps "6fbae585-e911-49b0-8386-6d6714e562ff")
+			(tstamps "dce088b5-c199-4f55-ae35-24a1be40bcd0")
 			(units
 				(unit
 					(name "A")
@@ -2276,6 +2276,60 @@
 				(tstamps "/66d25d5f-b49c-4f1e-a839-fa51026b9740/")
 			)
 			(tstamps "75ed3ace-bb8b-4bfa-b210-94ddb18a3d14")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R19")
+			(value "120k")
+			(footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
+			(description "SMD Resistor 120kOhm, 0.1%, 25ppm/C")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "SMD Resistor 120kOhm, 0.1%, 25ppm/C")
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "Telemetry")
+			)
+			(property
+				(name "Sheetfile")
+				(value "telemetry.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/Telemetry/")
+				(tstamps "/66d25d5f-b49c-4f1e-a839-fa51026b9740/")
+			)
+			(tstamps "16255287-bab7-47a9-aa6d-1b7c3a1e1abe")
 			(units
 				(unit
 					(name "A")
@@ -4049,13 +4103,8 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J1")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J1")
-				(pin "SH")
+				(ref "F3")
+				(pin "1")
 				(pintype "passive")
 			)
 			(node
@@ -4122,14 +4171,15 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "F3")
-				(pin "2")
-				(pintype "passive")
-			)
-			(node
 				(ref "J_PWR1")
 				(pin "2")
 				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "NT1")
+				(pin "2")
+				(pinfunction "2_2")
 				(pintype "passive")
 			)
 			(node
@@ -4496,17 +4546,21 @@
 		)
 		(net
 			(code "24")
-			(name "Net-(F3-Pad1)")
+			(name "Net-(F3-Pad2)")
 			(class "Default")
 			(node
 				(ref "F3")
-				(pin "1")
+				(pin "2")
 				(pintype "passive")
 			)
 			(node
-				(ref "NT1")
+				(ref "J1")
 				(pin "2")
-				(pinfunction "2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "SH")
 				(pintype "passive")
 			)
 		)
@@ -4563,6 +4617,21 @@
 		)
 		(net
 			(code "27")
+			(name "Net-(R15-Pad2)")
+			(class "Default")
+			(node
+				(ref "R15")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R19")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "28")
 			(name "Net-(U1A--)")
 			(class "Default")
 			(node
@@ -4583,7 +4652,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "Net-(U1B--)")
 			(class "Default")
 			(node
@@ -4604,7 +4673,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "Net-(U2-AIN2)")
 			(class "Default")
 			(node
@@ -4613,12 +4682,12 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R15")
+				(ref "R16")
 				(pin "2")
 				(pintype "passive")
 			)
 			(node
-				(ref "R16")
+				(ref "R19")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -4630,7 +4699,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "PWM_IN")
 			(class "Default")
 			(node
@@ -4645,7 +4714,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "unconnected-(J2-MountPin-PadMP)")
 			(class "Default")
 			(node
@@ -4656,7 +4725,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "unconnected-(J_FAN1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4667,7 +4736,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "unconnected-(J_FAN2-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4678,7 +4747,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "unconnected-(J_TEMP1-Pin_4-Pad4)")
 			(class "Default")
 			(node
