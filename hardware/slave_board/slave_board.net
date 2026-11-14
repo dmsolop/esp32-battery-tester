@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/slave_board/slave_board.kicad_sch")
-		(date "2026-11-14T00:43:52")
+		(date "2026-11-14T20:56:55")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -383,9 +383,9 @@
 		)
 		(comp
 			(ref "J2")
-			(value "Barrel_Jack_MountingPin")
+			(value "KLS1-DC-005A-2.5")
 			(footprint "Connector_BarrelJack:BarrelJack_Horizontal")
-			(description "DC Barrel Jack with a mounting pin")
+			(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			(fields
 				(field
 					(name "Footprint") "Connector_BarrelJack:BarrelJack_Horizontal")
@@ -393,7 +393,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "DC Barrel Jack with a mounting pin")
+					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
 				(lib "Connector")
@@ -1101,22 +1101,22 @@
 		)
 		(comp
 			(ref "NT1")
-			(value "NetTie_2")
-			(footprint "NetTie:NetTie-2_SMD_Pad2.0mm")
-			(description "Net tie, 2 pins")
+			(value "NetTie_3")
+			(footprint "NetTie:NetTie-3_SMD_Pad2.0mm")
+			(description "Net tie, 3 pins")
 			(fields
 				(field
-					(name "Footprint") "NetTie:NetTie-2_SMD_Pad2.0mm")
+					(name "Footprint") "NetTie:NetTie-3_SMD_Pad2.0mm")
 				(field
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Net tie, 2 pins")
+					(name "Description") "Net tie, 3 pins")
 			)
 			(libsource
 				(lib "Device")
-				(part "NetTie_2")
-				(description "Net tie, 2 pins")
+				(part "NetTie_3")
+				(description "Net tie, 3 pins")
 			)
 			(property
 				(name "Sheetname")
@@ -1141,13 +1141,16 @@
 				(names "/Power_Stage/")
 				(tstamps "/c29529fc-b98a-4ee0-89dc-ccd71379b83b/")
 			)
-			(tstamps "88965a30-1a3b-4844-89b0-4193f7526dc7")
+			(tstamps "2bf7f825-4e2b-4582-b1f0-f95e090cb242")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
 							(num "1")
+						)
+						(pin
+							(num "3")
 						)
 						(pin
 							(num "2")
@@ -3594,8 +3597,8 @@
 		)
 		(libpart
 			(lib "Device")
-			(part "NetTie_2")
-			(description "Net tie, 2 pins")
+			(part "NetTie_3")
+			(description "Net tie, 3 pins")
 			(footprints
 				(fp "Net*Tie*")
 			)
@@ -3603,7 +3606,7 @@
 				(field
 					(name "Reference") "NT")
 				(field
-					(name "Value") "NetTie_2")
+					(name "Value") "NetTie_3")
 				(field
 					(name "Footprint")
 				)
@@ -3611,7 +3614,7 @@
 					(name "Datasheet")
 				)
 				(field
-					(name "Description") "Net tie, 2 pins")
+					(name "Description") "Net tie, 3 pins")
 			)
 			(pins
 				(pin
@@ -3622,6 +3625,11 @@
 				(pin
 					(num "2")
 					(name "2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "3")
 					(type "passive")
 				)
 			)
@@ -4150,8 +4158,8 @@
 			)
 			(node
 				(ref "NT1")
-				(pin "1")
-				(pinfunction "1_1")
+				(pin "2")
+				(pinfunction "2_2")
 				(pintype "passive")
 			)
 			(node
@@ -4189,21 +4197,9 @@
 			(name "GND_PWR")
 			(class "Default")
 			(node
-				(ref "D1")
-				(pin "2")
-				(pinfunction "A_2")
-				(pintype "passive")
-			)
-			(node
-				(ref "J_PWR1")
-				(pin "2")
-				(pinfunction "Pin_2_2")
-				(pintype "passive")
-			)
-			(node
 				(ref "NT1")
-				(pin "2")
-				(pinfunction "2_2")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 			(node
@@ -4388,6 +4384,29 @@
 		)
 		(net
 			(code "15")
+			(name "LOAD_FORCE_-")
+			(class "Default")
+			(node
+				(ref "D1")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J_PWR1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "NT1")
+				(pin "3")
+				(pinfunction "3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "16")
 			(name "LOAD_SENSE_+")
 			(class "Default")
 			(node
@@ -4403,7 +4422,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "17")
 			(name "LOAD_SENSE_-")
 			(class "Default")
 			(node
@@ -4430,7 +4449,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "18")
 			(name "Net-(C1-Pad1)")
 			(class "Default")
 			(node
@@ -4455,7 +4474,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "19")
 			(name "Net-(C3-Pad1)")
 			(class "Default")
 			(node
@@ -4470,7 +4489,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "20")
 			(name "Net-(C4-Pad1)")
 			(class "Default")
 			(node
@@ -4485,7 +4504,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "21")
 			(name "Net-(C5-Pad1)")
 			(class "Default")
 			(node
@@ -4505,7 +4524,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "22")
 			(name "Net-(C6-Pad2)")
 			(class "Default")
 			(node
@@ -4525,7 +4544,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "23")
 			(name "Net-(D3-K)")
 			(class "Default")
 			(node
@@ -4547,7 +4566,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "Net-(D4-K)")
 			(class "Default")
 			(node
@@ -4569,7 +4588,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "Net-(F3-Pad2)")
 			(class "Default")
 			(node
@@ -4589,7 +4608,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "Net-(J6-Pin_1)")
 			(class "Default")
 			(node
@@ -4624,7 +4643,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "Net-(J_PWR1-Pin_1)")
 			(class "Default")
 			(node
@@ -4640,7 +4659,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "Net-(Q_FAN1-G)")
 			(class "Default")
 			(node
@@ -4656,7 +4675,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "Net-(R15-Pad2)")
 			(class "Default")
 			(node
@@ -4671,7 +4690,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "Net-(U1A--)")
 			(class "Default")
 			(node
@@ -4692,7 +4711,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "Net-(U1B--)")
 			(class "Default")
 			(node
@@ -4713,7 +4732,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "Net-(U2-AIN2)")
 			(class "Default")
 			(node
@@ -4739,7 +4758,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "PWM_IN")
 			(class "Default")
 			(node
@@ -4754,18 +4773,18 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "unconnected-(J2-MountPin-PadMP)")
 			(class "Default")
 			(node
 				(ref "J2")
 				(pin "MP")
 				(pinfunction "MountPin_MP")
-				(pintype "passive")
+				(pintype "passive+no_connect")
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "unconnected-(J_FAN1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4776,7 +4795,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "unconnected-(J_FAN2-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -4787,7 +4806,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "unconnected-(J_TEMP1-Pin_4-Pad4)")
 			(class "Default")
 			(node

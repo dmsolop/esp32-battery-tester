@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-14T00:23:40")
+		(date "2026-11-14T20:57:24")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
