@@ -5,7 +5,7 @@
 	(uuid "1337d129-c752-45b4-85a9-21e5a5723565")
 	(paper "A4")
 	(lib_symbols
-		(symbol "Connector:Barrel_Jack_MountingPin"
+		(symbol "Barrel_Jack_MountingPin_1"
 			(pin_names
 				(hide yes)
 			)
@@ -14,28 +14,29 @@
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at 0 5.334 0)
+			(property "Reference" "J9"
+				(at -6.35 -1.6257 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
+					(justify right)
 				)
 			)
-			(property "Value" "Barrel_Jack_MountingPin"
-				(at 1.27 -6.35 0)
+			(property "Value" "KLS1-DC-005A-2.5"
+				(at -6.35 0.9143 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify left)
+					(justify right)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "Connector_BarrelJack:BarrelJack_Horizontal"
 				(at 1.27 -1.016 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -57,7 +58,7 @@
 					)
 				)
 			)
-			(property "Description" "DC Barrel Jack with a mounting pin"
+			(property "Description" "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -90,7 +91,7 @@
 					)
 				)
 			)
-			(symbol "Barrel_Jack_MountingPin_0_1"
+			(symbol "Barrel_Jack_MountingPin_1_0_1"
 				(rectangle
 					(start -5.08 3.81)
 					(end 5.08 -3.81)
@@ -162,7 +163,7 @@
 					)
 				)
 			)
-			(symbol "Barrel_Jack_MountingPin_1_1"
+			(symbol "Barrel_Jack_MountingPin_1_1_1"
 				(polyline
 					(pts
 						(xy -1.016 -4.572) (xy 1.016 -4.572)
@@ -229,7 +230,7 @@
 							)
 						)
 					)
-					(number "MP"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -6354,89 +6355,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Barrel_Jack_MountingPin")
-		(at 33.02 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "80e791c0-24dc-468b-bd07-6bb3b88a4780")
-		(property "Reference" "J8"
-			(at 33.02 50.8 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "KLS1-DC-005A-2.5"
-			(at 33.02 53.34 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_BarrelJack:BarrelJack_Horizontal"
-			(at 34.29 60.706 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 34.29 60.706 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A"
-			(at 33.02 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "MP"
-			(uuid "e84b044b-0fe1-42ab-98bc-bf89b0ccd700")
-		)
-		(pin "2"
-			(uuid "30a554ab-a8c2-4664-9ac4-5aa3f72062fe")
-		)
-		(pin "1"
-			(uuid "26371980-0863-4c7a-aef9-2f030f7168ae")
-		)
-		(instances
-			(project "battery_analyzer_hw"
-				(path "/1337d129-c752-45b4-85a9-21e5a5723565"
-					(reference "J8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:+3.3V")
 		(at 273.05 80.01 0)
 		(unit 1)
@@ -6936,6 +6854,92 @@
 			(project "battery_analyzer_hw"
 				(path "/1337d129-c752-45b4-85a9-21e5a5723565"
 					(reference "#PWR02")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "Barrel_Jack_MountingPin_1")
+		(lib_id "Connector:Barrel_Jack_MountingPin")
+		(at 33.02 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a8f06ed9-860e-41be-8982-42c0e75f4008")
+		(property "Reference" "J13"
+			(at 26.67 58.7755 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "KLS1-DC-005A-2.5"
+			(at 26.67 61.3155 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_BarrelJack:BarrelJack_Horizontal"
+			(at 34.29 60.706 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 34.29 60.706 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A"
+			(at 33.02 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "3"
+			(uuid "e3e0fe81-8076-41ef-a9f2-25f63d143eb7")
+		)
+		(pin "2"
+			(uuid "e14ae21f-7f4c-46f2-82a5-3060ac83887f")
+		)
+		(pin "1"
+			(uuid "45691da1-a6aa-4f20-b6b1-603583d1e1b2")
+		)
+		(instances
+			(project "battery_analyzer_hw"
+				(path "/1337d129-c752-45b4-85a9-21e5a5723565"
+					(reference "J13")
 					(unit 1)
 				)
 			)
