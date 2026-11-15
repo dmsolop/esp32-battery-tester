@@ -8,7 +8,7 @@
 - **Communication Bus:** High-frequency signals (I2C, 1-Wire, PWM) are routed via shielded RJ45 cables (FTP/STP)[cite: 4]. The cable shield is tied to analog GND, acting as a Faraday cage to block EMI[cite: 4].
 - **Power Stage (Per Channel):** Maximum dissipation is >140W, up to 30A[cite: 4]. Uses dual IRFP150N MOSFETs (TO-247) in a "Sandwich" topology between two Intel Celeron heatsinks[cite: 4]. Hardware current balancing is enforced via dual independent CC-loops using an LM358 Op-Amp[cite: 4].
 - **Precision Sensing (4-Wire Kelvin):** Current is measured across a single 5 mOhm (R005) 2512 SMD Manganese-Copper alloy precision shunt per MOSFET leg (3W rating, 1.125W dissipation at 15A)[cite: 4]. Kelvin connections are routed directly from the inner pads on the PCB copper[cite: 4].
-- **ADC Scaling:** ADS1115 PGA dynamically scales to maintain 16-bit resolution across the 1V–60V range[cite: 4].
+- **ADC Scaling & Telemetry Divider:** ADS1115 PGA is configured for $\pm 4.096\text{V}$ ($125\text{ }\mu\text{V/LSB}$). The differential voltage sensing divider uses a precision 1:25 ratio ($240\text{ k}\Omega / 10\text{ k}\Omega$, two $120\text{ k}\Omega$ 0.1% 200V 1206 resistors in series $R15+R19$ in upper arm + $10\text{ k}\Omega$ 0.1% 0805 $R16$ in lower arm, filtered by $100\text{ nF}$ $C9$) yielding exact integer micro-scaling ($1\text{ LSB} = 3.125\text{ mV}$) and full-scale input up to $60\text{V}$ ($2.4\text{V}$ at ADC differential inputs $AIN2-AIN3$ at $60\text{V}$)[cite: 4].
 - **Hardware Bypass (Safety):** The `ADC_ALERT_PIN` triggers a hardware interrupt (GPIO 47) to instantly zero the PWM duty cycle via LEDC registers during over-current or over-voltage events[cite: 4].
 - **Thermal Management & Fan Control:** Dedicated LEDC timers: `LEDC_TIMER_0` (19531 Hz, 12-bit) dedicated to 4 power load channels (`LEDC_CHANNEL_0..3`), and `LEDC_TIMER_1` (30 Hz, 12-bit) dedicated to 4 cooling fan channels (`LEDC_CHANNEL_4..7`) for 3-wire BLDC fans (Sanyo Denki San Ace 109X) switched via Low-Side N-MOSFETs with freewheeling clamp diodes.
 
@@ -56,12 +56,12 @@ At high currents (e.g., $1\text{ A}$ to $30\text{ A}$), even low wire resistance
 
 Our instrument employs a **true 4-wire Kelvin connection topology**:
 1. **Force Pair ($F+, F-$):** Dedicated heavy-gauge copper leads carry the entire discharge current ($I_{load} \le 30\text{ A}$) to the MOSFET power stage and precision manganese-copper shunt ($5\text{ m}\Omega$).
-2. **Sense Pair ($S+, S-$):** Independent, shielded sense lines connect directly to the battery terminal lugs and route to the ADS1115 differential instrumentation ADC inputs ($AIN2 - AIN3$) via a high-impedance voltage divider ($205\text{ k}\Omega / 10\text{ k}\Omega$, total input impedance $R_{in} \approx 215\text{ k}\Omega$).
+2. **Sense Pair ($S+, S-$):** Independent, shielded sense lines connect directly to the battery terminal lugs and route to the ADS1115 differential instrumentation ADC inputs ($AIN2 - AIN3$) via a high-impedance precision voltage divider ($240\text{ k}\Omega / 10\text{ k}\Omega$, implemented with two $120\text{ k}\Omega$ 0.1% 200V 1206 resistors in series $R15 + R19$ in the upper arm and $10\text{ k}\Omega$ 0.1% 0805 $R16$ in the lower arm, total input impedance $R_{in} = 250\text{ k}\Omega$, scaling factor $K_{div} = 25.000$).
 3. **Kirchhoff's Current Law ($KCL$) Verification:** The leakage current $I_{sense}$ entering the measurement circuit is minuscule:
-   $$I_{sense} = \frac{V_{cell}}{R_{in}} = \frac{4.2\text{ V}}{215\text{ k}\Omega} \approx 19.5\text{ }\mu\text{A}$$
+   $$I_{sense} = \frac{V_{cell}}{R_{in}} = \frac{4.2\text{ V}}{250\text{ k}\Omega} = 16.8\text{ }\mu\text{A}$$
    The parasitic voltage drop across the sense leads ($R_{sense} \approx 50\text{ m}\Omega$) is mathematically negligible:
-   $$\Delta V_{error} = I_{sense} \cdot R_{sense} = 19.5\text{ }\mu\text{A} \cdot 0.05\text{ }\Omega \approx 0.976\text{ }\mu\text{V} < 1\text{ LSB}$$
-   (Where $1\text{ LSB} = 125\text{ }\mu\text{V} \times 21.5 \approx 2.68\text{ mV}$).
+   $$\Delta V_{error} = I_{sense} \cdot R_{sense} = 16.8\text{ }\mu\text{A} \cdot 0.05\text{ }\Omega \approx 0.84\text{ }\mu\text{V} \ll 1\text{ LSB}$$
+   (Where with ADS1115 PGA $\pm 4.096\text{ V}$, $1\text{ LSB} = 125\text{ }\mu\text{V} \times 25 = 3125\text{ }\mu\text{V} = 3.125\text{ mV}$, enabling exact integer math `raw_voltage_uv = (uint64_t)raw_adc * 3125ULL` up to $60\text{V}$ input range).
 4. **Complete Elimination of Wire Calibration:** In differential two-tier DCIR pulse evaluation ($I_1 \to I_2$):
    $$R_{DCIR} = \frac{V_1(I_1) - V_2(I_2)}{I_2 - I_1} = \frac{(V_{cell1} - I_{sense1} R_{sense}) - (V_{cell2} - I_{sense2} R_{sense})}{I_2 - I_1} \equiv \frac{\Delta V_{cell}}{\Delta I}$$
    Because the high-current path drop $\Delta V_{wire} = \Delta I_{load} \cdot R_{wire}$ never enters the sense loop, wire resistance cancels out completely. Manual probe zeroing (`Probe Tare` / `Nulling`) is **physically unnecessary** and thus set to $R_{wire} = 0\text{ m}\Omega$.

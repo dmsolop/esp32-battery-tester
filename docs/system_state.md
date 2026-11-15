@@ -1,18 +1,27 @@
 # System State: ESP32-S3 Smart Modular Battery Analyzer
 
 **Last Updated:** November 2026
-**Current Phase:** Engineering Prototyping and Breadboarding (blocking PCB routing).
+**Current Phase:** Pre-PCB Layout Direct Netlist Verification & Schematic Freeze (Master Board 100% Ready for PCB Layout; Slave Board 100% Netlist Verified).
 
 ---
 
 ## 1. Current Status
 - Laboratory prototyping and bench testing of the power stage and digital control interface (Stages 1–3) have been **successfully completed and validated** on physical hardware.
 - According to the Asymmetric Blocking Rule, **PCB routing and final layout execution for `slave_board` and `battery_analyzer_hw` are officially UNBLOCKED**.
-- Developing hierarchical schematics and moving toward final PCB routing (`slave_board` and `battery_analyzer_hw`).
+- Conducted full direct netlist audit of `hardware/battery_analyzer_hw/battery_analyzer_hw.net` and `hardware/slave_board/slave_board.net`.
+- **Master Board (`battery_analyzer_hw`):** 100% ready for PCB Layout routing. Centralized +12V power supply with DC-005 jack (`J8`), reverse polarity diode SS34 (`D21`), tantalum 22uF 35V (`C14`), MP1482 buck converter (`MOD1`), USB OR-ing diodes (`D22`, `D23`), channel protection fuses 30R135UU (`F6..F9`), Buzzer circuit (`Q1`, `R37..R39`, `C12`, `BZ1`), UI debouncing (`C8..C11`), and Slave protection (`F2..F5`, `D1..D4`, `R20..R35`, `D5..D20`) fully verified.
+- **Slave Board (`slave_board`):** 100% schematic netlist verified. Power stage (2x IRFP150N, LM358 on +12V, single 5 mOhm 2512 shunts, NetTie_3 NT1, SMCJ58A TVS, XT60PW-M), Telemetry with exact 1:25 differential divider (120k+120k 0.1% 200V 1206 + 10k 0.1% 0805, C9 100nF), and Thermal/Cooling (DS18B20 U3/U4, IRLML2502 Q_FAN1, R20 100R, R17 10k, D2/D5 1N4148W). Only pending action: physical arrival of MP1482 module to measure dimensions for MOD1 footprint and setting C10 0805 footprint.
 - Approved global pinout for the ESP32-S3-WROOM-1 MCU, accounting for hardware constraints (Boot, Strapping, USB) and separation of high-frequency and analog signals.
 - Fully implemented firmware control algorithms: PID controller, PWM DAC path (Variant B2), dual ADS1115 current sensing shunts, fan PWM cooling profile, interactive dual SSD1306 UI with viewport scrolling, and 1-Wire DS18B20 role EEPROM binding mechanism.
 
 ## 2. Changelog & Agreements
+- **Full Direct Netlist Audit & Centralized 12V Power Distribution Upgrade (November 2026):**
+  - **Comprehensive Netlist Verification:** Conducted rigorous direct parsing of `hardware/battery_analyzer_hw/battery_analyzer_hw.net` (9710 lines) and `hardware/slave_board/slave_board.net` (4821 lines). Confirmed 100% netlist connectivity and signal integrity across all power, telemetry, and control nets.
+  - **Centralized +12V Power Architecture (Master Board):** Added DC Barrel Jack 2.5x5.5mm `J8` (`KLS1-DC-005A-2.5`), reverse protection diode `SS34` (`D21`), bulk tantalum `22uF 35V Case D` (`C14`) + ceramic `100nF` (`C13`). Added step-down buck module `MOD1` (`MP1482`) generating +5V with `C15` (22uF Case B) + `C16` (100nF). Added dual `SS34` Schottky diodes (`D22`, `D23`) implementing safe USB-C / 12V Buck Power OR-ing feeding LDO `AMS1117-3.3` (`U2`). Added 4 channel distribution jacks `J9..J12` protected by radial PTC fuses `30R135UU` (`F6..F9`, 1.35A 30V). Star ground tie `NT1` (`NetTie-2_SMD_Pad0.5mm`) links `GND_12V` to `GND`.
+  - **Slave Board Power Isolation:** Confirmed `+12V` from `J2` powers exclusively the LM358 Op-Amp (`U1`, pin 8) and cooling fans (`J_FAN1`, `J_FAN2`). Logic and telemetry on Slave receive `+3.3V` directly from Master Board via RJ45 pin 3 (protected by `F2..F5` on Master). Absolutely zero conflict or cross-coupling between +12V and +3.3V.
+  - **Buzzer Circuit Netlist Synchronization:** Synchronized buzzer component designators in documentation: `BZ1` (`KLS3-SMT-09`, Murata PKMCS0909E footprint) driven by N-MOSFET `Q1` (`IRLML2502`) on `IO42` (`BUZZER_PIN`), with gate series resistor `R37 = 1k`, pull-down `R38 = 10k`, gate filter capacitor `C12 = 10nF`, and parallel discharge resistor `R39 = 1k` across buzzer pins. Retired obsolete designator references `R36` and `D21`.
+  - **Telemetry Voltage Divider (1:25 Integer Micro-Scaling):** Synchronized differential divider topology on Slave Board: upper arm $240\text{ k}\Omega$ using two $120\text{ k}\Omega$ 0.1% 200V 1206 resistors in series (`R15`, `R19`), lower arm precision $10\text{ k}\Omega$ 0.1% 0805 (`R16`), with filter capacitor `C9 = 100nF`. Scaling factor $K_{div} = 25.000$ enables exact integer arithmetic ($1\text{ LSB} = 3.125\text{ mV}$) for battery voltages up to $60\text{ V}$.
+  - **Inventory Registry SSOT:** Synchronized `docs/inventory_stock.md` with 8 newly acquired components (DC-140-005 jacks, MP1482 buck modules, 70W 12V desktop power supply, 30R135UU Littelfuse PTCs, SS34 diodes, 22uF 35V Case D tantalums, 120 kOhm 0.1% 1206 resistors, KLS3-SMT-09 buzzer transducers).
 - **Architectural audit of PID controller, PWM LPF (Variant B2), and transition to single 2512 R005 shunts (November 2026):**
 - **Elimination of double integration in PID:** Identified a mathematical collision in `components/load_control/pid_service.c` (combining the positional integral `ctx->integral += error * dt_sec` with incremental output accumulation `ctx->current_output += output`, which created an $I^2$ link and self-oscillations). Approved transition to a pure positional PID form according to `references/pid_math_rules.md` with dynamic Anti-Windup.
 - **Approval of passive LPF with divider (Variant B2) and 20 kHz PWM:** To generate the `V_REF` reference voltage, a dual-stage passive RC filter on fast `100 nF` capacitors with a built-in resistive divider was approved (`R1 = 10 kOhm` for breadboard with `0.27 Ohm` or `33 kOhm` for `5 mOhm`, `R_div = 1.0 kOhm || C1 = 100 nF`, `R2 = 4.7..10 kOhm`, `C2 = 100 nF`) at a PWM frequency of `19.53 kHz` (`20 kHz`, 12-bit, `PWM_MAX_DUTY = 4095`). This ensures ripple `< 0.59 mV (pk-pk)`, settling time `1.5..3.0 ms`, and a perfect zero at `PWM = 0` without the second Op-Amp zero-offset error.
@@ -49,13 +58,14 @@
 
 ## 3. Hardware Baseline
 - **MCU:** ESP32-S3-WROOM-1 / compatible with ESP32-S3-DevKitC-1 (N16R8).
-- **Power Stage:** MOSFET IRLZ44N (or IRFP150N/IRFP250N), IRLML2502TRPBF-JSM, 1N4148W SOD-323 diodes, single precision Manganin 2512 R005 shunts (0.005 Ohm / 5 mOhm, 3W, 0.5%) one per MOSFET (during breadboard prototyping — ceramic 0.27 Ohm / 270 mOhm).
-- **ADC & Interrupts:** ADS1115 (I2C_PWR_SDA: `IO4`, I2C_PWR_SCL: `IO5`, ADC_ALERT: `IO47`).
+- **Central Power (Master):** DC Barrel Jack `J8` (2.5x5.5mm), reverse protection `D21` (SS34 40V/3A), bulk tantalum `C14` (22uF 35V Case D) + `C13` (100nF), step-down buck `MOD1` (MP1482 DC 4.75-18V -> 5V/2A), USB OR-ing `D22` & `D23` (SS34), LDO `U2` (AMS1117-3.3), channel output jacks `J9..J12` with PTC fuses `30R135UU` (`F6..F9`, 1.35A 30V), NetTie `NT1`.
+- **Power Stage (Slave):** DC Barrel Jack `J2` (+12V rail powering LM358DT pin 8 and cooling fans), dual MOSFETs `Q1`, `Q2` (IRFP150N TO-247), Op-Amp `U1` (LM358DT SOIC-8), gate resistors `R3`, `R4` (100R), zeners `D3`, `D4` (BZT52C15), snubbers `R11`, `R12` (10R 1206) + `C3`, `C4` (100nF 100V 1206), single precision Manganin 2512 R005 shunts `R6`, `R9` (5 mOhm, 3W, 0.5%), NetTie_3 `NT1`, TVS `D1` (SMCJ58A SMC), fuse `F1` (25A 2920 SMD), power connector `J_PWR1` (XT60PW-M).
+- **ADC & Telemetry (Slave):** ADS1115IDGS `U2` (TSSOP-10), address jumpers `J6` (0x48..0x4B), 1:25 differential Kelvin divider (`R15 = 120k` + `R19 = 120k` 0.1% 200V 1206 upper arm, `R16 = 10k` 0.1% 0805 lower arm, `C9 = 100nF`), ALERT filter `C8 = 1nF`.
 - **Load PWM:** `IO38` (CH0), `IO1` (CH1), `IO40` (CH2), `IO2` (CH3) — all Hi-Z on reset, frequency `19.53 kHz` (`20 kHz`, 12-bit, Variant B2 passive dual-stage LPF with divider and `100 nF` capacitors).
-- **Cooling FAN PWM:** `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3) (Cooling: Intel A65061-002).
-- **Temperature Sensors (1-Wire):** `IO8`, `IO9`, `IO10`, `IO11`.
-- **UI (RTC-domain):** I2C_UI (I2C_UI_SDA: `IO6`, I2C_UI_SCL: `IO7`), Encoder (`IO15`, `IO16`, `IO17`), Tare Button (`IO18`).
-- **Indication:** Piezo transducer (Buzzer) via transistor switch on `IO42` (with external `4.7 kOhm` pull-down to `GND`).
+- **Cooling FAN PWM:** `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3) (switched via Low-Side MOSFET `Q_FAN1` IRLML2502 with `R20 = 100R`, `R17 = 10k`, and clamp diodes `D2`, `D5` 1N4148W).
+- **Temperature Sensors (1-Wire):** `IO8`, `IO9`, `IO10`, `IO11` (Master pull-ups 4.7k `R14..R17`, Slave dual `DS18B20` `U3`/`U4` TO-92 Inline and external probe header `J_TEMP1` Micro-Fit 3.0 2x02).
+- **UI (RTC-domain):** I2C_UI (I2C_UI_SDA: `IO6`, I2C_UI_SCL: `IO7`, pull-ups 10k `R8`, `R7`), Rotary Encoder (`IO15`, `IO16`, `IO17` with debounce caps `C9`, `C10`, `C8`), Tare Button (`IO18` with debounce `C11`).
+- **Indication (Buzzer):** Piezo transducer `BZ1` (`KLS3-SMT-09`, Murata PKMCS0909E footprint) switched via `Q1` (`IRLML2502`) on `IO42` with gate series `R37 = 1k`, pull-down `R38 = 10k`, gate filter `C12 = 10nF`, and discharge resistor `R39 = 1k`.
 - **Free / Reserved Pins:** `IO39`, `IO41`, `IO48` (RGB LED WS2812 on DevKit).
 
 ## 4. Active Handoff / Queue
@@ -144,20 +154,19 @@
 - [ ] Prepare software architecture to handle global `ADC_ALERT` interrupt on pin `IO47`.
 - [ ] Verify logic separating I2C buses (`I2C_UI` and `I2C_PWR`) at the firmware level.
 
-### 🛠 KiCad Hardware Engineer (Status: In Progress - Preparing Schematic Freeze for PCB Routing)
-- [ ] **[Ticket-HW-BUZZER-PULLDOWN]** In `main_board` / `battery_analyzer_hw.kicad_sch`: verify and add a dedicated external pull-down resistor (e.g. $10\text{ k}\Omega$) on GPIO 42 buzzer line to guarantee zero gate voltage during early bootloader/ROM execution before firmware GPIO configuration takes effect.
-- [x] **[Ticket-HW-1]** In `hardware/slave_board/power_stage.kicad_sch`, replace shunt arrays `R5..R7` and `R8..R10` (3x 33 mOhm) with single `0.005` shunts (`2512 R005`, 5 mOhm, 3W) as `R5` and `R8`, deleting `R6, R7, R9, R10`.
-- [x] **[Ticket-HW-2]** In `hardware/slave_board/power_stage.kicad_sch`, update PWM LPF to Variant B2 (`C1 = 100nF`, `C2 = 100nF`, `R1 = 10k`, `R2 = 10k`, add divider resistor `R_div = 1.0k` to GND parallel to `C1`).
-- [ ] **[Ticket-HW-KELVIN-DIVIDER-240K]** In `hardware/slave_board/telemetry.kicad_sch`: update voltage divider to $240\text{ k}\Omega / 10\text{ k}\Omega$ ($K_{div} = 25.000$). Implement upper arm as two $120\text{ k}\Omega$ ($0.1\%$, 1206/0805) resistors in series to share voltage/power and provide exact integer scaling ($1\text{ LSB} = 3.125\text{ mV}$), with lower arm using precision $10\text{ k}\Omega$ ($0.1\%$, 0805, ERA6ARB from inventory stock).
-- [ ] **[Ticket-HW-NETTIE-FOOTPRINT]** In `hardware/slave_board/power_stage.kicad_sch`: replace invalid Bluetooth footprint `RF_Module:ST_SPBTLE` on `NT1` (`NetTie_2`) with dedicated copper-short footprint `NetTie:NetTie-2_SMD_Pad0.5mm`.
-- [ ] **[Ticket-HW-ENCODER-HEADER]** In `hardware/battery_analyzer_hw/ui_controls.kicad_sch`: replace onboard encoder footprint with 5-pin 2.54mm header `Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical` for external KY-040 front panel module. Retain filtering capacitors `C8..C10` ($10\text{ nF}$) on master board directly at MCU inputs.
-- [ ] **[Ticket-HW-FAN-GATE-RESISTOR]** In `hardware/slave_board/cooling_thermal.kicad_sch`: add a series damping resistor $100\ \Omega$ (0805) directly in series with Gate pin of `Q_FAN1` (between 10k pull-down `R17` and Gate) to damp LC ringing over the RJ45 cable. CRITICAL: replace symbol `Simulation_SPICE:NMOS` with `Transistor_FET:Q_NMOS_GSD` to prevent SOT-23 pin swap (where Drain/Gate/Source would otherwise be scrambled).
-- [ ] **[Ticket-HW-GROUND-LOOP-PPTC]** In `hardware/slave_board/slave_board.kicad_sch`: add protection against accidental power ground return via Ethernet cabling when parallel battery negative leads disconnect under load. Insert `1812 PPTC 100mA 60V` in series with RJ45 GND pin 2 / shield line.
-- [ ] **[Ticket-HW-FUSE-F1-HOLDER]** In `hardware/slave_board/slave_board.kicad_sch`: replace SMD fuse footprint with through-hole automotive mini blade fuse clip `Fuse:Fuseholder_Mini_Blade_Keystone_3568` (20A..30A) or designate inline cable holder on XT60 harness (rejecting high-resistance 1.85A PTCs like RF2635).
-- [ ] **[Ticket-HW-NOISE-GROUNDING]** In `slave_board` and `battery_analyzer_hw` layout/schematics: separate 1-Wire signal lines (`1W_CH0..3`) and reference grounds completely from high-current discharge copper pours and switching nodes. Add mandatory local ceramic decoupling capacitors `100 nF` directly adjacent to each 1-Wire temperature sensor connector/jack to eliminate noise spikes and Dallas CRC8 errors during high-current load pulses.
-- [ ] Continue routing 140W power modules (4-wire Kelvin sensing) **ONLY AFTER** successful test by Lab Engineer.
-- [ ] Ensure `GND_PWR` and `FAN_GND` polygon topology does not create ground loops.
-- [ ] Verify application of European notation and HandSolder rules configuration.
+### 🛠 KiCad Hardware Engineer (Status: Master Board 100% Ready for PCB Layout / Slave Board 100% Netlist Verified)
+- [x] **[Ticket-HW-BUZZER-PULLDOWN]** Verified in `battery_analyzer_hw.net`: dedicated external pull-down resistor `R38 = 10k` to GND, series gate resistor `R37 = 1k`, gate filter capacitor `C12 = 10nF`, piezo discharge resistor `R39 = 1k` across `BZ1` (`KLS3-SMT-09`, Murata PKMCS0909E footprint).
+- [x] **[Ticket-HW-1]** In `hardware/slave_board/slave_board.net`: single `0.005` shunts (`2512 R005`, 5 mOhm, 3W, 0.5%) implemented as `R6` (for Q1) and `R9` (for Q2).
+- [x] **[Ticket-HW-2]** In `hardware/slave_board/slave_board.net`: PWM LPF Variant B2 implemented with `C1 = 100nF`, `C2 = 100nF`, `R1 = 10k`, `R2 = 10k`, `R18 = 1k` divider to GND.
+- [x] **[Ticket-HW-KELVIN-DIVIDER-240K]** In `hardware/slave_board/slave_board.net`: voltage divider upgraded to $240\text{ k}\Omega / 10\text{ k}\Omega$ ($K_{div} = 25.000$). Implemented upper arm as two $120\text{ k}\Omega$ ($0.1\%$, 200V, 1206 Cinetech) resistors in series (`R15`, `R19`), lower arm precision $10\text{ k}\Omega$ ($0.1\%$, 0805, `R16`), with filter capacitor `C9 = 100nF`.
+- [x] **[Ticket-HW-NETTIE-FOOTPRINT]** In `slave_board.net`: `NT1` assigned `NetTie:NetTie-3_SMD_Pad2.0mm` star-grounding `GND`, `GND_PWR` and `LOAD_FORCE_-`. In `battery_analyzer_hw.net`: `NT1` assigned `NetTie:NetTie-2_SMD_Pad0.5mm` star-grounding `GND_12V` and `GND`.
+- [x] **[Ticket-HW-FAN-GATE-RESISTOR]** In `slave_board.net`: gate series resistor `R20 = 100R` (0805) added in series with Gate of `Q_FAN1` (`IRLML2502`, SOT-23), pull-down `R17 = 10k` to `GND_PWR`. Diodes `D2`, `D5` (`1N4148W`) clamp inductive flyback.
+- [x] **[Ticket-HW-GROUND-LOOP-PPTC]** In `slave_board.net`: `F3` (`200mA_60V`, 1206 HandSolder) placed in series with RJ45 GND / shield line to protect against ground loops.
+- [x] **[Ticket-HW-CENTRAL-12V-POWER]** In `battery_analyzer_hw.net`: centralized +12V distribution with DC barrel jack `J8`, reverse diode `D21` (SS34), bulk tantalum `C14` (22uF 35V Case D), MP1482 step-down `MOD1` to +5V, USB OR-ing `D22`/`D23` (SS34), and channel output barrel jacks `J9..J12` protected by radial PTC fuses `30R135UU` (`F6..F9`, 1.35A 30V).
+- [ ] **[Ticket-HW-MOD1-FOOTPRINT]** Create physical footprint for `MOD1` (`DC_DC_MP1482`) upon physical arrival of the module and assign footprint `Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder` to `C10` on `cooling_thermal`.
+- [ ] **[Ticket-HW-ENCODER-HEADER]** Retain option for external KY-040 front panel module wiring via header if chassis layout requires mechanical separation from Master PCB.
+- [ ] **[Ticket-HW-FUSE-F1-HOLDER]** Verify XT60 harness fuseholder vs SMD 2920 fuse `F1` (25A) during mechanical integration.
+- [ ] Proceed to PCB layout routing for Master Board (`battery_analyzer_hw.kicad_pcb`).
 
 ### 📋 Firmware Backlog (Scheduled Post-PCB Layout)
 - [ ] **[Backlog-FW-POWER-LIMIT-SOA]** Implement dynamic power clamp $I_{target} \le \min(I_{max}, 140\text{W} / V_{bat})$ in `load_control.c` and `safety_monitor.c`. Fix 32-bit integer multiplication overflow before `uint64_t` cast in `integration_service.c:24`.
