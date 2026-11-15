@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-15T04:00:04")
+		(date "2026-11-15T16:24:12")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -1041,20 +1041,20 @@
 		(comp
 			(ref "MOD1")
 			(value "MP1482_Buck_Regulator")
-			(datasheet "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP1482/document_id/344/?srsltid=AYCX9vJXUG-QZ9sJMB0PQD6jrJmGmKjhhTj0HEwlTQnPbQFM31BPcuZ8")
+			(footprint "My_Custom_Library:DC_DC_MP1482_18x12mm_SMD")
+			(datasheet "https://xpart.org/mini-powerhouse-a-complete-guide-to-using-the-mini-360-dc-dc-buck-non-isolated-converter-step-down-module/")
 			(description "4.75-18V In, 0.9-15V Out, 2A Non-Isolated Buck Regulator, -40 to +125°C")
 			(fields
 				(field
-					(name "Footprint")
-				)
+					(name "Footprint") "My_Custom_Library:DC_DC_MP1482_18x12mm_SMD")
 				(field
-					(name "Datasheet") "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP1482/document_id/344/?srsltid=AYCX9vJXUG-QZ9sJMB0PQD6jrJmGmKjhhTj0HEwlTQnPbQFM31BPcuZ8")
+					(name "Datasheet") "https://xpart.org/mini-powerhouse-a-complete-guide-to-using-the-mini-360-dc-dc-buck-non-isolated-converter-step-down-module/")
 				(field
 					(name "Description") "4.75-18V In, 0.9-15V Out, 2A Non-Isolated Buck Regulator, -40 to +125°C")
 			)
 			(libsource
 				(lib "My_Custom_Library")
-				(part "DC_DC_MP1482")
+				(part "DC-DC_MP1482")
 				(description "4.75-18V In, 0.9-15V Out, 2A Non-Isolated Buck Regulator, -40 to +125°C")
 			)
 			(property
@@ -1069,7 +1069,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "addebc51-144b-4de7-a481-0460957fb45a")
+			(tstamps "58ce852d-cca0-4571-8c6e-c6f8d0e21159")
 			(units
 				(unit
 					(name "A")
@@ -7011,19 +7011,18 @@
 		)
 		(libpart
 			(lib "My_Custom_Library")
-			(part "DC_DC_MP1482")
+			(part "DC-DC_MP1482")
 			(description "4.75-18V In, 0.9-15V Out, 2A Non-Isolated Buck Regulator, -40 to +125°C")
-			(docs "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP1482/document_id/344/?srsltid=AYCX9vJXUG-QZ9sJMB0PQD6jrJmGmKjhhTj0HEwlTQnPbQFM31BPcuZ8")
+			(docs "https://xpart.org/mini-powerhouse-a-complete-guide-to-using-the-mini-360-dc-dc-buck-non-isolated-converter-step-down-module/")
 			(fields
 				(field
 					(name "Reference") "MOD")
 				(field
 					(name "Value") "MP1482_Buck_Regulator")
 				(field
-					(name "Footprint")
-				)
+					(name "Footprint") "My_Custom_Library:DC_DC_MP1482_18x12mm_SMD")
 				(field
-					(name "Datasheet") "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP1482/document_id/344/?srsltid=AYCX9vJXUG-QZ9sJMB0PQD6jrJmGmKjhhTj0HEwlTQnPbQFM31BPcuZ8")
+					(name "Datasheet") "https://xpart.org/mini-powerhouse-a-complete-guide-to-using-the-mini-360-dc-dc-buck-non-isolated-converter-step-down-module/")
 				(field
 					(name "Description") "4.75-18V In, 0.9-15V Out, 2A Non-Isolated Buck Regulator, -40 to +125°C")
 			)

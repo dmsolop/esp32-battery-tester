@@ -2,7 +2,7 @@
 	(version 20251024)
 	(generator "kicad_symbol_editor")
 	(generator_version "10.0")
-	(symbol "DC_DC_MP1482"
+	(symbol "DC-DC_MP1482"
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -29,7 +29,7 @@
 				(justify top)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "My_Custom_Library:DC_DC_MP1482_18x12mm_SMD"
 			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -40,7 +40,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MP1482/document_id/344/?srsltid=AYCX9vJXUG-QZ9sJMB0PQD6jrJmGmKjhhTj0HEwlTQnPbQFM31BPcuZ8"
+		(property "Datasheet" "https://xpart.org/mini-powerhouse-a-complete-guide-to-using-the-mini-360-dc-dc-buck-non-isolated-converter-step-down-module/"
 			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -62,10 +62,10 @@
 				)
 			)
 		)
-		(symbol "DC_DC_MP1482_1_1"
+		(symbol "DC-DC_MP1482_1_1"
 			(rectangle
-				(start -10.16 6.35)
-				(end 10.16 -6.35)
+				(start -9 6)
+				(end 9 -6)
 				(stroke
 					(width 0)
 					(type solid)
@@ -75,8 +75,8 @@
 				)
 			)
 			(pin power_in line
-				(at -12.7 -5.08 0)
-				(length 2.54)
+				(at -11.43 -3.81 0)
+				(length 2.5)
 				(name "IN+"
 					(effects
 						(font
@@ -93,8 +93,8 @@
 				)
 			)
 			(pin power_in line
-				(at -12.7 5.08 0)
-				(length 2.54)
+				(at -11.43 3.81 0)
+				(length 2.5)
 				(name "IN-"
 					(effects
 						(font
@@ -111,8 +111,8 @@
 				)
 			)
 			(pin power_in line
-				(at 12.7 5.08 180)
-				(length 2.54)
+				(at 11.43 3.81 180)
+				(length 2.5)
 				(name "OUT-"
 					(effects
 						(font
@@ -129,8 +129,8 @@
 				)
 			)
 			(pin power_out line
-				(at 12.7 -5.08 180)
-				(length 2.54)
+				(at 11.43 -3.81 180)
+				(length 2.5)
 				(name "OUT+"
 					(effects
 						(font
