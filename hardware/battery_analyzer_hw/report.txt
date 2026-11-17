@@ -1,0 +1,12 @@
+Інформація: X масштабування обмежено.
+Інформація: Y масштабування обмежено.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-F_Cu.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-B_Cu.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-F_Paste.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-B_Paste.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-F_Silkscreen.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-B_Silkscreen.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-F_Mask.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-B_Mask.pdf'.
+Накреслено в '/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw-Edge_Cuts.pdf'.
+Інформація: Виконано.
