@@ -34,6 +34,45 @@
 		(45 "User.4" user)
 	)
 	(setup
+		(stackup
+			(layer "F.SilkS"
+				(type "Top Silk Screen")
+			)
+			(layer "F.Paste"
+				(type "Top Solder Paste")
+			)
+			(layer "F.Mask"
+				(type "Top Solder Mask")
+				(thickness 0.01)
+			)
+			(layer "F.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(layer "dielectric 1"
+				(type "core")
+				(thickness 1.51)
+				(material "FR4")
+				(epsilon_r 4.5)
+				(loss_tangent 0.02)
+			)
+			(layer "B.Cu"
+				(type "copper")
+				(thickness 0.035)
+			)
+			(layer "B.Mask"
+				(type "Bottom Solder Mask")
+				(thickness 0.01)
+			)
+			(layer "B.Paste"
+				(type "Bottom Solder Paste")
+			)
+			(layer "B.SilkS"
+				(type "Bottom Silk Screen")
+			)
+			(copper_finish "None")
+			(dielectric_constraints no)
+		)
 		(pad_to_mask_clearance 0)
 		(allow_soldermask_bridges_in_footprints no)
 		(tenting
@@ -50,6 +89,7 @@
 		)
 		(capping no)
 		(filling no)
+		(zone_defaults)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
@@ -4185,7 +4225,7 @@
 		(property "Reference" "J6"
 			(at 3.61 9.16 0)
 			(layer "F.SilkS")
-			(uuid "0a8f0d30-68f8-46d7-b74a-4ba63c91998c")
+			(uuid "cbb78005-62be-483e-921d-b80e7a7d702e")
 			(effects
 				(font
 					(size 1 1)
@@ -4196,7 +4236,7 @@
 		(property "Value" "CH2"
 			(at 5.175 11.2 0)
 			(layer "F.Fab")
-			(uuid "b950f567-0f02-4f7d-ae3e-19d77deb4aaf")
+			(uuid "76ce56be-eaa7-4df1-84d5-e0ade1efed18")
 			(effects
 				(font
 					(size 1 1)
@@ -4209,7 +4249,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "c7e60c5b-a49b-45fa-9cbe-ec5d747e7185")
+			(uuid "06c13e85-7bbe-42b5-bba0-fe37ab8cdafb")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4222,7 +4262,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "edac0187-e959-4fd0-830b-084f6b095349")
+			(uuid "c9775ce1-90eb-452f-9887-e9e37825b824")
 			(effects
 				(font
 					(size 1.27 1.27)

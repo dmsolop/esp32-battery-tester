@@ -237,6 +237,9 @@
 				"import_pcb",
 				"validate_schematic",
 				"validate_symbol_library"
+			],
+			"alwaysAllow": [
+				"get_pads"
 			]
 		}
 	}
