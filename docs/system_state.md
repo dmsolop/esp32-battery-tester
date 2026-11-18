@@ -15,6 +15,10 @@
 - Fully implemented firmware control algorithms: PID controller, PWM DAC path (Variant B2), dual ADS1115 current sensing shunts, fan PWM cooling profile, interactive dual SSD1306 UI with viewport scrolling, and 1-Wire DS18B20 role EEPROM binding mechanism.
 
 ## 2. Changelog & Agreements
+- **Master Board Central Power & Grounding Refactoring (November 2026):**
+  - **DC Jack Pins 2 & 3 Unified:** Mechanically and electrically tied pin 2 (sleeve shunt/switch) and pin 3 (sleeve) across DC Jack connectors `J8..J13` (`KLS1-DC-005A-2.5`) to eliminate floating contacts and bolster mechanical solder retention against cable strain.
+  - **MOD1 Buck Ground Topology:** Assigned pin 3 (`OUT-`) of `MOD1` (Mini-360 / MP1482 buck regulator) to the heavy power ground `GND_12V`, keeping the switching loop entirely within the power ground domain.
+  - **Star Ground Tie (NT1) Relocation:** Shifted `NT1` (`NetTie-2_SMD_c0.5mm`) to immediately follow `MOD1` before filter capacitor `C15` to connect `GND_12V` to clean system logic `GND`, preventing high-frequency buck return currents from polluting the analog/digital ground plane. Synchronized with PCB via `F8`.
 - **Custom SMD Footprint Creation for MOD1 & Pcbnew Revision Synchronization (November 2026):**
   - **Custom Footprint `DC_DC_MP1482_18x12mm_SMD`:** Created custom SMD footprint in project-local library `My_Custom_Library` for `MOD1` (`MP1482_Buck_Regulator`, Mini-360 module, 18x12 mm). Implemented 4 corner castellated/cut solder pads ($2.05 \times 2.05\text{ mm}$ roundrect, $r = 0.15$) placed at $(-8, 5)$, $(-8, -5)$, $(8, -5)$, and $(8, 5)$.
   - **High-Voltage / Power Plane Clearances:** Configured dedicated $0.6\text{ mm}$ electrical clearance on pin 1 (`IN+`, $+12\text{V}$) and pin 4 (`OUT+`, $+5\text{V\_BUCK}$) to prevent flashover and maintain IPC-2221 insulation against surrounding ground/copper pours. Pins 2 (`IN-`, `GND_12V`) and 3 (`OUT-`, `GND`) are tied to their respective grounds.
