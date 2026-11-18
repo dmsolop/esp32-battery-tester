@@ -2919,11 +2919,11 @@
 	(footprint "Fuse:Fuse_Bourns_MF-RHT100"
 		(layer "F.Cu")
 		(uuid "19674be8-5d37-4564-b173-d113512f9659")
-		(at 122 60.5 90)
+		(at 123.55 53.35 180)
 		(descr "PTC Resettable Fuse, Ihold = 1.0A, Itrip=1.8A, http://www.bourns.com/docs/product-datasheets/mfrht.pdf")
 		(tags "ptc resettable fuse polyfuse THT")
 		(property "Reference" "F8"
-			(at -3.5 0.6 180)
+			(at -3.5 0.6 90)
 			(layer "F.SilkS")
 			(uuid "498bafe0-0065-49d9-9685-ad3d32ba7276")
 			(effects
@@ -2934,7 +2934,7 @@
 			)
 		)
 		(property "Value" "1.35A_30V"
-			(at 2.55 3.1 90)
+			(at 2.55 3.1 0)
 			(layer "F.Fab")
 			(uuid "c93387ef-7eed-4c45-9e91-cf964f9e5f1f")
 			(effects
@@ -2945,7 +2945,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "fcc9f613-f3f4-4388-a404-2253e393fdbc")
@@ -2956,7 +2956,7 @@
 			)
 		)
 		(property "Description" "PTC Resettable Fuse 30R135UU Littelfuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "9c29cfb6-11d1-485f-a1f2-31f01efff53a")
@@ -2967,7 +2967,7 @@
 			)
 		)
 		(property "KiLib_Generator" "fuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "98795083-676c-44ce-a50f-451a8dd4f7fe")
@@ -2991,36 +2991,6 @@
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start 7.5 -1)
-			(end 7.5 2.2)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "aad71071-7dc5-4de2-b341-becf89de08c4")
-		)
-		(fp_line
-			(start 0.578 -1)
-			(end 7.5 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "0da743f5-e6b7-4ff9-a589-d6d148e5be8f")
-		)
-		(fp_line
-			(start -2.4 -1)
-			(end -0.578 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "25f61cf1-5fcc-4d6c-a29d-4d08ef16781c")
-		)
-		(fp_line
 			(start 7.5 2.2)
 			(end 5.678 2.2)
 			(stroke
@@ -3029,6 +2999,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "241bd3e3-4b2d-4e85-a5aa-2f92e7c52ae5")
+		)
+		(fp_line
+			(start 7.5 -1)
+			(end 7.5 2.2)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "aad71071-7dc5-4de2-b341-becf89de08c4")
 		)
 		(fp_line
 			(start 4.522 2.2)
@@ -3041,6 +3021,16 @@
 			(uuid "2d7811f0-cb47-4142-8b0d-12eaddecd2ea")
 		)
 		(fp_line
+			(start 0.578 -1)
+			(end 7.5 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "0da743f5-e6b7-4ff9-a589-d6d148e5be8f")
+		)
+		(fp_line
 			(start -2.4 2.2)
 			(end -2.4 -1)
 			(stroke
@@ -3049,6 +3039,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "f0337bf6-b228-4d43-b8cd-14d166f22507")
+		)
+		(fp_line
+			(start -2.4 -1)
+			(end -0.578 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "25f61cf1-5fcc-4d6c-a29d-4d08ef16781c")
 		)
 		(fp_rect
 			(start -2.55 -1.15)
@@ -3073,7 +3073,7 @@
 			(uuid "0690ae4b-bdaa-460b-9cb9-706a6499fed3")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.55 0.6 90)
+			(at 2.55 0.6 0)
 			(layer "F.Fab")
 			(uuid "251bcb9c-b3c6-4b5b-a942-714cde7a82c3")
 			(effects
@@ -3084,7 +3084,7 @@
 			)
 		)
 		(pad "1" thru_hole circle
-			(at 0 0 90)
+			(at 0 0 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -3094,7 +3094,7 @@
 			(uuid "22614011-8a90-4b27-b83a-e4f240a69d51")
 		)
 		(pad "2" thru_hole circle
-			(at 5.1 1.2 90)
+			(at 5.1 1.2 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -12983,11 +12983,11 @@
 	(footprint "Fuse:Fuse_Bourns_MF-RHT100"
 		(layer "F.Cu")
 		(uuid "70a8ca33-ed6e-4d6d-b17b-7d698fa844ad")
-		(at 154.5 60.5 90)
+		(at 156.3 53.35 180)
 		(descr "PTC Resettable Fuse, Ihold = 1.0A, Itrip=1.8A, http://www.bourns.com/docs/product-datasheets/mfrht.pdf")
 		(tags "ptc resettable fuse polyfuse THT")
 		(property "Reference" "F9"
-			(at -3.55 0.5 180)
+			(at -3.55 0.5 90)
 			(layer "F.SilkS")
 			(uuid "8e102828-7470-4038-95d4-c1f6426a996e")
 			(effects
@@ -12998,7 +12998,7 @@
 			)
 		)
 		(property "Value" "1.35A_30V"
-			(at 2.55 3.1 90)
+			(at 2.55 3.1 0)
 			(layer "F.Fab")
 			(uuid "3a6199f5-f347-46a4-81ac-41e19c51bc20")
 			(effects
@@ -13009,7 +13009,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "b68dde5d-ad5d-4f11-9c62-a0eaf4c10409")
@@ -13020,7 +13020,7 @@
 			)
 		)
 		(property "Description" "PTC Resettable Fuse 30R135UU Littelfuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "856a90dc-8330-451b-8c6b-c8ebc4f3dcae")
@@ -13031,7 +13031,7 @@
 			)
 		)
 		(property "KiLib_Generator" "fuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "a77dc606-88a7-4b37-817f-23f205a6e0e9")
@@ -13055,36 +13055,6 @@
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start 7.5 -1)
-			(end 7.5 2.2)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "efa419d9-2000-4092-967e-bd5a2a44abb0")
-		)
-		(fp_line
-			(start 0.578 -1)
-			(end 7.5 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "dc70d8a1-5c21-4d98-9f60-21369922cc41")
-		)
-		(fp_line
-			(start -2.4 -1)
-			(end -0.578 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "71b9e99c-e638-4d73-afa5-13622f21db4e")
-		)
-		(fp_line
 			(start 7.5 2.2)
 			(end 5.678 2.2)
 			(stroke
@@ -13093,6 +13063,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "bdc6e6eb-7b2e-4069-b91d-852f4ff9b4d9")
+		)
+		(fp_line
+			(start 7.5 -1)
+			(end 7.5 2.2)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "efa419d9-2000-4092-967e-bd5a2a44abb0")
 		)
 		(fp_line
 			(start 4.522 2.2)
@@ -13105,6 +13085,16 @@
 			(uuid "7568f7e5-f44d-49b3-8914-35e18b679f40")
 		)
 		(fp_line
+			(start 0.578 -1)
+			(end 7.5 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "dc70d8a1-5c21-4d98-9f60-21369922cc41")
+		)
+		(fp_line
 			(start -2.4 2.2)
 			(end -2.4 -1)
 			(stroke
@@ -13113,6 +13103,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "81d29dd0-08e7-4a7c-86b9-61e14e71156b")
+		)
+		(fp_line
+			(start -2.4 -1)
+			(end -0.578 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "71b9e99c-e638-4d73-afa5-13622f21db4e")
 		)
 		(fp_rect
 			(start -2.55 -1.15)
@@ -13137,7 +13137,7 @@
 			(uuid "cec0fc55-6b39-4692-9988-6fc78e92f322")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.55 0.6 90)
+			(at 2.55 0.6 0)
 			(layer "F.Fab")
 			(uuid "c584f1c9-53ac-4abc-860f-1f02a7c0b51a")
 			(effects
@@ -13148,7 +13148,7 @@
 			)
 		)
 		(pad "1" thru_hole circle
-			(at 0 0 90)
+			(at 0 0 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -13158,7 +13158,7 @@
 			(uuid "257a6a97-9470-4ac8-b309-4abd4e8ebb0d")
 		)
 		(pad "2" thru_hole circle
-			(at 5.1 1.2 90)
+			(at 5.1 1.2 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -19757,11 +19757,11 @@
 	(footprint "Fuse:Fuse_Bourns_MF-RHT100"
 		(layer "F.Cu")
 		(uuid "c1387cfa-4f42-411e-834b-bccdd590763a")
-		(at 87.9 60.55 90)
+		(at 90.05 53.35 180)
 		(descr "PTC Resettable Fuse, Ihold = 1.0A, Itrip=1.8A, http://www.bourns.com/docs/product-datasheets/mfrht.pdf")
 		(tags "ptc resettable fuse polyfuse THT")
 		(property "Reference" "F7"
-			(at -3.45 0.5 180)
+			(at -3.45 0.5 90)
 			(layer "F.SilkS")
 			(uuid "b8c84c41-df08-491c-ab0c-7d11354c22bc")
 			(effects
@@ -19772,7 +19772,7 @@
 			)
 		)
 		(property "Value" "1.35A_30V"
-			(at 2.55 3.1 90)
+			(at 2.55 3.1 0)
 			(layer "F.Fab")
 			(uuid "1db0910b-7fee-4dff-8fee-9f7f195c6ccb")
 			(effects
@@ -19783,7 +19783,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "dc49245a-4eb3-4520-b505-d5b2a02d2a9d")
@@ -19794,7 +19794,7 @@
 			)
 		)
 		(property "Description" "PTC Resettable Fuse 30R135UU Littelfuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "db759f9e-3139-406d-b5ce-2853eca7ca7d")
@@ -19805,7 +19805,7 @@
 			)
 		)
 		(property "KiLib_Generator" "fuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "02a94876-0a4f-4023-839b-4d2ba0a8a9ff")
@@ -19829,36 +19829,6 @@
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start 7.5 -1)
-			(end 7.5 2.2)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "a7544eda-c130-4612-9209-262410a9281c")
-		)
-		(fp_line
-			(start 0.578 -1)
-			(end 7.5 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "ec978a75-c8d2-4b94-b214-1db0e2bbcbf9")
-		)
-		(fp_line
-			(start -2.4 -1)
-			(end -0.578 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "4fa9cf39-f26f-4aa0-b195-bdb46e538d6a")
-		)
-		(fp_line
 			(start 7.5 2.2)
 			(end 5.678 2.2)
 			(stroke
@@ -19867,6 +19837,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "502cf8d6-57c5-47c9-8ec4-8265e2d955ec")
+		)
+		(fp_line
+			(start 7.5 -1)
+			(end 7.5 2.2)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "a7544eda-c130-4612-9209-262410a9281c")
 		)
 		(fp_line
 			(start 4.522 2.2)
@@ -19879,6 +19859,16 @@
 			(uuid "7a3d98d1-ec5f-4b04-99d3-9a977818fda1")
 		)
 		(fp_line
+			(start 0.578 -1)
+			(end 7.5 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "ec978a75-c8d2-4b94-b214-1db0e2bbcbf9")
+		)
+		(fp_line
 			(start -2.4 2.2)
 			(end -2.4 -1)
 			(stroke
@@ -19887,6 +19877,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "dd45d619-4ddd-47cf-817c-d45ca5ad7ffb")
+		)
+		(fp_line
+			(start -2.4 -1)
+			(end -0.578 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "4fa9cf39-f26f-4aa0-b195-bdb46e538d6a")
 		)
 		(fp_rect
 			(start -2.55 -1.15)
@@ -19911,7 +19911,7 @@
 			(uuid "24f131a4-c600-4712-95bb-773244e25711")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.55 0.6 90)
+			(at 2.55 0.6 0)
 			(layer "F.Fab")
 			(uuid "bbc957e0-77e1-4cb5-b7ee-c16021b548b9")
 			(effects
@@ -19922,7 +19922,7 @@
 			)
 		)
 		(pad "1" thru_hole circle
-			(at 0 0 90)
+			(at 0 0 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -19932,7 +19932,7 @@
 			(uuid "5df9263e-8a24-410d-9373-e8c295cde783")
 		)
 		(pad "2" thru_hole circle
-			(at 5.1 1.2 90)
+			(at 5.1 1.2 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -22413,13 +22413,13 @@
 	(footprint "Fuse:Fuse_Bourns_MF-RHT100"
 		(layer "F.Cu")
 		(uuid "dc7050cc-508a-4f8f-8499-1202f3e3b3fc")
-		(at 187.4 60.55 90)
+		(at 189.8 53.35 180)
 		(descr "PTC Resettable Fuse, Ihold = 1.0A, Itrip=1.8A, http://www.bourns.com/docs/product-datasheets/mfrht.pdf")
 		(tags "ptc resettable fuse polyfuse THT")
 		(property "Reference" "F6"
-			(at -3.35 0.7 180)
+			(at -3.35 0.7 90)
 			(layer "F.SilkS")
-			(uuid "f980f8d2-33b3-4117-9fad-53190faf6fd9")
+			(uuid "4e5b0621-7a5c-4721-ac11-6e2e1d6b509f")
 			(effects
 				(font
 					(size 1 1)
@@ -22428,9 +22428,9 @@
 			)
 		)
 		(property "Value" "1.35A_30V"
-			(at 2.55 3.1 90)
+			(at 2.55 3.1 0)
 			(layer "F.Fab")
-			(uuid "ded97da2-489d-4617-8d54-3fa3274a4a62")
+			(uuid "07ec57dc-891b-4512-9879-b6d2fde874e2")
 			(effects
 				(font
 					(size 1 1)
@@ -22439,10 +22439,10 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "67e1707f-5551-4522-9fe6-b5b1c26790af")
+			(uuid "99a30032-5ffe-4a12-89cd-7309453a16a9")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22450,10 +22450,10 @@
 			)
 		)
 		(property "Description" "PTC Resettable Fuse 30R135UU Littelfuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "c78afc9c-24ab-43a2-9234-ce462a32685e")
+			(uuid "19a491db-421e-4c45-8050-85f0b7773101")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22461,7 +22461,7 @@
 			)
 		)
 		(property "KiLib_Generator" "fuse"
-			(at 0 0 90)
+			(at 0 0 0)
 			(layer "F.SilkS")
 			(hide yes)
 			(uuid "76951eed-c295-4f94-9118-a03e2aae08ea")
@@ -22485,36 +22485,6 @@
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start 7.5 -1)
-			(end 7.5 2.2)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "299689a1-bd4a-44ef-a5c0-a41cf723b500")
-		)
-		(fp_line
-			(start 0.578 -1)
-			(end 7.5 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "59fb53dd-f22e-4bb8-afc3-7f1e88d57d5c")
-		)
-		(fp_line
-			(start -2.4 -1)
-			(end -0.578 -1)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "e14dd3fc-0afd-4db8-9030-c071bc97059e")
-		)
-		(fp_line
 			(start 7.5 2.2)
 			(end 5.678 2.2)
 			(stroke
@@ -22523,6 +22493,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "d8c4cb56-4167-4f27-bf51-248bb2cc9042")
+		)
+		(fp_line
+			(start 7.5 -1)
+			(end 7.5 2.2)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "299689a1-bd4a-44ef-a5c0-a41cf723b500")
 		)
 		(fp_line
 			(start 4.522 2.2)
@@ -22535,6 +22515,16 @@
 			(uuid "ac370914-b8c8-49e8-9ac0-bb5d145ff1ee")
 		)
 		(fp_line
+			(start 0.578 -1)
+			(end 7.5 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "59fb53dd-f22e-4bb8-afc3-7f1e88d57d5c")
+		)
+		(fp_line
 			(start -2.4 2.2)
 			(end -2.4 -1)
 			(stroke
@@ -22543,6 +22533,16 @@
 			)
 			(layer "F.SilkS")
 			(uuid "c48cbd11-9f98-49fa-be4f-cb0e2df8ed95")
+		)
+		(fp_line
+			(start -2.4 -1)
+			(end -0.578 -1)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "e14dd3fc-0afd-4db8-9030-c071bc97059e")
 		)
 		(fp_rect
 			(start -2.55 -1.15)
@@ -22567,7 +22567,7 @@
 			(uuid "4fe8121d-80a8-46a0-bbfa-c533b1bbe954")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 2.55 0.6 90)
+			(at 2.55 0.6 0)
 			(layer "F.Fab")
 			(uuid "bd08bf74-f204-4a8b-be9d-7b0c9bc014cf")
 			(effects
@@ -22578,7 +22578,7 @@
 			)
 		)
 		(pad "1" thru_hole circle
-			(at 0 0 90)
+			(at 0 0 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
@@ -22588,7 +22588,7 @@
 			(uuid "7c9dd00a-b34e-4634-bac9-2321e651c05f")
 		)
 		(pad "2" thru_hole circle
-			(at 5.1 1.2 90)
+			(at 5.1 1.2 180)
 			(size 1.71 1.71)
 			(drill 0.71)
 			(layers "*.Cu" "*.Mask")
