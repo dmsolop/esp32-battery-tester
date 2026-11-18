@@ -171,7 +171,9 @@
 - [x] **[Ticket-HW-MASTER-PLACEMENT-MCU-UI]** Formulated exact topological placement coordinates, decoupling, RC filtering, and RF keepout specifications for ESP32-S3 Core (`U3`, `C5..C7`, `R3..R6`, `SW1`, `SW2`), Buzzer stage (`BZ1`, `Q1`, `R37..R39`, `C12`), and UI Interface filters (`J2`, `J3`, `SW3`, `J8`, `C8..C11`, `R7`, `R8`, `R12`) on Master Board (`hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_pcb`).
 - [ ] **[Ticket-HW-ENCODER-HEADER]** Retain option for external KY-040 front panel module wiring via header if chassis layout requires mechanical separation from Master PCB.
 - [ ] **[Ticket-HW-FUSE-F1-HOLDER]** Verify XT60 harness fuseholder vs SMD 2920 fuse `F1` (25A) during mechanical integration.
-- [ ] Proceed to PCB layout routing for Master Board (`battery_analyzer_hw.kicad_pcb`).
+- [x] **[Ticket-HW-NETCLASSES-SETUP]** Configured Net Classes in `battery_analyzer_hw.kicad_pcb` (Board Setup): `Default` (0.2/0.2mm), `Power_12V` (0.8/0.4mm), `Power_Low` (0.5/0.25mm), `USB_Diff` (0.25/0.20mm, diff pair 0.25/0.20mm). Configured manufacturing constraints and pre-defined track width palette (0.2, 0.25, 0.5, 0.6, 0.8, 1.0mm).
+- [x] **[Ticket-HW-ROUTING-STEP1-12V-BUS]** Successfully routed Step 1 of Master Board: rotated `F6..F9` 90 deg for optimal alignment; routed `F6..F9` pin 2 to `J9..J12` pin 1; routed balanced microstrip sandwich power bus with `+12V` on `F.Cu` (from `J13` -> `D21` -> `C14/C13` -> `MOD1` pin 1 -> `F6..F9` pin 1) and `GND_12V` on `B.Cu` directly beneath it connecting `J9..J12` pin 2 directly on Bottom layer and returning to `J13` pin 2, preserving 100% solid central GND plane.
+- [ ] **[Ticket-HW-ROUTING-STEP2-MOD1-NT1]** Review and route `MOD1` pins 2 (`IN-`, `GND_12V`) and 3 (`OUT-`, `GND`) through star-ground NetTie `NT1`, ensuring DRC rule compliance between separate ground nets.
 
 ### 📋 Firmware Backlog (Scheduled Post-PCB Layout)
 - [ ] **[Backlog-FW-POWER-LIMIT-SOA]** Implement dynamic power clamp $I_{target} \le \min(I_{max}, 140\text{W} / V_{bat})$ in `load_control.c` and `safety_monitor.c`. Fix 32-bit integer multiplication overflow before `uint64_t` cast in `integration_service.c:24`.
