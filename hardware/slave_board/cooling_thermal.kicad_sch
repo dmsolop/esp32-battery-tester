@@ -2190,7 +2190,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 130.5052 125.73 0)
 			(hide yes)
 			(show_name no)
@@ -2212,7 +2212,7 @@
 				)
 			)
 		)
-		(property "Description" "Unpolarized ceramic capacitor 7"
+		(property "Description" "Unpolarized capacitor"
 			(at 129.54 121.92 0)
 			(hide yes)
 			(show_name no)
@@ -2272,7 +2272,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline_W4.0mm_Horizontal_FlatSideUp"
 			(at 78.74 123.19 0)
 			(hide yes)
 			(show_name no)
@@ -3214,7 +3214,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline"
+		(property "Footprint" "Package_TO_SOT_THT:TO-92_Inline_W4.0mm_Horizontal_FlatSideUp"
 			(at 171.45 123.19 0)
 			(hide yes)
 			(show_name no)

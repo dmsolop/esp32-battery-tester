@@ -1162,12 +1162,12 @@
 		(comp
 			(ref "Q1")
 			(value "IRFP150N")
-			(footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
+			(footprint "Package_TO_SOT_THT:TO-247-3_Horizontal_TabUp")
 			(datasheet "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 			(description "30A, 200V, N-Channel Power MOSFET, TO-247")
 			(fields
 				(field
-					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Vertical")
+					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Horizontal_TabUp")
 				(field
 					(name "Datasheet") "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 				(field
@@ -1219,12 +1219,12 @@
 		(comp
 			(ref "Q2")
 			(value "IRFP150N")
-			(footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
+			(footprint "Package_TO_SOT_THT:TO-247-3_Horizontal_TabUp")
 			(datasheet "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 			(description "30A, 200V, N-Channel Power MOSFET, TO-247")
 			(fields
 				(field
-					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Vertical")
+					(name "Footprint") "Package_TO_SOT_THT:TO-247-3_Horizontal_TabUp")
 				(field
 					(name "Datasheet") "https://www.alldatasheetru.com/datasheet-pdf/pdf/68496/IRF/IRFP150N.html")
 				(field
@@ -2428,11 +2428,11 @@
 		(comp
 			(ref "C10")
 			(value "100nF")
+			(footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
 			(description "Unpolarized ceramic capacitor 7")
 			(fields
 				(field
-					(name "Footprint")
-				)
+					(name "Footprint") "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
 				(field
 					(name "Datasheet")
 				)

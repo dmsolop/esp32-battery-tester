@@ -511,6 +511,81 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "clearance": 0.6,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power_HighCurrent",
+        "pcb_color": "rgb(255, 0, 0)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 2.0,
+        "tuning_profile": "",
+        "via_diameter": 1.2,
+        "via_drill": 0.6
+      },
+      {
+        "clearance": 0.35,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power_12V",
+        "pcb_color": "rgb(255, 80, 0)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.8,
+        "tuning_profile": "",
+        "via_diameter": 0.8,
+        "via_drill": 0.4
+      },
+      {
+        "clearance": 0.25,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power_3V3",
+        "pcb_color": "rgb(255, 185, 0)",
+        "priority": 2,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.5,
+        "tuning_profile": "",
+        "via_diameter": 0.7,
+        "via_drill": 0.35
+      },
+      {
+        "clearance": 0.35,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Gate_Drive",
+        "pcb_color": "rgb(180, 0, 255)",
+        "priority": 3,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.35,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3
+      },
+      {
+        "clearance": 0.35,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.25,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Kelvin_Sense",
+        "pcb_color": "rgb(0, 200, 255)",
+        "priority": 4,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.25,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3
       }
     ],
     "meta": {
@@ -518,7 +593,100 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Power_HighCurrent",
+        "pattern": "*FORCE*"
+      },
+      {
+        "netclass": "Power_HighCurrent",
+        "pattern": "*PWR*"
+      },
+      {
+        "netclass": "Power_HighCurrent",
+        "pattern": "Net-(J_PWR1-Pin_1)"
+      },
+      {
+        "netclass": "Power_HighCurrent",
+        "pattern": "Net-(C3-Pad1)"
+      },
+      {
+        "netclass": "Power_HighCurrent",
+        "pattern": "Net-(C4-Pad1)"
+      },
+      {
+        "netclass": "Power_12V",
+        "pattern": "*12V*"
+      },
+      {
+        "netclass": "Power_12V",
+        "pattern": "*FAN_GND*"
+      },
+      {
+        "netclass": "Power_12V",
+        "pattern": "Net-(F3-Pad2)"
+      },
+      {
+        "netclass": "Power_3V3",
+        "pattern": "+3.3V"
+      },
+      {
+        "netclass": "Power_3V3",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "Gate_Drive",
+        "pattern": "Net-(D3-K)"
+      },
+      {
+        "netclass": "Gate_Drive",
+        "pattern": "Net-(D4-K)"
+      },
+      {
+        "netclass": "Gate_Drive",
+        "pattern": "PWM_IN"
+      },
+      {
+        "netclass": "Gate_Drive",
+        "pattern": "*V_REF*"
+      },
+      {
+        "netclass": "Gate_Drive",
+        "pattern": "Net-(C1-Pad1)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "*SENSE*"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(U1A--)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(U1B--)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(U2-AIN2)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(R15-Pad2)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(C5-Pad1)"
+      },
+      {
+        "netclass": "Kelvin_Sense",
+        "pattern": "Net-(C6-Pad2)"
+      },
+      {
+        "netclass": "Default",
+        "pattern": ""
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
