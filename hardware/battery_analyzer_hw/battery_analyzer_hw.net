@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "/Users/dmsolop/Embadded_dev_cours/ESP-IDF_Course_project/battery_analyzer/hardware/battery_analyzer_hw/battery_analyzer_hw.kicad_sch")
-		(date "2026-11-15T16:24:12")
+		(date "2026-11-19T03:58:50")
 		(tool "Eeschema 10.0.6")
 		(sheet
 			(number "1")
@@ -883,14 +883,68 @@
 			)
 		)
 		(comp
+			(ref "F10")
+			(value "Polyfuse 500mA")
+			(footprint "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+			(description "PTC Resettable Fuse SMD 500mA")
+			(fields
+				(field
+					(name "Footprint") "Fuse:Fuse_1206_3216Metric_Pad1.42x1.75mm_HandSolder")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "PTC Resettable Fuse SMD 500mA")
+			)
+			(libsource
+				(lib "Device")
+				(part "Polyfuse")
+				(description "Resettable fuse, polymeric positive temperature coefficient")
+			)
+			(property
+				(name "Sheetname")
+				(value "battery_analyzer_hw")
+			)
+			(property
+				(name "Sheetfile")
+				(value "battery_analyzer_hw.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "resettable fuse PTC PPTC polyfuse polyswitch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "*polyfuse* *PTC*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "252ff0df-52f1-4087-885c-80803ba5e99d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "J1")
 			(value "USB_C_Receptacle_USB2.0_16P")
-			(footprint "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12")
+			(footprint "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
 			(datasheet "https://www.usb.org/sites/default/files/documents/usb_type-c.zip")
 			(description "USB 2.0-only 16P Type-C Receptacle connector")
 			(fields
 				(field
-					(name "Footprint") "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12")
+					(name "Footprint") "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal")
 				(field
 					(name "Datasheet") "https://www.usb.org/sites/default/files/documents/usb_type-c.zip")
 				(field
@@ -982,7 +1036,7 @@
 			)
 		)
 		(comp
-			(ref "J8")
+			(ref "J13")
 			(value "KLS1-DC-005A-2.5")
 			(footprint "Connector_BarrelJack:BarrelJack_Horizontal")
 			(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
@@ -996,9 +1050,9 @@
 					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Barrel_Jack_MountingPin")
-				(description "DC Barrel Jack with a mounting pin")
+				(lib "")
+				(part "Barrel_Jack_MountingPin_1")
+				(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(property
 				(name "Sheetname")
@@ -1020,13 +1074,13 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "80e791c0-24dc-468b-bd07-6bb3b88a4780")
+			(tstamps "a8f06ed9-860e-41be-8982-42c0e75f4008")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "MP")
+							(num "3")
 						)
 						(pin
 							(num "1")
@@ -1132,7 +1186,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b383b3b2-b912-474a-8b36-a25e352cb5fd")
+			(tstamps "bd22d21e-705f-4096-bc08-75d563c63a43")
 			(units
 				(unit
 					(name "A")
@@ -2687,6 +2741,60 @@
 			)
 		)
 		(comp
+			(ref "J8")
+			(value "J_BTN1")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x02")
+				(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Sheetname")
+				(value "UI_Controls")
+			)
+			(property
+				(name "Sheetfile")
+				(value "ui_controls.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/UI_Controls/")
+				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
+			)
+			(tstamps "de582d76-b89a-476e-ad16-c447ac274452")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "R7")
 			(value "10k")
 			(footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -2906,56 +3014,6 @@
 						)
 						(pin
 							(num "5")
-						)
-					)
-				)
-			)
-		)
-		(comp
-			(ref "SW4")
-			(value "SW_Push")
-			(footprint "Button_Switch_THT:SW_PUSH_6mm")
-			(description "Tactile Switch THT 6x6mm 4-pin")
-			(fields
-				(field
-					(name "Footprint") "Button_Switch_THT:SW_PUSH_6mm")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Tactile Switch THT 6x6mm 4-pin")
-			)
-			(libsource
-				(lib "Switch")
-				(part "SW_Push")
-				(description "Push button switch, generic, two pins")
-			)
-			(property
-				(name "Sheetname")
-				(value "UI_Controls")
-			)
-			(property
-				(name "Sheetfile")
-				(value "ui_controls.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "switch normally-open pushbutton push-button")
-			)
-			(sheetpath
-				(names "/UI_Controls/")
-				(tstamps "/13bd107b-9208-4ea5-ad4b-b6cb38ac8f7d/")
-			)
-			(tstamps "ea7f170d-0ed4-4c42-88ec-0a3677b086d1")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
 						)
 					)
 				)
@@ -4836,9 +4894,9 @@
 					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Barrel_Jack_MountingPin")
-				(description "DC Barrel Jack with a mounting pin")
+				(lib "")
+				(part "Barrel_Jack_MountingPin_1")
+				(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(property
 				(name "Sheetname")
@@ -4866,7 +4924,7 @@
 					(name "A")
 					(pins
 						(pin
-							(num "MP")
+							(num "3")
 						)
 						(pin
 							(num "1")
@@ -4893,9 +4951,9 @@
 					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Barrel_Jack_MountingPin")
-				(description "DC Barrel Jack with a mounting pin")
+				(lib "")
+				(part "Barrel_Jack_MountingPin_1")
+				(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(property
 				(name "Sheetname")
@@ -4917,13 +4975,13 @@
 				(names "/Slave_Ports/")
 				(tstamps "/7d038be6-a427-4199-9b42-2249d23efd76/")
 			)
-			(tstamps "56bae22b-af1e-4bb0-92ee-0091dc77a132")
+			(tstamps "03a4e147-eac1-49d3-8ed5-1597ce11ff09")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "MP")
+							(num "3")
 						)
 						(pin
 							(num "1")
@@ -4950,9 +5008,9 @@
 					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Barrel_Jack_MountingPin")
-				(description "DC Barrel Jack with a mounting pin")
+				(lib "")
+				(part "Barrel_Jack_MountingPin_1")
+				(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(property
 				(name "Sheetname")
@@ -4974,13 +5032,13 @@
 				(names "/Slave_Ports/")
 				(tstamps "/7d038be6-a427-4199-9b42-2249d23efd76/")
 			)
-			(tstamps "0bf7869a-bff5-4998-a7dd-1d69e14970a4")
+			(tstamps "d4af687a-99b0-4b55-939e-9a02066fbb0f")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "MP")
+							(num "3")
 						)
 						(pin
 							(num "1")
@@ -5007,9 +5065,9 @@
 					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(libsource
-				(lib "Connector")
-				(part "Barrel_Jack_MountingPin")
-				(description "DC Barrel Jack with a mounting pin")
+				(lib "")
+				(part "Barrel_Jack_MountingPin_1")
+				(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
 			)
 			(property
 				(name "Sheetname")
@@ -5031,13 +5089,13 @@
 				(names "/Slave_Ports/")
 				(tstamps "/7d038be6-a427-4199-9b42-2249d23efd76/")
 			)
-			(tstamps "d66b3ef2-ed0b-4157-a59e-3517bec0b9d1")
+			(tstamps "30128c31-badd-4e7a-acb9-752ecd363a8b")
 			(units
 				(unit
 					(name "A")
 					(pins
 						(pin
-							(num "MP")
+							(num "3")
 						)
 						(pin
 							(num "1")
@@ -6297,6 +6355,44 @@
 	(libparts
 		(libpart
 			(lib "")
+			(part "Barrel_Jack_MountingPin_1")
+			(description "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
+			(footprints
+				(fp "BarrelJack*")
+			)
+			(fields
+				(field
+					(name "Reference") "J9")
+				(field
+					(name "Value") "KLS1-DC-005A-2.5")
+				(field
+					(name "Footprint") "Connector_BarrelJack:BarrelJack_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "DC Power Jack 5.5x2.5mm, THT Horizontal, 16V 2A")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "MountPin")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "")
 			(part "Conn_01x04_Socket_1")
 			(description "Generic connector, single row, 01x04, script generated")
 			(footprints
@@ -6335,45 +6431,6 @@
 				(pin
 					(num "4")
 					(name "Pin_4")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Connector")
-			(part "Barrel_Jack_MountingPin")
-			(description "DC Barrel Jack with a mounting pin")
-			(footprints
-				(fp "BarrelJack*")
-			)
-			(fields
-				(field
-					(name "Reference") "J")
-				(field
-					(name "Value") "Barrel_Jack_MountingPin")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "DC Barrel Jack with a mounting pin")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "")
-					(type "passive")
-				)
-				(pin
-					(num "MP")
-					(name "MountPin")
 					(type "passive")
 				)
 			)
@@ -6654,6 +6711,40 @@
 				(pin
 					(num "SH")
 					(name "SHIELD")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x02")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x02")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
 					(type "passive")
 				)
 			)
@@ -7442,6 +7533,10 @@
 			(uri "${KICAD10_SYMBOL_DIR}/Connector.kicad_sym")
 		)
 		(library
+			(logical "Connector_Generic")
+			(uri "${KICAD10_SYMBOL_DIR}/Connector_Generic.kicad_sym")
+		)
+		(library
 			(logical "Device")
 			(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")
 		)
@@ -7478,7 +7573,7 @@
 		(net
 			(code "1")
 			(name "+3.3V")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "BZ1")
 				(pin "1")
@@ -7744,7 +7839,7 @@
 		(net
 			(code "2")
 			(name "+5V")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "C1")
 				(pin "1")
@@ -7777,7 +7872,7 @@
 		(net
 			(code "3")
 			(name "+12V")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "C13")
 				(pin "1")
@@ -7858,8 +7953,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "17")
-				(pinfunction "IO9_17")
+				(pin "19")
+				(pinfunction "IO11_19")
 				(pintype "bidirectional")
 			)
 		)
@@ -7900,8 +7995,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "19")
-				(pinfunction "IO11_19")
+				(pin "17")
+				(pinfunction "IO9_17")
 				(pintype "bidirectional")
 			)
 		)
@@ -7975,14 +8070,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R12")
+				(ref "J8")
 				(pin "2")
+				(pinfunction "Pin_2_2")
 				(pintype "passive")
 			)
 			(node
-				(ref "SW4")
+				(ref "R12")
 				(pin "2")
-				(pinfunction "2_2")
 				(pintype "passive")
 			)
 			(node
@@ -8096,8 +8191,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "20")
-				(pinfunction "IO12_20")
+				(pin "23")
+				(pinfunction "IO21_23")
 				(pintype "bidirectional")
 			)
 		)
@@ -8118,8 +8213,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "21")
-				(pinfunction "IO13_21")
+				(pin "22")
+				(pinfunction "IO14_22")
 				(pintype "bidirectional")
 			)
 		)
@@ -8140,8 +8235,8 @@
 			)
 			(node
 				(ref "U3")
-				(pin "22")
-				(pinfunction "IO14_22")
+				(pin "21")
+				(pinfunction "IO13_21")
 				(pintype "bidirectional")
 			)
 		)
@@ -8162,15 +8257,15 @@
 			)
 			(node
 				(ref "U3")
-				(pin "23")
-				(pinfunction "IO21_23")
+				(pin "20")
+				(pinfunction "IO12_20")
 				(pintype "bidirectional")
 			)
 		)
 		(net
 			(code "18")
 			(name "GND")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "C1")
 				(pin "2")
@@ -8444,10 +8539,10 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "MOD1")
-				(pin "3")
-				(pinfunction "OUT-_3")
-				(pintype "power_in")
+				(ref "J8")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
 			)
 			(node
 				(ref "NT1")
@@ -8505,12 +8600,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "SW4")
-				(pin "1")
-				(pinfunction "1_1")
-				(pintype "passive")
-			)
-			(node
 				(ref "U1")
 				(pin "2")
 				(pinfunction "GND_2")
@@ -8544,7 +8633,7 @@
 		(net
 			(code "19")
 			(name "GND_12V")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "C13")
 				(pin "2")
@@ -8561,8 +8650,20 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "J10")
+				(pin "3")
+				(pinfunction "MountPin_3")
+				(pintype "passive")
+			)
+			(node
 				(ref "J11")
 				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J11")
+				(pin "3")
+				(pinfunction "MountPin_3")
 				(pintype "passive")
 			)
 			(node
@@ -8571,8 +8672,20 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J8")
+				(ref "J12")
+				(pin "3")
+				(pinfunction "MountPin_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J13")
 				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J13")
+				(pin "3")
+				(pinfunction "MountPin_3")
 				(pintype "passive")
 			)
 			(node
@@ -8581,9 +8694,21 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "J9")
+				(pin "3")
+				(pinfunction "MountPin_3")
+				(pintype "passive")
+			)
+			(node
 				(ref "MOD1")
 				(pin "2")
 				(pinfunction "IN-_2")
+				(pintype "power_in")
+			)
+			(node
+				(ref "MOD1")
+				(pin "3")
+				(pinfunction "OUT-_3")
 				(pintype "power_in")
 			)
 			(node
@@ -8794,7 +8919,7 @@
 		(net
 			(code "25")
 			(name "Net-(D21-A)")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "D21")
 				(pin "2")
@@ -8802,7 +8927,7 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J8")
+				(ref "J13")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -8810,7 +8935,7 @@
 		(net
 			(code "26")
 			(name "Net-(D22-A)")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "D22")
 				(pin "2")
@@ -8832,17 +8957,7 @@
 		(net
 			(code "27")
 			(name "Net-(D23-A)")
-			(class "Default")
-			(node
-				(ref "C15")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "C16")
-				(pin "1")
-				(pintype "passive")
-			)
+			(class "Power_Low,Default")
 			(node
 				(ref "D23")
 				(pin "2")
@@ -8850,16 +8965,15 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "MOD1")
-				(pin "4")
-				(pinfunction "OUT+_4")
-				(pintype "power_out")
+				(ref "F10")
+				(pin "1")
+				(pintype "passive")
 			)
 		)
 		(net
 			(code "28")
 			(name "Net-(F1-Pad2)")
-			(class "Default")
+			(class "Power_Low,Power_12V,Default")
 			(node
 				(ref "F1")
 				(pin "2")
@@ -8893,7 +9007,7 @@
 		(net
 			(code "29")
 			(name "Net-(F2-Pad1)")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "F2")
 				(pin "1")
@@ -8908,7 +9022,7 @@
 		(net
 			(code "30")
 			(name "Net-(F3-Pad1)")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "F3")
 				(pin "1")
@@ -8923,7 +9037,7 @@
 		(net
 			(code "31")
 			(name "Net-(F4-Pad1)")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "F4")
 				(pin "1")
@@ -8938,7 +9052,7 @@
 		(net
 			(code "32")
 			(name "Net-(F5-Pad1)")
-			(class "Default")
+			(class "Power_Low,Default")
 			(node
 				(ref "F5")
 				(pin "1")
@@ -8953,7 +9067,7 @@
 		(net
 			(code "33")
 			(name "Net-(F6-Pad2)")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "F6")
 				(pin "2")
@@ -8968,14 +9082,14 @@
 		(net
 			(code "34")
 			(name "Net-(F7-Pad2)")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "F7")
 				(pin "2")
 				(pintype "passive")
 			)
 			(node
-				(ref "J10")
+				(ref "J12")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -8983,7 +9097,7 @@
 		(net
 			(code "35")
 			(name "Net-(F8-Pad2)")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "F8")
 				(pin "2")
@@ -8998,14 +9112,14 @@
 		(net
 			(code "36")
 			(name "Net-(F9-Pad2)")
-			(class "Default")
+			(class "Power_12V,Default")
 			(node
 				(ref "F9")
 				(pin "2")
 				(pintype "passive")
 			)
 			(node
-				(ref "J12")
+				(ref "J10")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -9045,7 +9159,7 @@
 		(net
 			(code "39")
 			(name "Net-(J1-D+-PadA6)")
-			(class "Default")
+			(class "USB_Diff,Default")
 			(node
 				(ref "J1")
 				(pin "A6")
@@ -9068,7 +9182,7 @@
 		(net
 			(code "40")
 			(name "Net-(J1-D--PadA7)")
-			(class "Default")
+			(class "USB_Diff,Default")
 			(node
 				(ref "J1")
 				(pin "A7")
@@ -9330,6 +9444,32 @@
 		)
 		(net
 			(code "57")
+			(name "Net-(MOD1-OUT+)")
+			(class "Power_Low,Default")
+			(node
+				(ref "C15")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C16")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "F10")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "MOD1")
+				(pin "4")
+				(pinfunction "OUT+_4")
+				(pintype "power_out")
+			)
+		)
+		(net
+			(code "58")
 			(name "Net-(Q1-G)")
 			(class "Default")
 			(node
@@ -9350,7 +9490,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "59")
 			(name "Net-(U3-EN)")
 			(class "Default")
 			(node
@@ -9377,7 +9517,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "60")
 			(name "Net-(U3-IO0)")
 			(class "Default")
 			(node
@@ -9399,7 +9539,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "61")
 			(name "Net-(U3-IO45)")
 			(class "Default")
 			(node
@@ -9415,7 +9555,7 @@
 			)
 		)
 		(net
-			(code "61")
+			(code "62")
 			(name "Net-(U3-IO46)")
 			(class "Default")
 			(node
@@ -9431,27 +9571,11 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "63")
 			(name "PWM_CH0")
 			(class "Default")
 			(node
 				(ref "J4")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
-				(ref "U3")
-				(pin "31")
-				(pinfunction "IO38_31")
-				(pintype "bidirectional")
-			)
-		)
-		(net
-			(code "63")
-			(name "PWM_CH1")
-			(class "Default")
-			(node
-				(ref "J5")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -9464,6 +9588,22 @@
 		)
 		(net
 			(code "64")
+			(name "PWM_CH1")
+			(class "Default")
+			(node
+				(ref "J5")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "U3")
+				(pin "38")
+				(pinfunction "IO2_38")
+				(pintype "bidirectional")
+			)
+		)
+		(net
+			(code "65")
 			(name "PWM_CH2")
 			(class "Default")
 			(node
@@ -9479,7 +9619,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "66")
 			(name "PWM_CH3")
 			(class "Default")
 			(node
@@ -9489,15 +9629,15 @@
 			)
 			(node
 				(ref "U3")
-				(pin "38")
-				(pinfunction "IO2_38")
+				(pin "31")
+				(pinfunction "IO38_31")
 				(pintype "bidirectional")
 			)
 		)
 		(net
-			(code "66")
+			(code "67")
 			(name "USB_D+")
-			(class "Default")
+			(class "USB_Diff,Default")
 			(node
 				(ref "U1")
 				(pin "4")
@@ -9512,9 +9652,9 @@
 			)
 		)
 		(net
-			(code "67")
+			(code "68")
 			(name "USB_D-")
-			(class "Default")
+			(class "USB_Diff,Default")
 			(node
 				(ref "U1")
 				(pin "6")
@@ -9529,7 +9669,7 @@
 			)
 		)
 		(net
-			(code "68")
+			(code "69")
 			(name "unconnected-(J1-SBU1-PadA8)")
 			(class "Default")
 			(node
@@ -9540,7 +9680,7 @@
 			)
 		)
 		(net
-			(code "69")
+			(code "70")
 			(name "unconnected-(J1-SBU2-PadB8)")
 			(class "Default")
 			(node
@@ -9551,62 +9691,7 @@
 			)
 		)
 		(net
-			(code "70")
-			(name "unconnected-(J8-MountPin-PadMP)")
-			(class "Default")
-			(node
-				(ref "J8")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
 			(code "71")
-			(name "unconnected-(J9-MountPin-PadMP)")
-			(class "Default")
-			(node
-				(ref "J9")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "72")
-			(name "unconnected-(J10-MountPin-PadMP)")
-			(class "Default")
-			(node
-				(ref "J10")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "73")
-			(name "unconnected-(J11-MountPin-PadMP)")
-			(class "Default")
-			(node
-				(ref "J11")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "74")
-			(name "unconnected-(J12-MountPin-PadMP)")
-			(class "Default")
-			(node
-				(ref "J12")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive+no_connect")
-			)
-		)
-		(net
-			(code "75")
 			(name "unconnected-(U3-IO3-Pad15)")
 			(class "Default")
 			(node
@@ -9617,7 +9702,7 @@
 			)
 		)
 		(net
-			(code "76")
+			(code "72")
 			(name "unconnected-(U3-IO35-Pad28)")
 			(class "Default")
 			(node
@@ -9628,7 +9713,7 @@
 			)
 		)
 		(net
-			(code "77")
+			(code "73")
 			(name "unconnected-(U3-IO36-Pad29)")
 			(class "Default")
 			(node
@@ -9639,7 +9724,7 @@
 			)
 		)
 		(net
-			(code "78")
+			(code "74")
 			(name "unconnected-(U3-IO37-Pad30)")
 			(class "Default")
 			(node
@@ -9650,7 +9735,7 @@
 			)
 		)
 		(net
-			(code "79")
+			(code "75")
 			(name "unconnected-(U3-IO39-Pad32)")
 			(class "Default")
 			(node
@@ -9661,7 +9746,7 @@
 			)
 		)
 		(net
-			(code "80")
+			(code "76")
 			(name "unconnected-(U3-IO41-Pad34)")
 			(class "Default")
 			(node
@@ -9672,7 +9757,7 @@
 			)
 		)
 		(net
-			(code "81")
+			(code "77")
 			(name "unconnected-(U3-IO48-Pad25)")
 			(class "Default")
 			(node
@@ -9683,7 +9768,7 @@
 			)
 		)
 		(net
-			(code "82")
+			(code "78")
 			(name "unconnected-(U3-RXD0-Pad36)")
 			(class "Default")
 			(node
@@ -9694,7 +9779,7 @@
 			)
 		)
 		(net
-			(code "83")
+			(code "79")
 			(name "unconnected-(U3-TXD0-Pad37)")
 			(class "Default")
 			(node

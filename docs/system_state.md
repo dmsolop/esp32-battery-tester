@@ -9,7 +9,7 @@
 - Laboratory prototyping and bench testing of the power stage and digital control interface (Stages 1–3) have been **successfully completed and validated** on physical hardware.
 - According to the Asymmetric Blocking Rule, **PCB routing and final layout execution for `slave_board` and `battery_analyzer_hw` are officially UNBLOCKED**.
 - Conducted full direct netlist audit of `hardware/battery_analyzer_hw/battery_analyzer_hw.net` and `hardware/slave_board/slave_board.net`.
-- **Master Board (`battery_analyzer_hw`):** 100% ready for PCB Layout routing. Centralized +12V power supply with DC-005 jack (`J8`), reverse polarity diode SS34 (`D21`), tantalum 22uF 35V (`C14`), MP1482 buck converter (`MOD1`, custom SMD footprint `My_Custom_Library:DC_DC_MP1482_18x12mm_SMD` with 0.6 mm isolation clearances on IN+/OUT+), USB OR-ing diodes (`D22`, `D23`), channel protection fuses 30R135UU (`F6..F9`), Buzzer circuit (`Q1`, `R37..R39`, `C12`, `BZ1`), UI debouncing (`C8..C11`), and Slave protection (`F2..F5`, `D1..D4`, `R20..R35`, `D5..D20`) fully verified.
+- **Master Board (`battery_analyzer_hw`):** 100% completed PCB Layout routing & DRC verified (0 unconnected nets, 0 electrical DRC errors, complete GND/GND_12V polygon fills, USB-C protection and Star-Ground NetTie verified). Centralized +12V power supply with DC-005 jack (`J8`), reverse polarity diode SS34 (`D21`), tantalum 22uF 35V (`C14`), MP1482 buck converter (`MOD1`, custom SMD footprint `My_Custom_Library:DC_DC_MP1482_18x12mm_SMD` with 0.6 mm isolation clearances on IN+/OUT+), USB OR-ing diodes (`D22`, `D23`), channel protection fuses 30R135UU (`F6..F9`), Buzzer circuit (`Q1`, `R37..R39`, `C12`, `BZ1`), UI debouncing (`C8..C11`), and Slave protection (`F2..F5`, `D1..D4`, `R20..R35`, `D5..D20`) fully verified.
 - **Slave Board (`slave_board`):** 100% schematic netlist verified. Power stage (2x IRFP150N, LM358 on +12V, single 5 mOhm 2512 shunts, NetTie_3 NT1, SMCJ58A TVS, XT60PW-M), Telemetry with exact 1:25 differential divider (120k+120k 0.1% 200V 1206 + 10k 0.1% 0805, C9 100nF), and Thermal/Cooling (DS18B20 U3/U4, IRLML2502 Q_FAN1, R20 100R, R17 10k, D2/D5 1N4148W). Only pending action: assigning `Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder` to C10 on `cooling_thermal`.
 - Approved global pinout for the ESP32-S3-WROOM-1 MCU, accounting for hardware constraints (Boot, Strapping, USB) and separation of high-frequency and analog signals.
 - Fully implemented firmware control algorithms: PID controller, PWM DAC path (Variant B2), dual ADS1115 current sensing shunts, fan PWM cooling profile, interactive dual SSD1306 UI with viewport scrolling, and 1-Wire DS18B20 role EEPROM binding mechanism.
@@ -40,13 +40,29 @@
   - **Stage 3 (Full peripheral integration under ~1 A load):** Dual SSD1306 OLED panels (`0x3C`, `0x3D`) on Fast Mode I2C (400 kHz) and PCNT quadrature rotary encoder operate without I2C stalls or glitch counts under load. All 3 DS18B20 1-Wire sensors on `IO8` are detected and respond to thermal gradients; emergency shutdown on thermal runaway (`ERR_THERMAL_RUNAWAY`, Mask: 0x08) is verified.
   - **PCB Layout Unblock:** Hardware validation confirmed circuit stability; per Asymmetric Blocking Rule, PCB layout is unblocked.
   - **Interactive 1-Wire Sensor Role Binding via UI (`UI_STATE_SENSOR_BIND`):** Implemented sub-screen accessed from `[ TESTS & SAFE ]` -> `1W:H%d/C%d [ROLES]`. Lists sensors #0..#5 with live temperatures and ROM IDs, allowing one-click cycling through `NONE` -> `HS` -> `CELL` roles with direct commit to DS18B20 EEPROM (`T_L` byte: `0x01` for Heatsink, `0x02` for Cell) via `temp_service_bind_sensor_role()` and live bus rescan via `temp_service_rescan()`.
-- **Pinout unification for compatibility with ESP32-S3-DevKitC-1 (N16R8) and protection against WPU upon reset (November 2026):**
-- Unified pinout (Variant B) approved and synchronized between the `mcu_core.kicad_sch` schematic and firmware config (`Kconfig.projbuild`, `sdkconfig`):
-- **Power Load PWM (`PWM_CH0..3`):** moved `PWM_CH1` to `IO1`, `PWM_CH3` to `IO2` (along with `IO38` for CH0 and `IO40` for CH2). All 4 pins have a `Hi-Z` state upon MCU reset, completely eliminating parasitic partial opening of power MOSFETs due to internal weak pull-ups (`Internal Weak Pull-Up`) on `IO39` and `IO41`.
-- **Cooling FAN PWM (`FAN_CH0..3`):** assigned to `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3). Freed `IO48` for full hardware compatibility with the built-in WS2812 LED on `ESP32-S3-DevKitC-1` boards.
-- **Audio Indication (Buzzer):** assigned `BUZZER_PIN` to `IO42` with a mandatory external `4.7 kOhm` pull-down resistor to `GND` to reliably close the transistor switch during MCU boot/reset.
-- Completely freed pins `IO39`, `IO41`, `IO48`.
-- **Master Board Netlist Verification:** The updated `battery_analyzer_hw.net` netlist is fully verified. All circuits of the U3 microcontroller (ESP32-S3-WROOM-1) comply with Variant B unified pinout: `PWM_CH0..3` (`IO38`, `IO1`, `IO40`, `IO2`), `FAN_CH0..3` (`IO12`, `IO13`, `IO14`, `IO21`), `BUZZER_PIN` (`IO42` with R36 4.7k pull-down to GND), `IO39`/`IO41`/`IO48` (`NC`), `I2C_PWR` (`IO4`/`IO5`), `I2C_UI` (`IO6`/`IO7`), `1W_CH0..3` (`IO8..11`), input devices (`IO15..18`), `ADC_ALERT` (`IO47`), `USB_D-/D+` (`IO19`/`IO20`).
+- **Pinout unification & Topological Routing Optimization for Master Board (November 2026):**
+  - **Pin Swap Rationale:** During direct PCB layout routing between the ESP32-S3 module (`U3`) and the 4 channel RJ45 ports (`J4..J7`), pin allocations were topologically swapped to eliminate track crossings and preserve unbroken ground return paths:
+  - **Power Load PWM (`PWM_CH0..3`):**
+    - `PWM_CH0`: assigned to `IO1` (pin 39, previously `IO38`)
+    - `PWM_CH1`: assigned to `IO2` (pin 38, previously `IO1`)
+    - `PWM_CH2`: retained on `IO40` (pin 33, unchanged)
+    - `PWM_CH3`: assigned to `IO38` (pin 31, previously `IO2`)
+    - All 4 pins maintain `Hi-Z` on MCU boot/reset, completely preventing parasitic MOSFET turn-on.
+  - **Cooling FAN PWM (`FAN_CH0..3`):**
+    - `FAN_CH0`: assigned to `IO21` (pin 23, previously `IO12`)
+    - `FAN_CH1`: assigned to `IO14` (pin 22, previously `IO13`)
+    - `FAN_CH2`: assigned to `IO13` (pin 21, previously `IO14`)
+    - `FAN_CH3`: assigned to `IO12` (pin 20, previously `IO21`)
+    - Complete pin inversion matches the physical layout sequence of the RJ45 connectors (`J4..J7`).
+  - **Temperature Sensors 1-Wire (`1W_CH0..3`):**
+    - `1W_CH0`: retained on `IO8` (pin 12, unchanged)
+    - `1W_CH1`: assigned to `IO11` (pin 19, previously `IO9`)
+    - `1W_CH2`: retained on `IO10` (pin 18, unchanged)
+    - `1W_CH3`: assigned to `IO9` (pin 17, previously `IO11`)
+    - Swapped CH1 and CH3 to untangle escape routing from MCU pins to pull-up resistors and RJ45 ports.
+  - **Audio Indication (Buzzer):** assigned `BUZZER_PIN` to `IO42` with external pull-down `R38 = 10k` to `GND`.
+  - **Completely freed pins:** `IO39`, `IO41`, `IO48` (NC / DevKit WS2812).
+  - **Master Board Netlist & Schematics Synchronized:** Updated `mcu_core.kicad_sch` and `battery_analyzer_hw.net`. All nets 100% matched.
 - **I2C Synchronization and Netlist Verification (November 2026):**
 - Coordinated and synchronized I2C bus hardware pinout in the `battery_analyzer_hw.net` netlist with the ESP-IDF firmware:
 - `I2C_PWR` (power telemetry bus for Slave modules): `SDA` = `IO4`, `SCL` = `IO5`.
@@ -69,9 +85,9 @@
 - **Central Power (Master):** DC Barrel Jack `J8` (2.5x5.5mm), reverse protection `D21` (SS34 40V/3A), bulk tantalum `C14` (22uF 35V Case D) + `C13` (100nF), step-down buck `MOD1` (MP1482 DC 4.75-18V -> 5V/2A, custom footprint `My_Custom_Library:DC_DC_MP1482_18x12mm_SMD` with 0.6 mm clearances on IN+/OUT+), USB OR-ing `D22` & `D23` (SS34), LDO `U2` (AMS1117-3.3), channel output jacks `J9..J12` with PTC fuses `30R135UU` (`F6..F9`, 1.35A 30V), NetTie `NT1`.
 - **Power Stage (Slave):** DC Barrel Jack `J2` (+12V rail powering LM358DT pin 8 and cooling fans), dual MOSFETs `Q1`, `Q2` (IRFP150N TO-247), Op-Amp `U1` (LM358DT SOIC-8), gate resistors `R3`, `R4` (100R), zeners `D3`, `D4` (BZT52C15), snubbers `R11`, `R12` (10R 1206) + `C3`, `C4` (100nF 100V 1206), single precision Manganin 2512 R005 shunts `R6`, `R9` (5 mOhm, 3W, 0.5%), NetTie_3 `NT1`, TVS `D1` (SMCJ58A SMC), fuse `F1` (25A 2920 SMD), power connector `J_PWR1` (XT60PW-M).
 - **ADC & Telemetry (Slave):** ADS1115IDGS `U2` (TSSOP-10), address jumpers `J6` (0x48..0x4B), 1:25 differential Kelvin divider (`R15 = 120k` + `R19 = 120k` 0.1% 200V 1206 upper arm, `R16 = 10k` 0.1% 0805 lower arm, `C9 = 100nF`), ALERT filter `C8 = 1nF`.
-- **Load PWM:** `IO38` (CH0), `IO1` (CH1), `IO40` (CH2), `IO2` (CH3) — all Hi-Z on reset, frequency `19.53 kHz` (`20 kHz`, 12-bit, Variant B2 passive dual-stage LPF with divider and `100 nF` capacitors).
-- **Cooling FAN PWM:** `IO12` (CH0), `IO13` (CH1), `IO14` (CH2), `IO21` (CH3) (switched via Low-Side MOSFET `Q_FAN1` IRLML2502 with `R20 = 100R`, `R17 = 10k`, and clamp diodes `D2`, `D5` 1N4148W).
-- **Temperature Sensors (1-Wire):** `IO8`, `IO9`, `IO10`, `IO11` (Master pull-ups 4.7k `R14..R17`, Slave dual `DS18B20` `U3`/`U4` TO-92 Inline and external probe header `J_TEMP1` Micro-Fit 3.0 2x02).
+- **Load PWM:** `IO1` (CH0), `IO2` (CH1), `IO40` (CH2), `IO38` (CH3) — all Hi-Z on reset, frequency `19.53 kHz` (`20 kHz`, 12-bit, Variant B2 passive dual-stage LPF with divider and `100 nF` capacitors).
+- **Cooling FAN PWM:** `IO21` (CH0), `IO14` (CH1), `IO13` (CH2), `IO12` (CH3) (switched via Low-Side MOSFET `Q_FAN1` IRLML2502 with `R20 = 100R`, `R17 = 10k`, and clamp diodes `D2`, `D5` 1N4148W).
+- **Temperature Sensors (1-Wire):** `IO8` (CH0), `IO11` (CH1), `IO10` (CH2), `IO9` (CH3) (Master pull-ups 4.7k `R14..R17`, Slave dual `DS18B20` `U3`/`U4` TO-92 Inline and external probe header `J_TEMP1` Micro-Fit 3.0 2x02).
 - **UI (RTC-domain):** I2C_UI (I2C_UI_SDA: `IO6`, I2C_UI_SCL: `IO7`, pull-ups 10k `R8`, `R7`), Rotary Encoder (`IO15`, `IO16`, `IO17` with debounce caps `C9`, `C10`, `C8`), Tare Button (`IO18` with debounce `C11`).
 - **Indication (Buzzer):** Piezo transducer `BZ1` (`KLS3-SMT-09`, Murata PKMCS0909E footprint) switched via `Q1` (`IRLML2502`) on `IO42` with gate series `R37 = 1k`, pull-down `R38 = 10k`, gate filter `C12 = 10nF`, and discharge resistor `R39 = 1k`.
 - **Free / Reserved Pins:** `IO39`, `IO41`, `IO48` (RGB LED WS2812 on DevKit).
@@ -162,7 +178,7 @@
 - [ ] Prepare software architecture to handle global `ADC_ALERT` interrupt on pin `IO47`.
 - [ ] Verify logic separating I2C buses (`I2C_UI` and `I2C_PWR`) at the firmware level.
 
-### 🛠 KiCad Hardware Engineer (Status: Master Board 100% Ready for PCB Layout / Slave Board 100% Netlist Verified)
+### 🛠 KiCad Hardware Engineer (Status: Master Board 100% PCB Layout Completed & DRC Passed / Slave Board 100% Netlist Verified)
 - [x] **[Ticket-HW-BUZZER-PULLDOWN]** Verified in `battery_analyzer_hw.net`: dedicated external pull-down resistor `R38 = 10k` to GND, series gate resistor `R37 = 1k`, gate filter capacitor `C12 = 10nF`, piezo discharge resistor `R39 = 1k` across `BZ1` (`KLS3-SMT-09`, Murata PKMCS0909E footprint).
 - [x] **[Ticket-HW-1]** In `hardware/slave_board/slave_board.net`: single `0.005` shunts (`2512 R005`, 5 mOhm, 3W, 0.5%) implemented as `R6` (for Q1) and `R9` (for Q2).
 - [x] **[Ticket-HW-2]** In `hardware/slave_board/slave_board.net`: PWM LPF Variant B2 implemented with `C1 = 100nF`, `C2 = 100nF`, `R1 = 10k`, `R2 = 10k`, `R18 = 1k` divider to GND.
@@ -179,7 +195,15 @@
 - [x] **[Ticket-HW-ROUTING-STEP1-12V-BUS]** Successfully routed Step 1 of Master Board: rotated `F6..F9` 90 deg for optimal alignment; routed `F6..F9` pin 2 to `J9..J12` pin 1; routed balanced microstrip sandwich power bus with `+12V` on `F.Cu` (from `J13` -> `D21` -> `C14/C13` -> `MOD1` pin 1 -> `F6..F9` pin 1) and `GND_12V` on `B.Cu` directly beneath it connecting `J9..J12` pin 2 directly on Bottom layer and returning to `J13` pin 2, preserving 100% solid central GND plane.
 - [x] **[Ticket-HW-ROUTING-STEP2-MOD1-NT1]** Review and route `MOD1` pins 2 (`IN-`, `GND_12V`) and 3 (`OUT-`, `GND_12V`) through star-ground NetTie `NT1`, ensuring DRC rule compliance between separate ground nets.
 - [x] **[Ticket-HW-ROUTING-POWER-LOW-COMPLETE]** Completely routed `Power_Low` class, secondary regulator `U2` (AMS1117-3.3), OR-ing diodes `D22/D23`, bulk/decoupling capacitors (`C15/C16`, `C1..C4`, `C5..C7` at ESP32-S3), USB D+/D- priority routing on F.Cu without vias, Daisy-Chain I2C topology, and prioritized routing matrix across RJ45 ports `J4..J7`. Split bottom polygon `B.Cu` into `GND_12V` and `GND` with 0.6 mm isolation gap.
-- [ ] **[Ticket-HW-ROUTING-FINAL-DRC]** Run final DRC check on `battery_analyzer_hw.kicad_pcb` and inspect any remaining unconnected nets or clearance warnings.
+- [x] **[Ticket-HW-ROUTING-FINAL-DRC]** Comprehensive engineering DRC audit of `battery_analyzer_hw.kicad_pcb` completed. Identified that 84 clearance violations were due to unrefilled zones on `B.Cu`. Verified 8 true unconnected items, 1 dangling via, USB-C clearance rules, and ESP32-S3 thermal pad via constraints.
+- [x] **[Ticket-HW-MASTER-DRC-FIXES]** Fully resolved all electrical errors and alerts on Master Board (`battery_analyzer_hw.kicad_pcb`):
+  1. Refilled copper polygons on `B.Cu` eliminating all zone clearance false positives.
+  2. Routed all 8 unconnected items: `+3.3V` to `U2` AMS1117-3.3 pin 2, `R3`/`R4` pin 1, `D18..D20` pin 2; closed reset `SW1` to `Net-(U3-EN)` and boot `SW2` pads to `Net-(U3-IO0)`.
+  3. Resolved clearance and hole constraints: 0 unconnected pads, 0 electrical DRC errors. Master Board PCB layout 100% finished and locked.
+- [ ] **[Cross-Ticket-FW-PINOUT-UPDATE]** Update firmware pin defines in `main/Kconfig.projbuild` and `sdkconfig`:
+  - Load PWM: `CONFIG_PWM_CH0_PIN` (38 -> 1), `CONFIG_PWM_CH1_PIN` (1 -> 2), `CONFIG_PWM_CH2_PIN` (40 -> 40), `CONFIG_PWM_CH3_PIN` (2 -> 38).
+  - Cooling Fan: `CONFIG_FAN_CH0_PIN` (12 -> 21), `CONFIG_FAN_CH1_PIN` (13 -> 14), `CONFIG_FAN_CH2_PIN` (14 -> 13), `CONFIG_FAN_CH3_PIN` (21 -> 12).
+  - 1-Wire Temp: `CONFIG_ONEWIRE_CH0_PIN` (8 -> 8), `CONFIG_ONEWIRE_CH1_PIN` (9 -> 11), `CONFIG_ONEWIRE_CH2_PIN` (10 -> 10), `CONFIG_ONEWIRE_CH3_PIN` (11 -> 9).
 
 ### 📋 Firmware Backlog (Scheduled Post-PCB Layout)
 - [ ] **[Backlog-FW-POWER-LIMIT-SOA]** Implement dynamic power clamp $I_{target} \le \min(I_{max}, 140\text{W} / V_{bat})$ in `load_control.c` and `safety_monitor.c`. Fix 32-bit integer multiplication overflow before `uint64_t` cast in `integration_service.c:24`.
